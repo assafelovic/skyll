@@ -1,11 +1,11 @@
 # 🌱 Skill Garden
 
-Skill Garden is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
-
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-00a393.svg)](https://fastapi.tiangolo.com)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Skill Garden is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
 
 ## The Problem
 
@@ -34,6 +34,8 @@ Skill Garden returns structured JSON with the full skill content:
 ```
 
 No pre-installation. No human intervention. Any agent can search, retrieve, and use skills autonomously.
+
+**Why scores matter**: Instead of pre-installing skills manually, agents can now explore and make their own decisions. The ranked list surfaces popular and relevant skills, letting agents choose based on user requests, task context, or what's trending. It's about giving agents freedom to discover.
 
 ## Features
 
@@ -122,11 +124,13 @@ Then submit a PR. Requirements:
 
 ## Use Cases
 
-**Agent Self-Discovery**: User asks "Help me optimize my React app" → Agent searches Skill Garden → Injects relevant skill into context → Provides expert guidance.
+**Web Research**: User asks "Find the latest news on AI agents" → Agent searches for `tavily-search` → Uses Tavily's LLM-optimized search API to fetch real-time web results.
 
-**Dynamic Skill Loading**: Mid-conversation, user needs authentication help → Agent discovers `better-auth` skill → Follows skill instructions to implement.
+**Deep Research**: User needs a comprehensive market analysis → Agent discovers `gpt-researcher` → Runs autonomous multi-step research with citations and detailed reports.
 
-**Multi-Agent Workflows**: Orchestrator agent searches for testing + API design skills → Distributes to specialized agents → Each agent works with domain expertise.
+**Testing Workflows**: User says "Add tests for this feature" → Agent finds `test-driven-development` → Follows TDD workflow: write tests first, then implement.
+
+**Building Integrations**: User wants to connect their app to external APIs → Agent retrieves `mcp-builder` → Creates Model Context Protocol servers following best practices.
 
 ## What are Agent Skills?
 

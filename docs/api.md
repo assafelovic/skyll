@@ -2,6 +2,8 @@
 
 Skill Garden provides two interfaces: a REST API and an MCP server.
 
+Both return a **ranked list of skills** with relevance scores (0-100), giving agents and developers multiple options to choose from. This enables dynamic filtering, custom selection logic, or letting agents pick based on context.
+
 ## REST API
 
 ### Endpoints
