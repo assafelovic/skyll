@@ -3,17 +3,15 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-00a393.svg)](https://fastapi.tiangolo.com)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Skill Garden is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
 
-## The Problem
+## Why use Skill Garden?
 
-Agent skills (SKILL.md files) are a powerful way to extend what AI agents can do, but today they only work with a handful of tools like Claude Code and Cursor. Skills require manual installation before a session, which means developers need to know in advance which skills they will need. Skill Garden democratizes access to skills by providing a simple API that any agent, framework, or tool can use to discover and retrieve skills on demand.
+Agent skills (SKILL.md files) are a powerful way to extend what AI agents can do, but today they only work with a handful of tools like Claude Code and Cursor. Skills require manual installation before a session, which means developers need to know in advance which skills they will need.
 
-## The Solution
-
-Skill Garden returns structured JSON with the full skill content:
+Skill Garden democratizes access to skills. Any agent, framework, or tool can discover and retrieve skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context, and use skills autonomously.
 
 ```json
 {
@@ -26,16 +24,13 @@ Skill Garden returns structured JSON with the full skill content:
       "source": "vercel/ai-skills",
       "relevance_score": 85.5,
       "install_count": 1250,
-      "content": "# React Best Practices\n\n## Performance\n...",
-      "references": []
+      "content": "# React Best Practices\n\n## Performance\n..."
     }
   ]
 }
 ```
 
-No pre-installation. No human intervention. Any agent can search, retrieve, and use skills autonomously.
-
-**Why options matter**: Instead of pre-installing skills manually, agents can now explore and make their own decisions. The ranked list surfaces popular and relevant skills, letting agents choose based on user requests, task context, or what's trending. It's about giving agents freedom to discover.
+**Why options matter**: The ranked list surfaces popular and relevant skills, letting agents choose based on user requests, task context, or what's trending. It's about giving agents freedom to discover.
 
 ## Features
 
@@ -68,6 +63,10 @@ uvicorn src.main:app --port 8000
 # Search for skills
 curl "http://localhost:8000/search?q=react+performance&limit=5"
 ```
+
+### Demo UI
+
+Open `web/index.html` in your browser for an interactive demo. Search for skills, view results with scores, and explore skill content visually.
 
 ## MCP Server
 
@@ -138,7 +137,7 @@ Agent skills are markdown files (SKILL.md) that teach AI coding agents how to co
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+Apache-2.0 License. See [LICENSE](LICENSE) for details.
 
 ---
 
