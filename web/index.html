@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Skill Garden</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-light: #c1f0b2;
+            --green-mid: #7ed957;
+            --green-dark: #2d5016;
+            --yellow: #fff06b;
+            --pink: #ffb3d9;
+            --orange: #ffb347;
+            --blue: #87ceeb;
+            --white: #fffef0;
+            --black: #1a1a1a;
+            --border: 4px solid var(--black);
+            --shadow: 6px 6px 0 var(--black);
+            --shadow-sm: 4px 4px 0 var(--black);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--green-light);
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(circle at 20% 80%, var(--yellow) 0%, transparent 25%),
+                radial-gradient(circle at 80% 20%, var(--pink) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, var(--blue) 0%, transparent 30%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--black);
+            text-shadow: 4px 4px 0 var(--green-mid);
+            margin-bottom: 0.5rem;
+            letter-spacing: -2px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--black);
+            background: var(--yellow);
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-box {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-wrapper {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        #search-input {
+            flex: 1;
+            min-width: 200px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border: var(--border);
+            background: var(--white);
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        #search-input:focus {
+            box-shadow: var(--shadow-sm);
+            background: var(--yellow);
+        }
+
+        #search-input::placeholder {
+            color: #888;
+        }
+
+        button {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 1rem 2rem;
+            border: var(--border);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        #search-btn {
+            background: var(--green-mid);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #search-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--black);
+        }
+
+        #search-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+
+        .options {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .options input[type="number"] {
+            width: 60px;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem;
+            border: 3px solid var(--black);
+            text-align: center;
+        }
+
+        #status {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        #status.loading {
+            display: block;
+            background: var(--yellow);
+            border: 3px solid var(--black);
+            animation: pulse 1s infinite;
+        }
+
+        #status.error {
+            display: block;
+            background: var(--pink);
+            border: 3px solid var(--black);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .results {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .skill-card {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .skill-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 var(--black);
+        }
+
+        .skill-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .skill-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .skill-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.6rem;
+            border: 3px solid var(--black);
+        }
+
+        .badge-installs {
+            background: var(--green-mid);
+        }
+
+        .badge-source {
+            background: var(--blue);
+        }
+
+        .skill-description {
+            padding: 0 1.5rem 1rem;
+            color: var(--green-dark);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .skill-content {
+            background: var(--black);
+            color: var(--green-light);
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .skill-content::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .skill-content::-webkit-scrollbar-track {
+            background: var(--green-dark);
+        }
+
+        .skill-content::-webkit-scrollbar-thumb {
+            background: var(--green-mid);
+            border: 2px solid var(--green-dark);
+        }
+
+        .skill-footer {
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            border-top: var(--border);
+            background: var(--green-light);
+        }
+
+        .skill-footer a {
+            font-size: 0.85rem;
+            color: var(--black);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border: 3px solid var(--black);
+            background: var(--white);
+            transition: all 0.15s;
+        }
+
+        .skill-footer a:hover {
+            background: var(--yellow);
+            transform: translate(-2px, -2px);
+            box-shadow: 2px 2px 0 var(--black);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .no-results-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-content {
+            background: var(--orange);
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            margin: 0 1.5rem 1rem;
+            display: inline-block;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .search-wrapper {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌱 Skill Garden</h1>
+            <p class="tagline">Dynamic skill discovery for AI agents</p>
+        </header>
+
+        <div class="search-box">
+            <div class="search-wrapper">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Search skills... (e.g., react performance, testing)"
+                    autofocus
+                >
+                <button id="search-btn">🔍 Search</button>
+            </div>
+            <div class="options">
+                <label>
+                    Limit:
+                    <input type="number" id="limit-input" value="5" min="1" max="20">
+                </label>
+            </div>
+            <div id="status"></div>
+        </div>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const limitInput = document.getElementById('limit-input');
+        const resultsDiv = document.getElementById('results');
+        const statusDiv = document.getElementById('status');
+
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num.toString();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatContent(content) {
+            if (!content) return 'No content available';
+            return content;
+        }
+
+        function renderSkill(skill) {
+            const hasContent = skill.content && !skill.fetch_error;
+            
+            return `
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-title">${escapeHtml(skill.title || skill.id)}</div>
+                        <div class="skill-badges">
+                            <span class="badge badge-installs">📦 ${formatNumber(skill.install_count)} installs</span>
+                            <span class="badge badge-source">📁 ${escapeHtml(skill.source)}</span>
+                        </div>
+                    </div>
+                    ${skill.description ? `
+                        <div class="skill-description">${escapeHtml(skill.description)}</div>
+                    ` : ''}
+                    ${hasContent ? `
+                        <button class="toggle-content" onclick="toggleContent(this)">
+                            📄 Show Content
+                        </button>
+                        <div class="skill-content" style="display: none;">${escapeHtml(formatContent(skill.content))}</div>
+                    ` : skill.fetch_error ? `
+                        <div class="skill-description" style="color: #c00;">⚠️ ${escapeHtml(skill.fetch_error)}</div>
+                    ` : ''}
+                    <div class="skill-footer">
+                        <a href="${skill.refs?.skills_sh}" target="_blank">🌐 skills.sh</a>
+                        <a href="${skill.refs?.github}" target="_blank">📂 GitHub</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleContent(btn) {
+            const content = btn.nextElementSibling;
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            btn.textContent = isHidden ? '📄 Hide Content' : '📄 Show Content';
+        }
+
+        async function search() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = '⚠️ Please enter a search query';
+                return;
+            }
+
+            const limit = parseInt(limitInput.value) || 5;
+
+            statusDiv.className = 'loading';
+            statusDiv.textContent = '🌱 Searching the garden...';
+            resultsDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(
+                    `${API_URL}/search?q=${encodeURIComponent(query)}&limit=${limit}`
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                statusDiv.style.display = 'none';
+                statusDiv.className = '';
+
+                if (data.skills && data.skills.length > 0) {
+                    resultsDiv.innerHTML = data.skills.map(renderSkill).join('');
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="no-results">
+                            <div class="no-results-emoji">🌿</div>
+                            <p>No skills found for "${escapeHtml(query)}"</p>
+                            <p style="margin-top: 0.5rem; opacity: 0.7;">Try a different search term</p>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = `❌ ${error.message}`;
+                console.error('Search error:', error);
+            }
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', search);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+
+        // Check API health on load
+        (async () => {
+            try {
+                const res = await fetch(`${API_URL}/health`);
+                if (res.ok) {
+                    console.log('✅ API connected');
+                }
+            } catch (e) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = '⚠️ API not running. Start with: uvicorn src.main:app --port 8000';
+            }
+        })();
+    </script>
+</body>
+</html>
