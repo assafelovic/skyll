@@ -66,6 +66,8 @@ curl "http://localhost:8000/search?q=react+performance&limit=5"
 
 ### Demo UI
 
+<img width="1060" height="565" alt="Screenshot 2026-01-31 at 22 24 58" src="https://github.com/user-attachments/assets/20937546-47c9-4a3a-b646-34eb44d4e081" />
+
 Open `web/index.html` in your browser for an interactive demo. Search for skills, view results with scores, and explore skill content visually.
 
 ## MCP Server
