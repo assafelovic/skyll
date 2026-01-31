@@ -2,7 +2,7 @@
 
 Skill Garden uses a multi-signal ranking algorithm to order search results by relevance. Each skill receives a score from 0-100 based on four weighted factors.
 
-## Why Scores Matter
+## Why Options Matter
 
 Today, developers pre-install skills manually before agents can use them. With Skill Garden, agents can explore and make their own decisions. The ranked list enables:
 
@@ -10,7 +10,7 @@ Today, developers pre-install skills manually before agents can use them. With S
 - **Discovery**: Surface popular and trending skills the agent (or developer) didn't know existed
 - **Flexibility**: Filter by score, pick the top match, or let the agent evaluate multiple options
 
-Scores give agents the freedom to discover and decide, rather than being limited to pre-installed choices.
+Options give agents the freedom to discover and decide, rather than being limited to pre-installed choices.
 
 ## Scoring Formula
 

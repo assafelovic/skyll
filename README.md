@@ -35,7 +35,7 @@ Skill Garden returns structured JSON with the full skill content:
 
 No pre-installation. No human intervention. Any agent can search, retrieve, and use skills autonomously.
 
-**Why scores matter**: Instead of pre-installing skills manually, agents can now explore and make their own decisions. The ranked list surfaces popular and relevant skills, letting agents choose based on user requests, task context, or what's trending. It's about giving agents freedom to discover.
+**Why options matter**: Instead of pre-installing skills manually, agents can now explore and make their own decisions. The ranked list surfaces popular and relevant skills, letting agents choose based on user requests, task context, or what's trending. It's about giving agents freedom to discover.
 
 ## Features
 
