@@ -30,9 +30,13 @@ import sys
 from contextlib import asynccontextmanager
 from typing import Any
 
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP, Context
 
 from src.core.service import SkillSearchService
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging to stderr (stdout is used for MCP communication)
 logging.basicConfig(
@@ -103,6 +107,7 @@ requiring human developers to pre-install them with `npx skills add`.
 async def search_skills(
     query: str,
     limit: int = 5,
+    include_references: bool = False,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -116,6 +121,9 @@ async def search_skills(
                "authentication setup"). Be descriptive for better results.
         limit: Maximum number of results to return (1-20, default: 5).
                Start with fewer results and increase if needed.
+        include_references: If True, also fetch reference files from the skill's
+                          references/ or resources/ directories. These contain
+                          additional documentation and examples.
     
     Returns:
         A dict containing:
@@ -129,6 +137,7 @@ async def search_skills(
             - install_count: Number of installs (higher = more trusted)
             - content: Full markdown instructions (inject this into context)
             - refs: URLs to view the skill on skills.sh and GitHub
+            - references: List of reference files (if include_references=True)
     
     Example queries:
         - "react performance optimization"
@@ -150,6 +159,7 @@ async def search_skills(
             query=query,
             limit=limit,
             include_content=True,
+            include_references=include_references,
         )
         
         if ctx:
@@ -170,6 +180,13 @@ async def search_skills(
                         "skills_sh": s.refs.skills_sh,
                         "github": s.refs.github,
                     },
+                    "references": [
+                        {
+                            "name": r.name,
+                            "content": r.content,
+                        }
+                        for r in s.references
+                    ] if s.references else [],
                     "fetch_error": s.fetch_error,
                 }
                 for s in response.skills
@@ -184,6 +201,7 @@ async def search_skills(
 async def get_skill(
     source: str,
     skill_id: str,
+    include_references: bool = False,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -196,6 +214,8 @@ async def get_skill(
                 (e.g., "vercel-labs/agent-skills", "anthropics/skills")
         skill_id: Skill identifier/slug 
                   (e.g., "vercel-react-best-practices", "frontend-design")
+        include_references: If True, also fetch reference files from the skill's
+                          references/ or resources/ directories.
     
     Returns:
         A skill object with:
@@ -208,6 +228,7 @@ async def get_skill(
         - install_count: Number of installs
         - content: Full markdown instructions
         - refs: URLs to view the skill
+        - references: List of reference files (if include_references=True)
         - metadata: Additional frontmatter fields
         
         Or {"error": "..."} if the skill is not found.
@@ -222,7 +243,9 @@ async def get_skill(
         await ctx.info(f"Fetching skill: {source}/{skill_id}")
     
     try:
-        skill = await _service.get_skill(source, skill_id)
+        skill = await _service.get_skill(
+            source, skill_id, include_references=include_references
+        )
         
         if skill is None:
             return {"error": f"Skill not found: {source}/{skill_id}"}
@@ -241,6 +264,15 @@ async def get_skill(
                 "github": skill.refs.github,
                 "raw": skill.refs.raw,
             },
+            "references": [
+                {
+                    "name": r.name,
+                    "path": r.path,
+                    "content": r.content,
+                    "raw_url": r.raw_url,
+                }
+                for r in skill.references
+            ] if skill.references else [],
             "metadata": skill.metadata,
         }
     except Exception as e:

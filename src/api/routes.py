@@ -93,6 +93,12 @@ async def search_get(
             description="Include raw SKILL.md with frontmatter",
         ),
     ] = False,
+    include_references: Annotated[
+        bool,
+        Query(
+            description="Fetch reference files from references/ or resources/ directories",
+        ),
+    ] = False,
 ) -> SearchResponse:
     """
     Search for skills matching a query (GET version).
@@ -106,6 +112,7 @@ async def search_get(
             limit=limit,
             include_content=include_content,
             include_raw=include_raw,
+            include_references=include_references,
         )
     except Exception as e:
         logger.error(f"Search failed: {e}")
@@ -152,6 +159,7 @@ async def search_post(
             limit=request.limit,
             include_content=request.include_content,
             include_raw=request.include_raw,
+            include_references=request.include_references,
         )
     except Exception as e:
         logger.error(f"Search failed: {e}")
@@ -185,9 +193,15 @@ async def get_skill(
         bool,
         Query(description="Include raw SKILL.md with frontmatter"),
     ] = False,
+    include_references: Annotated[
+        bool,
+        Query(description="Fetch reference files from references/ or resources/ directories"),
+    ] = False,
 ) -> Skill:
     """Get a specific skill by source and ID."""
-    skill = await service.get_skill(source, skill_id, include_raw=include_raw)
+    skill = await service.get_skill(
+        source, skill_id, include_raw=include_raw, include_references=include_references
+    )
 
     if skill is None:
         raise HTTPException(

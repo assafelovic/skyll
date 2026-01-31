@@ -34,6 +34,8 @@
             background: var(--green-light);
             min-height: 100vh;
             padding: 2rem;
+            display: flex;
+            flex-direction: column;
             background-image: 
                 radial-gradient(circle at 20% 80%, var(--yellow) 0%, transparent 25%),
                 radial-gradient(circle at 80% 20%, var(--pink) 0%, transparent 20%),
@@ -43,6 +45,8 @@
         .container {
             max-width: 900px;
             margin: 0 auto;
+            flex: 1;
+            width: 100%;
         }
 
         header {
@@ -311,6 +315,104 @@
             display: inline-block;
         }
 
+        .toggle-refs {
+            background: var(--pink);
+        }
+
+        .skill-refs {
+            padding: 1rem 1.5rem;
+            background: var(--white);
+            border-top: 3px dashed var(--black);
+        }
+
+        .skill-refs-title {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .ref-item {
+            margin-bottom: 1rem;
+            border: 3px solid var(--black);
+            background: var(--white);
+        }
+
+        .ref-header {
+            background: var(--blue);
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-bottom: 3px solid var(--black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ref-content {
+            background: var(--black);
+            color: var(--green-light);
+            padding: 1rem;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            display: none;
+        }
+
+        .ref-toggle {
+            background: var(--yellow);
+            border: 2px solid var(--black);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 1.5rem;
+            text-align: center;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        footer:hover {
+            opacity: 1;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--green-dark);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.15s;
+        }
+
+        .footer-links a:hover {
+            color: var(--black);
+        }
+
+        .footer-credit {
+            font-size: 0.75rem;
+            color: var(--green-dark);
+        }
+
+        .footer-credit a {
+            color: var(--green-dark);
+        }
+
+        .footer-credit a:hover {
+            color: var(--black);
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 2.5rem;
@@ -322,6 +424,11 @@
             
             button {
                 width: 100%;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.75rem;
             }
         }
     </style>
@@ -348,12 +455,30 @@
                     Limit:
                     <input type="number" id="limit-input" value="5" min="1" max="20">
                 </label>
+                <label>
+                    <input type="checkbox" id="refs-checkbox">
+                    Include references
+                </label>
             </div>
             <div id="status"></div>
         </div>
 
         <div id="results" class="results"></div>
+
     </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://skillgarden.dev" target="_blank">🌱 skillgarden.dev</a>
+            <a href="https://github.com/assafelovic/skill-garden" target="_blank">📂 GitHub</a>
+            <a href="http://localhost:8000/docs" target="_blank">📚 API Docs</a>
+            <a href="https://skills.sh" target="_blank">🔍 skills.sh</a>
+        </div>
+        <p class="footer-credit">
+            Built with 🌱 for autonomous agents · 
+            <a href="https://agentskills.io" target="_blank">Agent Skills Spec</a>
+        </p>
+    </footer>
 
     <script>
         const API_URL = 'http://localhost:8000';
@@ -361,6 +486,7 @@
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
         const limitInput = document.getElementById('limit-input');
+        const refsCheckbox = document.getElementById('refs-checkbox');
         const resultsDiv = document.getElementById('results');
         const statusDiv = document.getElementById('status');
 
@@ -383,8 +509,21 @@
             return content;
         }
 
+        function renderReference(ref, index) {
+            return `
+                <div class="ref-item">
+                    <div class="ref-header">
+                        <span>📎 ${escapeHtml(ref.name)}</span>
+                        <button class="ref-toggle" onclick="toggleRef(this)">Show</button>
+                    </div>
+                    <div class="ref-content">${escapeHtml(ref.content || 'Content not loaded')}</div>
+                </div>
+            `;
+        }
+
         function renderSkill(skill) {
             const hasContent = skill.content && !skill.fetch_error;
+            const hasRefs = skill.references && skill.references.length > 0;
             
             return `
                 <div class="skill-card">
@@ -393,6 +532,7 @@
                         <div class="skill-badges">
                             <span class="badge badge-installs">📦 ${formatNumber(skill.install_count)} installs</span>
                             <span class="badge badge-source">📁 ${escapeHtml(skill.source)}</span>
+                            ${hasRefs ? `<span class="badge" style="background: var(--pink);">📎 ${skill.references.length} refs</span>` : ''}
                         </div>
                     </div>
                     ${skill.description ? `
@@ -405,6 +545,15 @@
                         <div class="skill-content" style="display: none;">${escapeHtml(formatContent(skill.content))}</div>
                     ` : skill.fetch_error ? `
                         <div class="skill-description" style="color: #c00;">⚠️ ${escapeHtml(skill.fetch_error)}</div>
+                    ` : ''}
+                    ${hasRefs ? `
+                        <button class="toggle-content toggle-refs" onclick="toggleRefs(this)">
+                            📎 Show ${skill.references.length} References
+                        </button>
+                        <div class="skill-refs" style="display: none;">
+                            <div class="skill-refs-title">📚 Reference Files:</div>
+                            ${skill.references.map(renderReference).join('')}
+                        </div>
                     ` : ''}
                     <div class="skill-footer">
                         <a href="${skill.refs?.skills_sh}" target="_blank">🌐 skills.sh</a>
@@ -421,6 +570,21 @@
             btn.textContent = isHidden ? '📄 Hide Content' : '📄 Show Content';
         }
 
+        function toggleRefs(btn) {
+            const refs = btn.nextElementSibling;
+            const isHidden = refs.style.display === 'none';
+            refs.style.display = isHidden ? 'block' : 'none';
+            const count = refs.querySelectorAll('.ref-item').length;
+            btn.textContent = isHidden ? `📎 Hide ${count} References` : `📎 Show ${count} References`;
+        }
+
+        function toggleRef(btn) {
+            const content = btn.parentElement.nextElementSibling;
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            btn.textContent = isHidden ? 'Hide' : 'Show';
+        }
+
         async function search() {
             const query = searchInput.value.trim();
             if (!query) {
@@ -430,15 +594,18 @@
             }
 
             const limit = parseInt(limitInput.value) || 5;
+            const includeRefs = refsCheckbox.checked;
 
             statusDiv.className = 'loading';
-            statusDiv.textContent = '🌱 Searching the garden...';
+            statusDiv.textContent = includeRefs ? '🌱 Searching with references...' : '🌱 Searching the garden...';
             resultsDiv.innerHTML = '';
 
             try {
-                const response = await fetch(
-                    `${API_URL}/search?q=${encodeURIComponent(query)}&limit=${limit}`
-                );
+                let url = `${API_URL}/search?q=${encodeURIComponent(query)}&limit=${limit}`;
+                if (includeRefs) {
+                    url += '&include_references=true';
+                }
+                const response = await fetch(url);
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);

@@ -38,6 +38,7 @@ No pre-installation. No human intervention. The agent searches, retrieves, and u
 
 - 🔍 **Search** - Query the skills.sh directory by natural language
 - 📄 **Full Content** - Returns complete SKILL.md with parsed metadata
+- 📎 **References** - Optionally fetch additional docs from `references/` directories
 - 📊 **Ranked Results** - Sorted by popularity (install count)
 - ⚡ **Cached** - Aggressive caching to respect GitHub rate limits
 - 🔌 **Dual Interface** - REST API + MCP Server
@@ -61,7 +62,11 @@ uvicorn src.main:app --port 8000
 ```
 
 ```bash
+# Basic search
 curl "http://localhost:8000/search?q=react+performance&limit=5"
+
+# Include reference files (additional docs from references/ directories)
+curl "http://localhost:8000/search?q=react+native&limit=1&include_references=true"
 ```
 
 ### Option 2: MCP Server
@@ -127,8 +132,8 @@ python -m src.mcp_server --transport sse --port 8080
 
 | Tool | Description |
 |------|-------------|
-| `search_skills` | Search for skills by query, returns list with full content |
-| `get_skill` | Get a specific skill by source and ID |
+| `search_skills` | Search for skills by query (params: `query`, `limit`, `include_references`) |
+| `get_skill` | Get a specific skill by source and ID (params: `source`, `skill_id`, `include_references`) |
 | `get_cache_stats` | Get cache hit/miss statistics for debugging |
 
 **Example MCP tool call:**
@@ -138,7 +143,8 @@ python -m src.mcp_server --transport sse --port 8080
   "name": "search_skills",
   "arguments": {
     "query": "react performance optimization",
-    "limit": 5
+    "limit": 5,
+    "include_references": true
   }
 }
 ```
@@ -165,7 +171,72 @@ python -m src.mcp_server --transport sse --port 8080
       "install_count": 74200,
       "relevance_score": 74200.0,
       "content": "# React Best Practices\n\nFull markdown...",
+      "references": [
+        {
+          "name": "js-lists-flatlist.md",
+          "path": "skills/react-native-best-practices/references/js-lists-flatlist.md",
+          "content": "# FlatList Best Practices\n\nFull markdown...",
+          "raw_url": "https://raw.githubusercontent.com/..."
+        }
+      ],
       "metadata": {}
+    }
+  ]
+}
+```
+
+## Skill References
+
+Many skills include additional documentation in `references/` or `resources/` directories. These contain detailed guides, code examples, and best practices.
+
+### Fetching References
+
+**REST API:**
+```bash
+# Include references in search results
+curl "http://localhost:8000/search?q=react+native&include_references=true"
+
+# Fetch a specific skill with references
+curl "http://localhost:8000/skills/owner/repo/skill-id?include_references=true"
+```
+
+**MCP:**
+```json
+{
+  "name": "search_skills",
+  "arguments": {
+    "query": "react native",
+    "limit": 3,
+    "include_references": true
+  }
+}
+```
+
+### Reference Structure
+
+Skills with references typically have this structure:
+
+```
+skill-folder/
+├── SKILL.md              # Main skill instructions
+└── references/
+    ├── concept-1.md      # Additional documentation
+    ├── concept-2.md
+    └── examples.md
+```
+
+Reference files are returned in the `references` array:
+
+```json
+{
+  "id": "react-native-best-practices",
+  "content": "Main SKILL.md content...",
+  "references": [
+    {
+      "name": "js-lists-flatlist.md",
+      "path": "skills/react-native/references/js-lists-flatlist.md",
+      "content": "Full reference content...",
+      "raw_url": "https://raw.githubusercontent.com/..."
     }
   ]
 }

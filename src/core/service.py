@@ -12,7 +12,7 @@ from typing import Protocol
 from src.cache import CacheBackend, InMemoryCache
 from src.clients import GitHubClient, SkillsShClient
 from src.clients.skillssh import SkillSearchResult
-from src.core.models import Skill, SkillRefs, SearchResponse
+from src.core.models import Skill, SkillRefs, SkillReference, SearchResponse
 from src.core.parser import ParsedSkill, SkillParser, ParseError
 
 logger = logging.getLogger(__name__)
@@ -121,31 +121,47 @@ class SkillSearchService:
         self,
         source: str,
         skill_id: str,
-    ) -> tuple[str | None, str | None, str | None]:
+        include_references: bool = False,
+    ) -> tuple[str | None, str | None, list[SkillReference], str | None]:
         """
         Fetch skill content from cache or GitHub.
         
-        Returns: (content, raw_url, error)
+        Returns: (content, raw_url, references, error)
         """
         cache_key = self._cache_key(source, skill_id)
+        refs_cache_key = f"{cache_key}:refs" if include_references else None
 
-        # Check cache first
+        # Check cache first (content only, references fetched fresh if needed)
         cached = await self._cache.get(cache_key)
-        if cached is not None:
+        if cached is not None and not include_references:
             logger.debug(f"Cache hit for {cache_key}")
-            return cached.get("content"), cached.get("raw_url"), None
+            return cached.get("content"), cached.get("raw_url"), [], None
 
         # Fetch from GitHub
-        result = await self._github_client.fetch_skill(source, skill_id)
+        result = await self._github_client.fetch_skill(
+            source, skill_id, include_references=include_references
+        )
 
         if result.success:
-            # Cache successful fetch
+            # Cache successful fetch (content only)
             await self._cache.set(
                 cache_key,
                 {"content": result.content, "raw_url": result.raw_url},
                 ttl=self._cache_ttl,
             )
-            return result.content, result.raw_url, None
+            
+            # Convert reference files to SkillReference models
+            references = [
+                SkillReference(
+                    name=ref.name,
+                    path=ref.path,
+                    content=ref.content,
+                    raw_url=ref.raw_url,
+                )
+                for ref in result.references
+            ]
+            
+            return result.content, result.raw_url, references, None
         else:
             # Cache the failure briefly to avoid repeated requests
             await self._cache.set(
@@ -153,13 +169,14 @@ class SkillSearchService:
                 {"content": None, "raw_url": None, "error": result.error},
                 ttl=300,  # 5 minute TTL for failures
             )
-            return None, None, result.error
+            return None, None, [], result.error
 
     def _build_skill(
         self,
         search_result: SkillSearchResult,
         parsed: ParsedSkill | None,
         raw_url: str | None,
+        references: list[SkillReference],
         fetch_error: str | None,
         include_raw: bool = False,
     ) -> Skill:
@@ -188,6 +205,7 @@ class SkillSearchService:
                 content=parsed.content,
                 raw_content=parsed.raw if include_raw else None,
                 metadata=parsed.metadata,
+                references=references,
                 fetch_error=None,
             )
         else:
@@ -200,6 +218,7 @@ class SkillSearchService:
                 install_count=search_result.installs,
                 relevance_score=float(search_result.installs),
                 content=None,
+                references=references,
                 fetch_error=fetch_error,
             )
 
@@ -208,14 +227,15 @@ class SkillSearchService:
         result: SkillSearchResult,
         include_content: bool,
         include_raw: bool,
+        include_references: bool = False,
     ) -> Skill:
-        """Process a single search result, optionally fetching content."""
+        """Process a single search result, optionally fetching content and references."""
         if not include_content:
-            return self._build_skill(result, None, None, None, include_raw)
+            return self._build_skill(result, None, None, [], None, include_raw)
 
-        # Fetch content
-        content, raw_url, error = await self._fetch_and_cache_content(
-            result.source, result.id
+        # Fetch content (and optionally references)
+        content, raw_url, references, error = await self._fetch_and_cache_content(
+            result.source, result.id, include_references=include_references
         )
 
         # Parse if we got content
@@ -227,7 +247,7 @@ class SkillSearchService:
                 logger.warning(f"Failed to parse {result.id}: {e}")
                 error = f"Parse error: {e}"
 
-        return self._build_skill(result, parsed, raw_url, error, include_raw)
+        return self._build_skill(result, parsed, raw_url, references, error, include_raw)
 
     async def search(
         self,
@@ -235,6 +255,7 @@ class SkillSearchService:
         limit: int = 10,
         include_content: bool = True,
         include_raw: bool = False,
+        include_references: bool = False,
     ) -> SearchResponse:
         """
         Search for skills matching a query.
@@ -244,6 +265,7 @@ class SkillSearchService:
             limit: Maximum number of results (default: 10)
             include_content: Fetch full SKILL.md content (default: True)
             include_raw: Include raw content with frontmatter (default: False)
+            include_references: Fetch reference files from references/ directory (default: False)
             
         Returns:
             SearchResponse with matching skills sorted by relevance
@@ -256,7 +278,7 @@ class SkillSearchService:
 
         # Process results in parallel
         tasks = [
-            self._process_search_result(result, include_content, include_raw)
+            self._process_search_result(result, include_content, include_raw, include_references)
             for result in search_results
         ]
         skills = await asyncio.gather(*tasks)
@@ -275,6 +297,7 @@ class SkillSearchService:
         source: str,
         skill_id: str,
         include_raw: bool = False,
+        include_references: bool = False,
     ) -> Skill | None:
         """
         Get a specific skill by source and ID.
@@ -283,11 +306,14 @@ class SkillSearchService:
             source: GitHub owner/repo
             skill_id: Skill identifier
             include_raw: Include raw content with frontmatter
+            include_references: Fetch reference files from references/ directory
             
         Returns:
             Skill if found, None otherwise
         """
-        content, raw_url, error = await self._fetch_and_cache_content(source, skill_id)
+        content, raw_url, references, error = await self._fetch_and_cache_content(
+            source, skill_id, include_references=include_references
+        )
 
         if not content:
             return None
@@ -306,7 +332,7 @@ class SkillSearchService:
             installs=0,
         )
 
-        return self._build_skill(search_result, parsed, raw_url, error, include_raw)
+        return self._build_skill(search_result, parsed, raw_url, references, error, include_raw)
 
     async def get_cache_stats(self) -> dict:
         """Get cache statistics."""

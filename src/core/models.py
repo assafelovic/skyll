@@ -10,6 +10,34 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class SkillReference(BaseModel):
+    """
+    A reference/resource file associated with a skill.
+    
+    Many skills include additional documentation in references/ or resources/
+    directories. These provide deeper context and examples.
+    """
+    
+    name: str = Field(
+        ...,
+        description="Filename of the reference",
+        examples=["js-lists-flatlist-flashlist.md"],
+    )
+    path: str = Field(
+        ...,
+        description="Full path in the repository",
+        examples=["skills/react-native-best-practices/references/js-lists-flatlist-flashlist.md"],
+    )
+    content: str | None = Field(
+        default=None,
+        description="Full markdown content of the reference file",
+    )
+    raw_url: str | None = Field(
+        default=None,
+        description="Direct URL to fetch the raw content",
+    )
+
+
 class SkillRefs(BaseModel):
     """
     Reference URLs for a skill.
@@ -113,6 +141,10 @@ class Skill(BaseModel):
         default_factory=dict,
         description="Additional frontmatter fields",
     )
+    references: list[SkillReference] = Field(
+        default_factory=list,
+        description="Additional reference/resource files associated with this skill",
+    )
     fetch_error: str | None = Field(
         default=None,
         description="Error message if content fetch failed",
@@ -122,6 +154,11 @@ class Skill(BaseModel):
     def has_content(self) -> bool:
         """True if skill content was successfully fetched."""
         return self.content is not None
+    
+    @property
+    def has_references(self) -> bool:
+        """True if skill has reference files."""
+        return len(self.references) > 0
 
 
 class SearchRequest(BaseModel):
@@ -151,6 +188,10 @@ class SearchRequest(BaseModel):
     include_raw: bool = Field(
         default=False,
         description="Include raw SKILL.md with frontmatter in response",
+    )
+    include_references: bool = Field(
+        default=False,
+        description="Fetch reference files (in references/, resources/ directories)",
     )
 
 

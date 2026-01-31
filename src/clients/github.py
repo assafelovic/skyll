@@ -1,16 +1,27 @@
 """
-GitHub client for fetching raw SKILL.md content from repositories.
+GitHub client for fetching raw SKILL.md content and references from repositories.
 
-Uses the GitHub API to efficiently locate SKILL.md files
-instead of brute-forcing multiple path patterns.
+Uses the GitHub API to efficiently locate SKILL.md files and their
+associated reference documents (in references/ or resources/ directories).
 """
 
+import asyncio
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import httpx
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ReferenceFile:
+    """A reference file associated with a skill."""
+    
+    name: str  # Filename (e.g., "js-lists-flatlist.md")
+    path: str  # Full path in repo
+    content: str | None = None  # Content if fetched
+    raw_url: str | None = None  # Raw GitHub URL
 
 
 @dataclass
@@ -21,11 +32,15 @@ class FetchResult:
     Attributes:
         content: The raw SKILL.md content if successful, None otherwise
         raw_url: The URL that successfully returned content
+        skill_dir: The directory containing the SKILL.md
+        references: List of reference files found
         error: Error message if fetch failed
     """
 
     content: str | None
     raw_url: str | None = None
+    skill_dir: str | None = None
+    references: list[ReferenceFile] = field(default_factory=list)
     error: str | None = None
 
     @property
@@ -42,10 +57,10 @@ class GitHubError(Exception):
 
 class GitHubClient:
     """
-    Async client for fetching raw SKILL.md content from GitHub.
+    Async client for fetching raw SKILL.md content and references from GitHub.
     
     Uses the GitHub API to find SKILL.md files efficiently,
-    then fetches the raw content.
+    then fetches the raw content and any associated reference files.
     
     Args:
         timeout: Request timeout in seconds (default: 10.0)
@@ -53,13 +68,22 @@ class GitHubClient:
     
     Example:
         async with GitHubClient(token="ghp_xxx") as client:
-            result = await client.fetch_skill("vercel-labs/agent-skills", "react-best-practices")
+            result = await client.fetch_skill(
+                "vercel-labs/agent-skills", 
+                "react-best-practices",
+                include_references=True
+            )
             if result.success:
                 print(result.content)
+                for ref in result.references:
+                    print(f"  - {ref.name}: {len(ref.content)} chars")
     """
 
     API_BASE_URL = "https://api.github.com"
     RAW_BASE_URL = "https://raw.githubusercontent.com"
+    
+    # Common directory names for reference files
+    REFERENCE_DIRS = ["references", "resources", "docs", "examples", "rules"]
 
     def __init__(
         self,
@@ -69,7 +93,7 @@ class GitHubClient:
         self._timeout = timeout
         self._token = token
         self._client: httpx.AsyncClient | None = None
-        # Cache for repo info: {owner/repo: {"branch": str, "paths": dict}}
+        # Cache for repo info: {owner/repo: {"branch": str, "tree": list}}
         self._repo_cache: dict[str, dict] = {}
 
     async def __aenter__(self) -> "GitHubClient":
@@ -120,9 +144,9 @@ class GitHubClient:
 
     async def _get_repo_tree(self, source: str) -> dict | None:
         """
-        Get the file tree and default branch for a repository.
+        Get the full file tree and default branch for a repository.
         
-        Returns a dict with 'branch' and 'paths', or None if failed.
+        Returns a dict with 'branch' and 'tree' (all files), or None if failed.
         Cached per repo.
         """
         if source in self._repo_cache:
@@ -131,7 +155,6 @@ class GitHubClient:
         # First get the default branch
         branch = await self._get_default_branch(source)
         if not branch:
-            # Cache the failure
             self._repo_cache[source] = None
             return None
 
@@ -149,15 +172,19 @@ class GitHubClient:
             data = response.json()
             tree = data.get("tree", [])
             
-            # Build path -> blob mapping for SKILL.md files only
-            paths = {}
+            # Store all blob paths (not just SKILL.md)
+            all_paths = {}
+            skill_paths = {}
             for item in tree:
-                if item.get("type") == "blob" and item.get("path", "").endswith("SKILL.md"):
-                    paths[item["path"]] = item.get("sha", "")
+                if item.get("type") == "blob":
+                    path = item.get("path", "")
+                    all_paths[path] = item.get("sha", "")
+                    if path.endswith("SKILL.md"):
+                        skill_paths[path] = item.get("sha", "")
             
-            result = {"branch": branch, "paths": paths}
+            result = {"branch": branch, "tree": all_paths, "skills": skill_paths}
             self._repo_cache[source] = result
-            logger.debug(f"Found {len(paths)} SKILL.md files in {source} (branch: {branch})")
+            logger.debug(f"Found {len(skill_paths)} SKILL.md files in {source} (branch: {branch})")
             return result
 
         except httpx.TimeoutException:
@@ -169,42 +196,100 @@ class GitHubClient:
             self._repo_cache[source] = None
             return None
 
-    def _find_skill_path(self, paths: dict[str, str], skill_id: str) -> str | None:
+    def _find_skill_path(self, skill_paths: dict[str, str], skill_id: str) -> str | None:
         """
         Find the path to a specific skill's SKILL.md in the repo tree.
         
-        Looks for patterns like:
-        - skills/{skill_id}/SKILL.md
-        - .claude/skills/{skill_id}/SKILL.md
-        - {skill_id}/SKILL.md
-        - SKILL.md (if skill_id matches repo name)
+        Handles various naming conventions:
+        - Direct match: skill_id matches folder name exactly
+        - Prefix stripping: "vercel-react-skills" matches "react-skills" 
+        - Suffix matching: matches if skill_id ends with folder name
         """
-        # Direct match patterns (most common)
-        priority_patterns = [
-            f"skills/{skill_id}/SKILL.md",
-            f".claude/skills/{skill_id}/SKILL.md",
-            f".cursor/skills/{skill_id}/SKILL.md",
-            f".github/skills/{skill_id}/SKILL.md",
-            f".agent/skills/{skill_id}/SKILL.md",
-            f".agents/skills/{skill_id}/SKILL.md",
-            f"{skill_id}/SKILL.md",
-        ]
+        # Generate ID variants to try (original + without common prefixes)
+        id_variants = [skill_id]
         
-        for pattern in priority_patterns:
-            if pattern in paths:
-                return pattern
+        # Common prefixes to strip (e.g., vercel-react-skills -> react-skills)
+        prefixes_to_strip = ["vercel-", "anthropic-", "openai-", "claude-"]
+        for prefix in prefixes_to_strip:
+            if skill_id.startswith(prefix):
+                id_variants.append(skill_id[len(prefix):])
+        
+        for variant_id in id_variants:
+            # Direct match patterns (most common)
+            priority_patterns = [
+                f"skills/{variant_id}/SKILL.md",
+                f".claude/skills/{variant_id}/SKILL.md",
+                f".cursor/skills/{variant_id}/SKILL.md",
+                f".github/skills/{variant_id}/SKILL.md",
+                f".agent/skills/{variant_id}/SKILL.md",
+                f".agents/skills/{variant_id}/SKILL.md",
+                f"{variant_id}/SKILL.md",
+            ]
+            
+            for pattern in priority_patterns:
+                if pattern in skill_paths:
+                    return pattern
         
         # Fuzzy match - find any path containing the skill_id as a directory
-        for path in paths:
+        for variant_id in id_variants:
+            for path in skill_paths:
+                parts = path.split("/")
+                if variant_id in parts:
+                    return path
+        
+        # Suffix match - skill_id ends with folder name (e.g., vercel-react-skills matches react-skills)
+        for path in skill_paths:
             parts = path.split("/")
-            if skill_id in parts:
-                return path
+            for part in parts:
+                if skill_id.endswith(part) and len(part) > 5:  # Avoid matching short names
+                    return path
         
         # Last resort - if there's only one SKILL.md, use it
-        if len(paths) == 1:
-            return list(paths.keys())[0]
+        if len(skill_paths) == 1:
+            return list(skill_paths.keys())[0]
         
         return None
+
+    def _find_reference_files(
+        self,
+        all_paths: dict[str, str],
+        skill_dir: str,
+    ) -> list[tuple[str, str]]:
+        """
+        Find reference/resource files associated with a skill.
+        
+        Looks for .md files in:
+        1. Sibling files: {skill_dir}/*.md (excluding SKILL.md)
+        2. Subdirectories: {skill_dir}/references/, resources/, docs/, examples/, rules/
+        
+        Returns list of (name, path) tuples.
+        """
+        reference_files = []
+        seen_paths = set()
+        
+        # 1. Sibling .md files in the same directory as SKILL.md
+        skill_dir_prefix = f"{skill_dir}/" if skill_dir else ""
+        for path in all_paths:
+            if path.startswith(skill_dir_prefix) and path.endswith(".md"):
+                # Check if it's a direct sibling (not in a subdirectory)
+                remaining = path[len(skill_dir_prefix):]
+                if "/" not in remaining and remaining.upper() != "SKILL.MD":
+                    name = remaining
+                    if path not in seen_paths:
+                        reference_files.append((name, path))
+                        seen_paths.add(path)
+        
+        # 2. Files in reference subdirectories
+        for ref_dir in self.REFERENCE_DIRS:
+            prefix = f"{skill_dir}/{ref_dir}/"
+            for path in all_paths:
+                if path.startswith(prefix) and path.endswith(".md"):
+                    if path not in seen_paths:
+                        name = path.split("/")[-1]
+                        reference_files.append((name, path))
+                        seen_paths.add(path)
+        
+        return reference_files
 
     async def _fetch_raw_content(self, source: str, branch: str, path: str) -> str | None:
         """Fetch raw file content from GitHub."""
@@ -223,19 +308,18 @@ class GitHubClient:
         self,
         source: str,
         skill_id: str,
+        include_references: bool = False,
     ) -> FetchResult:
         """
-        Fetch SKILL.md content from a GitHub repository.
-        
-        Uses the GitHub API to locate the file efficiently,
-        then fetches the raw content.
+        Fetch SKILL.md content and optionally reference files from a GitHub repository.
         
         Args:
             source: Repository in "owner/repo" format
             skill_id: Skill identifier (folder name)
+            include_references: If True, also fetch reference files
             
         Returns:
-            FetchResult with content if found, error message otherwise
+            FetchResult with content, references, and metadata
         """
         # Get repo info (cached)
         repo_info = await self._get_repo_tree(source)
@@ -247,41 +331,72 @@ class GitHubClient:
             )
         
         branch = repo_info["branch"]
-        paths = repo_info["paths"]
+        all_paths = repo_info["tree"]
+        skill_paths = repo_info["skills"]
         
-        if not paths:
+        if not skill_paths:
             return FetchResult(
                 content=None,
                 error=f"No SKILL.md files found in {source}",
             )
         
         # Find the specific skill
-        skill_path = self._find_skill_path(paths, skill_id)
+        skill_path = self._find_skill_path(skill_paths, skill_id)
         
         if not skill_path:
-            # List available skills for debugging
-            available = [p.split("/")[-2] for p in paths.keys() if "/" in p]
+            available = [p.split("/")[-2] for p in skill_paths.keys() if "/" in p]
             return FetchResult(
                 content=None,
                 error=f"Skill '{skill_id}' not found. Available: {available[:5]}",
             )
         
-        # Fetch the content
+        # Get the skill directory (parent of SKILL.md)
+        skill_dir = "/".join(skill_path.split("/")[:-1])
+        
+        # Fetch the SKILL.md content
         content = await self._fetch_raw_content(source, branch, skill_path)
         
-        if content:
-            raw_url = f"{self.RAW_BASE_URL}/{source}/{branch}/{skill_path}"
-            logger.debug(f"Found skill at {raw_url}")
-            return FetchResult(content=content, raw_url=raw_url)
+        if not content:
+            return FetchResult(
+                content=None,
+                error=f"Failed to fetch content from {source}/{skill_path}",
+            )
+        
+        raw_url = f"{self.RAW_BASE_URL}/{source}/{branch}/{skill_path}"
+        logger.debug(f"Found skill at {raw_url}")
+        
+        # Find and optionally fetch references
+        references = []
+        if include_references:
+            ref_files = self._find_reference_files(all_paths, skill_dir)
+            
+            if ref_files:
+                logger.debug(f"Found {len(ref_files)} reference files for {skill_id}")
+                
+                # Fetch all reference files in parallel
+                async def fetch_ref(name: str, path: str) -> ReferenceFile:
+                    ref_content = await self._fetch_raw_content(source, branch, path)
+                    ref_url = f"{self.RAW_BASE_URL}/{source}/{branch}/{path}"
+                    return ReferenceFile(
+                        name=name,
+                        path=path,
+                        content=ref_content,
+                        raw_url=ref_url,
+                    )
+                
+                references = await asyncio.gather(*[
+                    fetch_ref(name, path) for name, path in ref_files
+                ])
         
         return FetchResult(
-            content=None,
-            error=f"Failed to fetch content from {source}/{skill_path}",
+            content=content,
+            raw_url=raw_url,
+            skill_dir=skill_dir,
+            references=list(references),
         )
 
     def get_github_url(self, source: str, skill_id: str) -> str:
         """Get the GitHub web URL for a skill."""
-        # Use cached branch if available
         repo_info = self._repo_cache.get(source)
         branch = repo_info["branch"] if repo_info else "main"
         return f"https://github.com/{source}/tree/{branch}/skills/{skill_id}"
