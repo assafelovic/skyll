@@ -10,41 +10,15 @@ with automatic deduplication across sources.
 
 import asyncio
 import logging
-from typing import Protocol
 
 from src.cache import CacheBackend, InMemoryCache
 from src.clients import GitHubClient
 from src.core.models import Skill, SkillRefs, SkillReference, SearchResponse
 from src.core.parser import ParsedSkill, SkillParser, ParseError
-from src.sources import SkillSource, SkillSearchResult, SkillsShSource, AwesomeListSource
+from src.ranking import Ranker, RelevanceRanker
+from src.sources import SkillSource, SkillSearchResult, SkillsShSource, SkillRegistrySource
 
 logger = logging.getLogger(__name__)
-
-
-class Ranker(Protocol):
-    """Protocol for ranking strategies."""
-
-    def rank(self, skills: list[Skill]) -> list[Skill]:
-        """Re-rank skills and return sorted list."""
-        ...
-
-
-class InstallCountRanker:
-    """
-    Ranks skills by install count (popularity).
-    
-    Skills from sources without popularity data (e.g., awesome lists)
-    will have install_count=0 and appear after popular skills.
-    
-    Ranking strategy can be extended later (semantic matching, etc.)
-    """
-
-    def rank(self, skills: list[Skill]) -> list[Skill]:
-        """Sort skills by install count descending."""
-        for skill in skills:
-            skill.relevance_score = float(skill.install_count)
-        
-        return sorted(skills, key=lambda s: s.relevance_score, reverse=True)
 
 
 class SkillSearchService:
@@ -82,14 +56,14 @@ class SkillSearchService:
         ranker: Ranker | None = None,
         github_token: str | None = None,
         cache_ttl: int = 3600,
-        enable_awesome_list: bool = True,
+        enable_registry: bool = True,
     ):
         self._cache = cache or InMemoryCache(default_ttl=cache_ttl)
-        self._ranker = ranker or InstallCountRanker()
+        self._ranker = ranker or RelevanceRanker()
         self._github_token = github_token
         self._cache_ttl = cache_ttl
         self._parser = SkillParser()
-        self._enable_awesome_list = enable_awesome_list
+        self._enable_registry = enable_registry
 
         # Sources and clients are created in context manager
         self._sources: list[SkillSource] = []
@@ -102,8 +76,8 @@ class SkillSearchService:
             SkillsShSource(enabled=True),
         ]
         
-        if self._enable_awesome_list:
-            self._sources.append(AwesomeListSource(enabled=True))
+        if self._enable_registry:
+            self._sources.append(SkillRegistrySource(enabled=True))
         
         # Initialize GitHub client for content fetching
         self._github_client = GitHubClient(token=self._github_token)
@@ -353,8 +327,12 @@ class SkillSearchService:
         ]
         skills = await asyncio.gather(*tasks)
 
-        # Rank results
-        ranked_skills = self._ranker.rank(list(skills))
+        # Rank results with query relevance and reference availability
+        ranked_skills = self._ranker.rank(
+            list(skills),
+            query=query,
+            include_references=include_references,
+        )
 
         return SearchResponse(
             query=query,

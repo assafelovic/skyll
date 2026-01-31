@@ -229,6 +229,11 @@
             border: 3px solid var(--black);
         }
 
+        .badge-score {
+            background: var(--yellow);
+            font-weight: 800;
+        }
+
         .badge-installs {
             background: var(--green-mid);
         }
@@ -530,6 +535,7 @@
                     <div class="skill-header">
                         <div class="skill-title">${escapeHtml(skill.title || skill.id)}</div>
                         <div class="skill-badges">
+                            <span class="badge badge-score">⭐ ${skill.relevance_score.toFixed(1)}</span>
                             <span class="badge badge-installs">📦 ${formatNumber(skill.install_count)} installs</span>
                             <span class="badge badge-source">📁 ${escapeHtml(skill.source)}</span>
                             ${hasRefs ? `<span class="badge" style="background: var(--pink);">📎 ${skill.references.length} refs</span>` : ''}

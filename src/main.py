@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 # Configuration from environment
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 CACHE_TTL = int(os.getenv("CACHE_TTL", "3600"))
-ENABLE_AWESOME_LIST = os.getenv("ENABLE_AWESOME_LIST", "true").lower() == "true"
+ENABLE_REGISTRY = os.getenv("ENABLE_REGISTRY", "true").lower() == "true"
 
 # Global service instance
 _service: SkillSearchService | None = None
@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
     _service = SkillSearchService(
         github_token=GITHUB_TOKEN,
         cache_ttl=CACHE_TTL,
-        enable_awesome_list=ENABLE_AWESOME_LIST,
+        enable_registry=ENABLE_REGISTRY,
     )
 
     # Enter service context
@@ -62,7 +62,7 @@ async def lifespan(app: FastAPI):
     logger.info("Skill Garden service started successfully")
     logger.info(f"Cache TTL: {CACHE_TTL}s")
     logger.info(f"GitHub token: {'configured' if GITHUB_TOKEN else 'not configured'}")
-    logger.info(f"Awesome list source: {'enabled' if ENABLE_AWESOME_LIST else 'disabled'}")
+    logger.info(f"Skill registry: {'enabled' if ENABLE_REGISTRY else 'disabled'}")
 
     yield
 

@@ -7,11 +7,11 @@ interface for searching and fetching skills.
 
 from src.sources.base import SkillSource, SkillSearchResult
 from src.sources.skillssh import SkillsShSource
-from src.sources.awesome_list import AwesomeListSource
+from src.sources.registry import SkillRegistrySource
 
 __all__ = [
     "SkillSource",
     "SkillSearchResult",
     "SkillsShSource",
-    "AwesomeListSource",
+    "SkillRegistrySource",
 ]
