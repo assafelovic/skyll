@@ -247,18 +247,81 @@ Reference files are returned in the `references` array:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `PORT` | Server port | 8000 |
-| `GITHUB_TOKEN` | GitHub token for higher rate limits (recommended) | None |
+| `GITHUB_TOKEN` | GitHub Personal Access Token (optional, but recommended) | None |
 | `CACHE_TTL` | Cache TTL in seconds | 3600 |
 | `LOG_LEVEL` | Logging level | INFO |
 
-### GitHub Rate Limits
+### GitHub Token (Optional but Recommended)
 
-- Without token: 60 requests/hour
-- With token: 5,000 requests/hour
+Skill Garden fetches skill content from GitHub repositories. Without a token, you're limited to **60 requests/hour**. With a token, you get **5,000 requests/hour**.
+
+#### Rate Limits
+
+| Authentication | Rate Limit | Use Case |
+|----------------|------------|----------|
+| No token | 60 req/hour | Quick testing, low usage |
+| Personal Access Token | 5,000 req/hour | Development, production |
+
+#### Creating a GitHub Personal Access Token
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
+2. Click **"Generate new token"** → **"Generate new token (classic)"**
+3. Give it a descriptive name (e.g., "skill-garden")
+4. **No scopes required** - public repo access is sufficient for reading public skills
+5. Click **"Generate token"** and copy it immediately (you won't see it again)
+
+> 📖 **Full documentation**: [Creating a personal access token - GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+#### Setting Up the Token
+
+**Option 1: Using `.env` file (recommended)**
+
+Create a `.env` file in the project root:
+
+```bash
+# .env
+GITHUB_TOKEN=ghp_your_token_here
+```
+
+The server automatically loads this file on startup. The `.env` file is already in `.gitignore` so your token won't be committed.
+
+**Option 2: Environment variable**
 
 ```bash
 export GITHUB_TOKEN=ghp_your_token_here
+uvicorn src.main:app --port 8000
 ```
+
+**Option 3: In MCP config**
+
+For Claude Desktop or Cursor, add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "skill-garden": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/path/to/skill-garden",
+      "env": {
+        "GITHUB_TOKEN": "ghp_your_token_here"
+      }
+    }
+  }
+}
+```
+
+#### Verifying Token Configuration
+
+When the server starts, check the logs:
+
+```
+INFO - Skill Garden service started successfully
+INFO - Cache TTL: 3600s
+INFO - GitHub token: configured  ← You should see this
+```
+
+If you see `GitHub token: not configured`, the token wasn't loaded.
 
 ## Architecture
 
