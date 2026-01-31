@@ -24,7 +24,7 @@ This creates friction:
 
 ## The Solution
 
-Skill Garden gives agents **dynamic, runtime access** to the entire [skills.sh](https://skills.sh) ecosystem:
+Skill Garden gives agents **dynamic, runtime access** to skills from multiple sources:
 
 ```python
 # Agent can now discover and use any skill on-demand
@@ -36,12 +36,14 @@ No pre-installation. No human intervention. The agent searches, retrieves, and u
 
 ## Features
 
-- 🔍 **Search** - Query the skills.sh directory by natural language
+- 🔍 **Multi-Source Search** - Query skills.sh, awesome lists, and more
 - 📄 **Full Content** - Returns complete SKILL.md with parsed metadata
 - 📎 **References** - Optionally fetch additional docs from `references/` directories
 - 📊 **Ranked Results** - Sorted by popularity (install count)
+- 🔄 **Deduplication** - Automatic deduplication across sources
 - ⚡ **Cached** - Aggressive caching to respect GitHub rate limits
 - 🔌 **Dual Interface** - REST API + MCP Server
+- 🔧 **Extensible** - Easy to add new skill sources
 
 ## Quick Start
 
@@ -242,6 +244,47 @@ Reference files are returned in the `references` array:
 }
 ```
 
+## Skill Sources
+
+Skill Garden aggregates skills from multiple sources, automatically deduplicating results:
+
+| Source | Description | Status |
+|--------|-------------|--------|
+| **[skills.sh](https://skills.sh)** | Vercel's skill marketplace - the primary, canonical source with install counts | ✅ Enabled by default |
+| **[awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)** | Community-curated list with 28k+ stars | ✅ Enabled by default |
+| *Custom sources* | Add your own skill registries (see [Adding Sources](#adding-custom-sources)) | 🔧 Extensible |
+
+### How Multi-Source Works
+
+1. **Parallel search** - All enabled sources are queried simultaneously
+2. **Deduplication** - Skills are deduplicated by `owner/repo/skill-id`
+3. **Priority** - skills.sh results take priority (they have install counts)
+4. **Content fetch** - GitHub API fetches actual SKILL.md content
+
+### Disabling Sources
+
+```bash
+# Disable the awesome list source
+ENABLE_AWESOME_LIST=false uvicorn src.main:app --port 8000
+```
+
+### Adding Custom Sources
+
+To add a new skill source, implement the `SkillSource` protocol in `src/sources/`:
+
+```python
+from src.sources.base import SkillSource, SkillSearchResult
+
+class MyCustomSource:
+    REGISTRY_NAME = "my-source"
+    
+    async def search(self, query: str, limit: int = 10) -> list[SkillSearchResult]:
+        # Your search logic here
+        ...
+```
+
+Then register it in `src/core/service.py`. We welcome PRs for new sources!
+
 ## Configuration
 
 | Variable | Description | Default |
@@ -250,78 +293,16 @@ Reference files are returned in the `references` array:
 | `GITHUB_TOKEN` | GitHub Personal Access Token (optional, but recommended) | None |
 | `CACHE_TTL` | Cache TTL in seconds | 3600 |
 | `LOG_LEVEL` | Logging level | INFO |
+| `ENABLE_AWESOME_LIST` | Enable the awesome-claude-skills source | true |
 
 ### GitHub Token (Optional but Recommended)
 
-Skill Garden fetches skill content from GitHub repositories. Without a token, you're limited to **60 requests/hour**. With a token, you get **5,000 requests/hour**.
-
-#### Rate Limits
-
-| Authentication | Rate Limit | Use Case |
-|----------------|------------|----------|
-| No token | 60 req/hour | Quick testing, low usage |
-| Personal Access Token | 5,000 req/hour | Development, production |
-
-#### Creating a GitHub Personal Access Token
-
-1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
-2. Click **"Generate new token"** → **"Generate new token (classic)"**
-3. Give it a descriptive name (e.g., "skill-garden")
-4. **No scopes required** - public repo access is sufficient for reading public skills
-5. Click **"Generate token"** and copy it immediately (you won't see it again)
-
-> 📖 **Full documentation**: [Creating a personal access token - GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-
-#### Setting Up the Token
-
-**Option 1: Using `.env` file (recommended)**
-
-Create a `.env` file in the project root:
+Without a token you're limited to **60 requests/hour**; with a token you get **5,000 requests/hour**. Create one at [GitHub's Personal Access Token settings](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) (no scopes required).
 
 ```bash
-# .env
+# Add to .env file (gitignored)
 GITHUB_TOKEN=ghp_your_token_here
 ```
-
-The server automatically loads this file on startup. The `.env` file is already in `.gitignore` so your token won't be committed.
-
-**Option 2: Environment variable**
-
-```bash
-export GITHUB_TOKEN=ghp_your_token_here
-uvicorn src.main:app --port 8000
-```
-
-**Option 3: In MCP config**
-
-For Claude Desktop or Cursor, add to your MCP config:
-
-```json
-{
-  "mcpServers": {
-    "skill-garden": {
-      "command": "python",
-      "args": ["-m", "src.mcp_server"],
-      "cwd": "/path/to/skill-garden",
-      "env": {
-        "GITHUB_TOKEN": "ghp_your_token_here"
-      }
-    }
-  }
-}
-```
-
-#### Verifying Token Configuration
-
-When the server starts, check the logs:
-
-```
-INFO - Skill Garden service started successfully
-INFO - Cache TTL: 3600s
-INFO - GitHub token: configured  ← You should see this
-```
-
-If you see `GitHub token: not configured`, the token wasn't loaded.
 
 ## Architecture
 

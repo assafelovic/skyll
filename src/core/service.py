@@ -3,6 +3,9 @@ Main skill search service orchestrating all components.
 
 This is the core business logic layer that can be wrapped by
 REST API (FastAPI) or MCP server interfaces.
+
+Supports multiple skill sources (skills.sh, awesome lists, custom registries)
+with automatic deduplication across sources.
 """
 
 import asyncio
@@ -10,10 +13,10 @@ import logging
 from typing import Protocol
 
 from src.cache import CacheBackend, InMemoryCache
-from src.clients import GitHubClient, SkillsShClient
-from src.clients.skillssh import SkillSearchResult
+from src.clients import GitHubClient
 from src.core.models import Skill, SkillRefs, SkillReference, SearchResponse
 from src.core.parser import ParsedSkill, SkillParser, ParseError
+from src.sources import SkillSource, SkillSearchResult, SkillsShSource, AwesomeListSource
 
 logger = logging.getLogger(__name__)
 
@@ -28,20 +31,18 @@ class Ranker(Protocol):
 
 class InstallCountRanker:
     """
-    Ranks skills by install count (popularity) and content availability.
+    Ranks skills by install count (popularity).
     
-    Skills with content are prioritized over those without.
-    Among skills with/without content, sorted by install count.
+    Skills from sources without popularity data (e.g., awesome lists)
+    will have install_count=0 and appear after popular skills.
+    
+    Ranking strategy can be extended later (semantic matching, etc.)
     """
 
     def rank(self, skills: list[Skill]) -> list[Skill]:
-        """Sort skills: content first, then by install count descending."""
+        """Sort skills by install count descending."""
         for skill in skills:
-            # Base score from install count
-            base_score = float(skill.install_count)
-            # Boost score massively if content is available
-            content_boost = 1_000_000_000 if skill.content else 0
-            skill.relevance_score = content_boost + base_score
+            skill.relevance_score = float(skill.install_count)
         
         return sorted(skills, key=lambda s: s.relevance_score, reverse=True)
 
@@ -51,11 +52,12 @@ class SkillSearchService:
     Main service for searching and retrieving agent skills.
     
     Orchestrates:
-    - skills.sh API for discovery
+    - Multiple skill sources (skills.sh, awesome lists, etc.)
     - GitHub for content fetching
     - Caching for performance
     - Parsing for structured data
     - Ranking for relevance
+    - Deduplication across sources
     
     Designed for dependency injection - all components are pluggable.
     
@@ -64,6 +66,7 @@ class SkillSearchService:
         ranker: Ranking strategy (default: InstallCountRanker)
         github_token: Optional GitHub token for higher rate limits
         cache_ttl: Cache time-to-live in seconds (default: 1 hour)
+        enable_awesome_list: Enable the awesome-claude-skills source (default: True)
     
     Example:
         service = SkillSearchService()
@@ -79,35 +82,55 @@ class SkillSearchService:
         ranker: Ranker | None = None,
         github_token: str | None = None,
         cache_ttl: int = 3600,
+        enable_awesome_list: bool = True,
     ):
         self._cache = cache or InMemoryCache(default_ttl=cache_ttl)
         self._ranker = ranker or InstallCountRanker()
         self._github_token = github_token
         self._cache_ttl = cache_ttl
         self._parser = SkillParser()
+        self._enable_awesome_list = enable_awesome_list
 
-        # Clients are created in context manager
-        self._skillssh_client: SkillsShClient | None = None
+        # Sources and clients are created in context manager
+        self._sources: list[SkillSource] = []
         self._github_client: GitHubClient | None = None
 
     async def __aenter__(self) -> "SkillSearchService":
-        """Enter async context, initializing clients."""
-        self._skillssh_client = SkillsShClient()
+        """Enter async context, initializing sources and clients."""
+        # Initialize skill sources
+        self._sources = [
+            SkillsShSource(enabled=True),
+        ]
+        
+        if self._enable_awesome_list:
+            self._sources.append(AwesomeListSource(enabled=True))
+        
+        # Initialize GitHub client for content fetching
         self._github_client = GitHubClient(token=self._github_token)
 
-        await self._skillssh_client.__aenter__()
+        # Enter all contexts
+        for source in self._sources:
+            await source.__aenter__()
         await self._github_client.__aenter__()
 
         # Start cache cleanup if it supports it
         if hasattr(self._cache, "start"):
             await self._cache.start()
+        
+        # Log enabled sources
+        enabled_sources = [s.name for s in self._sources if s.enabled]
+        logger.info(f"Enabled skill sources: {', '.join(enabled_sources)}")
 
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        """Exit async context, cleaning up clients."""
-        if self._skillssh_client:
-            await self._skillssh_client.__aexit__(exc_type, exc_val, exc_tb)
+        """Exit async context, cleaning up sources and clients."""
+        for source in self._sources:
+            try:
+                await source.__aexit__(exc_type, exc_val, exc_tb)
+            except Exception as e:
+                logger.warning(f"Error closing source {source.name}: {e}")
+        
         if self._github_client:
             await self._github_client.__aexit__(exc_type, exc_val, exc_tb)
         if hasattr(self._cache, "stop"):
@@ -129,7 +152,6 @@ class SkillSearchService:
         Returns: (content, raw_url, references, error)
         """
         cache_key = self._cache_key(source, skill_id)
-        refs_cache_key = f"{cache_key}:refs" if include_references else None
 
         # Check cache first (content only, references fetched fresh if needed)
         cached = await self._cache.get(cache_key)
@@ -191,11 +213,18 @@ class SkillSearchService:
             raw=raw_url,
         )
 
+        # Use description from search result if parsed doesn't have one
+        description = None
+        if parsed and parsed.description:
+            description = parsed.description
+        elif search_result.description:
+            description = search_result.description
+
         if parsed:
             return Skill(
                 id=search_result.id,
                 title=parsed.name or search_result.name,
-                description=parsed.description,
+                description=description,
                 version=parsed.version,
                 allowed_tools=parsed.allowed_tools,
                 source=search_result.source,
@@ -212,7 +241,7 @@ class SkillSearchService:
             return Skill(
                 id=search_result.id,
                 title=search_result.name,
-                description=None,
+                description=description,
                 source=search_result.source,
                 refs=refs,
                 install_count=search_result.installs,
@@ -249,6 +278,47 @@ class SkillSearchService:
 
         return self._build_skill(result, parsed, raw_url, references, error, include_raw)
 
+    async def _search_all_sources(self, query: str, limit: int) -> list[SkillSearchResult]:
+        """
+        Search all enabled sources and deduplicate results.
+        
+        Results from skills.sh take priority (they have install counts).
+        """
+        # Search all sources in parallel
+        search_tasks = [
+            source.search(query, limit=limit)
+            for source in self._sources
+            if source.enabled
+        ]
+        
+        all_results = await asyncio.gather(*search_tasks, return_exceptions=True)
+        
+        # Deduplicate by unique_key, preferring skills.sh results
+        seen_keys: dict[str, SkillSearchResult] = {}
+        
+        for results in all_results:
+            if isinstance(results, Exception):
+                logger.warning(f"Source search failed: {results}")
+                continue
+            
+            for result in results:
+                key = result.unique_key
+                
+                # If we haven't seen this skill, or if this is from skills.sh
+                # (which has install counts), use this result
+                if key not in seen_keys:
+                    seen_keys[key] = result
+                elif result.source_registry == "skills.sh":
+                    # Prefer skills.sh because it has install counts
+                    seen_keys[key] = result
+        
+        # Sort by install count (skills.sh results will have this)
+        deduplicated = list(seen_keys.values())
+        deduplicated.sort(key=lambda r: r.installs, reverse=True)
+        
+        logger.debug(f"Found {len(deduplicated)} unique skills from {len(self._sources)} sources")
+        return deduplicated[:limit]
+
     async def search(
         self,
         query: str,
@@ -258,7 +328,7 @@ class SkillSearchService:
         include_references: bool = False,
     ) -> SearchResponse:
         """
-        Search for skills matching a query.
+        Search for skills matching a query across all sources.
         
         Args:
             query: Search query (e.g., "react performance")
@@ -270,8 +340,8 @@ class SkillSearchService:
         Returns:
             SearchResponse with matching skills sorted by relevance
         """
-        # Search skills.sh
-        search_results = await self._skillssh_client.search(query, limit=limit)
+        # Search all sources and deduplicate
+        search_results = await self._search_all_sources(query, limit=limit)
 
         if not search_results:
             return SearchResponse(query=query, count=0, skills=[])
@@ -329,6 +399,7 @@ class SkillSearchService:
             id=skill_id,
             name=skill_id,
             source=source,
+            source_registry="direct",
             installs=0,
         )
 
@@ -337,3 +408,13 @@ class SkillSearchService:
     async def get_cache_stats(self) -> dict:
         """Get cache statistics."""
         return await self._cache.stats()
+    
+    async def get_sources(self) -> list[dict]:
+        """Get information about enabled sources."""
+        return [
+            {
+                "name": source.name,
+                "enabled": source.enabled,
+            }
+            for source in self._sources
+        ]
