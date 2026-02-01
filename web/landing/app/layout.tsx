@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 // JetBrains Mono font
@@ -60,6 +61,7 @@ export default function RootLayout({
       <body className="antialiased">
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
