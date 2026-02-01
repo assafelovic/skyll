@@ -64,20 +64,6 @@ body {
   @apply font-mono font-bold text-xs px-2 py-1 border-2 border-ink;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-green-dark);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-green-mid);
-  border: 2px solid var(--color-green-dark);
-}
-
 /* Gradient background */
 .bg-gradient-garden {
   background-image: 

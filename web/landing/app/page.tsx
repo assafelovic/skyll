@@ -42,24 +42,24 @@ interface SearchResponse {
 
 function TopIcons() {
   return (
-    <div className="absolute top-4 right-4 flex items-center gap-3">
+    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 md:gap-3 z-10">
       <Link
         href="/docs"
-        className="p-3 bg-cream border-4 border-ink hover:bg-yellow transition-colors"
-        style={{ boxShadow: '4px 4px 0 #1a1a1a' }}
+        className="p-2 md:p-3 bg-cream border-3 md:border-4 border-ink hover:bg-yellow transition-colors"
+        style={{ boxShadow: '3px 3px 0 #1a1a1a' }}
         title="Documentation"
       >
-        <BookOpen className="w-5 h-5" />
+        <BookOpen className="w-4 h-4 md:w-5 md:h-5" />
       </Link>
       <a
         href="https://github.com/assafelovic/skyll"
         target="_blank"
         rel="noopener noreferrer"
-        className="p-3 bg-cream border-4 border-ink hover:bg-yellow transition-colors"
-        style={{ boxShadow: '4px 4px 0 #1a1a1a' }}
+        className="p-2 md:p-3 bg-cream border-3 md:border-4 border-ink hover:bg-yellow transition-colors"
+        style={{ boxShadow: '3px 3px 0 #1a1a1a' }}
         title="GitHub"
       >
-        <Github className="w-5 h-5" />
+        <Github className="w-4 h-4 md:w-5 md:h-5" />
       </a>
     </div>
   );
@@ -246,7 +246,7 @@ export default function Home() {
       <TopIcons />
 
       {/* Main Content - Centered, fills viewport */}
-      <main className="flex-1 container mx-auto px-4 py-12 flex flex-col min-h-[calc(100vh-4rem)]">
+      <main className="flex-1 container mx-auto px-4 pt-16 md:pt-12 py-12 flex flex-col min-h-[calc(100vh-4rem)]">
         {/* Hero */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
@@ -381,9 +381,6 @@ export default function Home() {
             <Link href="/docs" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
               <BookOpen className="w-4 h-4" /> Docs
             </Link>
-            <a href="https://skills.sh" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
-              <Zap className="w-4 h-4" /> skills.sh
-            </a>
           </div>
         </div>
         
