@@ -147,6 +147,8 @@ python -m src.mcp_server --transport sse --port 8080  # SSE
 | [References](./docs/references.md) | Fetching additional skill documentation |
 | [Architecture](./docs/architecture.md) | System design and extending Skyll |
 
+For a web-friendly version, visit [skyll.app/docs](https://skyll.app/docs).
+
 ## Contributing Skills
 
 Add your skill to the community registry! Edit [`registry/SKILLS.md`](./registry/SKILLS.md):
