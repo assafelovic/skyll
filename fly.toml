@@ -1,0 +1,28 @@
+# Skyll API - FastAPI Backend
+# Deploy with: fly launch --name skyll-api
+
+app = 'skyll-api'
+primary_region = 'iad'
+
+[build]
+
+[env]
+  CACHE_TTL = "3600"
+  ENABLE_REGISTRY = "true"
+  LOG_LEVEL = "INFO"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+# Set GITHUB_TOKEN as a secret:
+# fly secrets set GITHUB_TOKEN=ghp_your_token

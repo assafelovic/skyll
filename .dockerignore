@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Tests
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Env
+.env
+.env.local
+.env*.local
+
+# Web frontend (separate deployment)
+web/
+
+# Docs (not needed for API)
+docs/
+
+# Misc
+*.md
+!README.md
+LICENSE
