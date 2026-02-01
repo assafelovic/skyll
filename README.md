@@ -1,14 +1,13 @@
 <p align="center">
   <img src="web/public/logo.png" alt="Skyll" width="120" height="120">
 </p>
-
 <h1 align="center">Skyll</h1>
 
 <p align="center">
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
-  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.109+-00a393.svg" alt="FastAPI"></a>
-  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-purple.svg" alt="MCP"></a>
-  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache-2.0"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-7ed957?style=flat&labelColor=1a1a1a" alt="Python 3.11+"></a>
+  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.109+-87ceeb?style=flat&labelColor=1a1a1a" alt="FastAPI"></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-ffb3d9?style=flat&labelColor=1a1a1a" alt="MCP"></a>
+  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-fff06b?style=flat&labelColor=1a1a1a" alt="License: Apache-2.0"></a>
 </p>
 
 <p align="center">
@@ -18,8 +17,7 @@
   <a href="#mcp-server">MCP Server</a> •
   <a href="#use-cases">Use Cases</a> •
   <a href="#documentation">Documentation</a> •
-  <a href="#contributing-skills">Contributing</a> •
-  <a href="#license">License</a>
+  <a href="#contributing-skills">Contributing</a>
 </p>
 
 ---
