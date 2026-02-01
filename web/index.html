@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔍 skyll</title>
+    <title>Skyll - Skill discovery for AI agents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -54,13 +54,24 @@
             margin-bottom: 2rem;
         }
 
+        .logo-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+        }
+
         h1 {
             font-family: 'JetBrains Mono', monospace;
             font-size: 3.5rem;
             font-weight: 800;
             color: var(--black);
-            text-shadow: 4px 4px 0 var(--green-mid);
-            margin-bottom: 0.5rem;
             letter-spacing: -2px;
         }
 
@@ -441,7 +452,10 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔍 skyll</h1>
+            <div class="logo-title">
+                <img src="public/logo.png" alt="Skyll" class="logo">
+                <h1>skyll</h1>
+            </div>
             <p class="tagline">Skill discovery for AI agents</p>
         </header>
 
@@ -474,7 +488,7 @@
 
     <footer>
         <div class="footer-links">
-            <a href="https://skyll.dev" target="_blank">🔍 skyll.dev</a>
+            <a href="https://skyll.app" target="_blank">🧩 skyll.app</a>
             <a href="https://github.com/assafelovic/skyll" target="_blank">📂 GitHub</a>
             <a href="http://localhost:8000/docs" target="_blank">📚 API Docs</a>
             <a href="https://skills.sh" target="_blank">🔍 skills.sh</a>
