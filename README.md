@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="#skyll">Skyll</a> •
   <a href="#why-use-skyll">Why use Skyll?</a> •
   <a href="#features">Features</a> •
   <a href="#quick-start">Quick Start</a> •
@@ -18,6 +19,10 @@
   <a href="#documentation">Documentation</a> •
   <a href="#contributing-skills">Contributing</a>
 </p>
+
+---
+
+# Skyll
 
 Skyll is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
 
