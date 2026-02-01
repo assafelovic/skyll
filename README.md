@@ -1,7 +1,6 @@
 <p align="center">
   <img src="web/public/logo.png" alt="Skyll" width="120" height="120">
 </p>
-<h1 align="center">Skyll</h1>
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-7ed957?style=flat&labelColor=1a1a1a" alt="Python 3.11+"></a>
@@ -19,8 +18,6 @@
   <a href="#documentation">Documentation</a> •
   <a href="#contributing-skills">Contributing</a>
 </p>
-
----
 
 Skyll is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
 
