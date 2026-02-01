@@ -6,6 +6,7 @@ import "./globals.css";
 const fontLink = "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://skyll.app"),
   title: "Skyll - Skill discovery for AI agents",
   description:
     "REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. Aggregates skills from multiple sources with full SKILL.md content.",
@@ -26,12 +27,21 @@ export const metadata: Metadata = {
     url: "https://skyll.app",
     siteName: "Skyll",
     type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 120,
+        height: 120,
+        alt: "Skyll Logo",
+      },
+    ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Skyll - Skill discovery for AI agents",
     description:
       "Let any AI agent search for and retrieve agent skills at runtime",
+    images: ["/logo.png"],
   },
 };
 

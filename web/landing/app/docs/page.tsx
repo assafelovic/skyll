@@ -121,6 +121,7 @@ export default function DocsPage() {
             { href: "#features", label: "Features" },
             { href: "#quickstart", label: "Quick Start" },
             { href: "#api", label: "API" },
+            { href: "#ranking", label: "Ranking" },
             { href: "#mcp", label: "MCP Server" },
             { href: "#usecases", label: "Use Cases" },
             { href: "#contributing", label: "Contributing" },
@@ -374,11 +375,300 @@ ENABLE_REGISTRY=true`}
           </div>
         </Section>
 
+        {/* Ranking Algorithm */}
+        <Section id="ranking">
+          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+            <Star className="w-8 h-8" />
+            <span className="bg-orange px-3 py-1 border-4 border-ink">Ranking Algorithm</span>
+          </h2>
+
+          <div className="card-brutal p-6 mb-6">
+            <p className="text-lg leading-relaxed">
+              Skyll uses a <strong>multi-signal ranking algorithm</strong> to order search results by relevance. 
+              Each skill receives a score from <strong>0-100</strong> based on four weighted factors.
+            </p>
+          </div>
+
+          <div className="space-y-8">
+            {/* Scoring Formula */}
+            <div className="card-brutal overflow-hidden">
+              <div className="bg-ink text-cream px-4 py-3 font-bold">
+                Scoring Formula
+              </div>
+              <div className="p-6">
+                <code className="block bg-green-mid/30 p-4 font-mono text-lg border-2 border-ink">
+                  score = content + references + query_match + popularity
+                </code>
+              </div>
+            </div>
+
+            {/* Signals Grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Content */}
+              <div className="card-brutal p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-green-mid p-2 border-2 border-ink">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Content Availability</h3>
+                    <span className="text-sm font-mono bg-ink text-green-light px-2">40 pts max</span>
+                  </div>
+                </div>
+                <p className="text-green-dark mb-4">
+                  Skills with successfully fetched SKILL.md content receive 40 points. 
+                  This ensures skills with actual content rank above those that failed to fetch.
+                </p>
+                <table className="w-full text-sm">
+                  <tbody>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">Has content</td>
+                      <td className="py-2 text-right font-bold text-green-dark">+40</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2">No content (fetch failed)</td>
+                      <td className="py-2 text-right font-bold">0</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Query Match */}
+              <div className="card-brutal p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-yellow p-2 border-2 border-ink">
+                    <Search className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Query Match</h3>
+                    <span className="text-sm font-mono bg-ink text-green-light px-2">30 pts max</span>
+                  </div>
+                </div>
+                <p className="text-green-dark mb-4">
+                  How well the skill ID matches the search query.
+                </p>
+                <table className="w-full text-sm">
+                  <tbody>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">Exact ID match</td>
+                      <td className="py-2 text-right font-bold text-green-dark">+30</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">All query terms in ID</td>
+                      <td className="py-2 text-right font-bold text-green-dark">+27</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">All ID terms in query</td>
+                      <td className="py-2 text-right font-bold">+25.5</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2">Partial matches</td>
+                      <td className="py-2 text-right font-bold">0-15</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* References */}
+              <div className="card-brutal p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-pink p-2 border-2 border-ink">
+                    <Package className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">References</h3>
+                    <span className="text-sm font-mono bg-ink text-green-light px-2">15 pts max</span>
+                  </div>
+                </div>
+                <p className="text-green-dark mb-4">
+                  When <code className="bg-ink text-green-light px-1">include_references=true</code>, skills with 
+                  additional .md files receive a boost.
+                </p>
+                <table className="w-full text-sm">
+                  <tbody>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">Has references (when requested)</td>
+                      <td className="py-2 text-right font-bold text-green-dark">+15</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2">No references</td>
+                      <td className="py-2 text-right font-bold">0</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Popularity */}
+              <div className="card-brutal p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-blue p-2 border-2 border-ink">
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Popularity</h3>
+                    <span className="text-sm font-mono bg-ink text-green-light px-2">15 pts max</span>
+                  </div>
+                </div>
+                <p className="text-green-dark mb-4">
+                  Install count from skills.sh, using <strong>logarithmic scaling</strong> to prevent 
+                  extremely popular skills from dominating.
+                </p>
+                <table className="w-full text-sm">
+                  <tbody>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">10,000+ installs</td>
+                      <td className="py-2 text-right font-bold text-green-dark">+15</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">1,000 installs</td>
+                      <td className="py-2 text-right font-bold">+11.25</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">100 installs</td>
+                      <td className="py-2 text-right font-bold">+7.5</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2">0 installs</td>
+                      <td className="py-2 text-right font-bold">0</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Example Scores Table */}
+            <div className="card-brutal overflow-hidden">
+              <div className="bg-yellow px-4 py-3 border-b-4 border-ink font-bold">
+                Example Scores
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-cream">
+                      <th className="text-left p-3 border-b-2 border-ink">Skill</th>
+                      <th className="text-center p-3 border-b-2 border-ink">Content</th>
+                      <th className="text-center p-3 border-b-2 border-ink">Refs</th>
+                      <th className="text-center p-3 border-b-2 border-ink">Query</th>
+                      <th className="text-center p-3 border-b-2 border-ink">Pop.</th>
+                      <th className="text-center p-3 border-b-2 border-ink font-bold">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-ink/20">
+                      <td className="p-3">Exact match, popular, with content</td>
+                      <td className="text-center p-3">40</td>
+                      <td className="text-center p-3">15</td>
+                      <td className="text-center p-3">30</td>
+                      <td className="text-center p-3">15</td>
+                      <td className="text-center p-3 font-bold bg-green-mid/30">100</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="p-3">Good match, popular, with content</td>
+                      <td className="text-center p-3">40</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3">25</td>
+                      <td className="text-center p-3">12</td>
+                      <td className="text-center p-3 font-bold bg-green-mid/20">77</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="p-3">Partial match, new skill</td>
+                      <td className="text-center p-3">40</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3">15</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3 font-bold">55</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3">No content (fetch failed)</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3">30</td>
+                      <td className="text-center p-3">15</td>
+                      <td className="text-center p-3 font-bold text-pink">45</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Design Rationale */}
+            <div className="card-brutal p-6 bg-cream">
+              <h3 className="font-bold text-xl mb-4">Design Rationale</h3>
+              <div className="space-y-4 text-green-dark">
+                <div className="flex items-start gap-3">
+                  <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">1</span>
+                  <p><strong>Content is king.</strong> Skills without content are not useful, so content availability dominates the score.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">2</span>
+                  <p><strong>Query relevance matters.</strong> Exact matches should rank above partial matches, regardless of popularity.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">3</span>
+                  <p><strong>Popularity is a signal, not the answer.</strong> Log scaling prevents extremely popular skills from dominating. A skill with 100 installs and good query match can outrank a skill with 10,000 installs and poor match.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">4</span>
+                  <p><strong>References add value.</strong> When users request references, skills that provide them are more valuable.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Custom Ranker */}
+            <div>
+              <h3 className="font-bold text-xl mb-4">Create a Custom Ranker</h3>
+              <p className="text-green-dark mb-4">
+                The ranking algorithm is modular. Implement the <code className="bg-ink text-green-light px-1">Ranker</code> protocol to create your own:
+              </p>
+              <CodeBlock code={`from src.ranking.base import Ranker
+
+class MyCustomRanker(Ranker):
+    def rank(self, skills, query="", include_references=False):
+        for skill in skills:
+            # Your scoring logic
+            skill.relevance_score = ...
+        return sorted(skills, key=lambda s: s.relevance_score, reverse=True)
+
+# Register in src/core/service.py:
+self._ranker = MyCustomRanker()`} />
+            </div>
+
+            {/* Future Enhancements */}
+            <div className="card-brutal p-6 border-l-4 border-l-blue">
+              <h3 className="font-bold text-xl mb-4">Future Enhancements</h3>
+              <p className="text-green-dark mb-4">
+                The ranking system is designed for extension. We welcome community contributions:
+              </p>
+              <ul className="space-y-2 text-green-dark">
+                <li className="flex items-center gap-2">
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  <strong>Semantic search:</strong> Use embeddings to match query intent, not just keywords
+                </li>
+                <li className="flex items-center gap-2">
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  <strong>Recency:</strong> Boost recently updated skills
+                </li>
+                <li className="flex items-center gap-2">
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  <strong>Quality signals:</strong> Factor in documentation completeness, test coverage
+                </li>
+                <li className="flex items-center gap-2">
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  <strong>User feedback:</strong> Learn from click-through rates
+                </li>
+              </ul>
+              <p className="mt-4 text-sm">
+                Open an <a href="https://github.com/assafelovic/skyll/issues" className="underline font-bold">issue</a> or <a href="https://github.com/assafelovic/skyll/pulls" className="underline font-bold">PR</a> to discuss!
+              </p>
+            </div>
+          </div>
+        </Section>
+
         {/* MCP Server */}
         <Section id="mcp">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Cpu className="w-8 h-8" />
-            <span className="bg-orange px-3 py-1 border-4 border-ink">MCP Server</span>
+            <span className="bg-pink px-3 py-1 border-4 border-ink">MCP Server</span>
           </h2>
 
           <div className="card-brutal p-6 mb-6">
