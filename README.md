@@ -1,17 +1,17 @@
-# Skyll
+# 🔍 Skyll
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-00a393.svg)](https://fastapi.tiangolo.com)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Skill Garden is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
+Skyll is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
 
-## Why use Skill Garden?
+## Why use Skyll?
 
 Agent skills (SKILL.md files) are a powerful way to extend what AI agents can do, but today they only work with a handful of tools like Claude Code and Cursor. Skills require manual installation before a session, which means developers need to know in advance which skills they will need.
 
-Skill Garden democratizes access to skills. Any agent, framework, or tool can discover and retrieve skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context, and use skills autonomously.
+Skyll democratizes access to skills. Any agent, framework, or tool can discover and retrieve skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context, and use skills autonomously.
 
 ```json
 {
@@ -47,8 +47,8 @@ Skill Garden democratizes access to skills. Any agent, framework, or tool can di
 
 ```bash
 # Clone and install
-git clone https://github.com/assafelovic/skill-garden.git
-cd skill-garden
+git clone https://github.com/assafelovic/skyll.git
+cd skyll
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
@@ -66,8 +66,6 @@ curl "http://localhost:8000/search?q=react+performance&limit=5"
 
 ### Demo UI
 
-<img width="1060" height="565" alt="Screenshot 2026-01-31 at 22 24 58" src="https://github.com/user-attachments/assets/20937546-47c9-4a3a-b646-34eb44d4e081" />
-
 Open `web/index.html` in your browser for an interactive demo. Search for skills, view results with scores, and explore skill content visually.
 
 ## MCP Server
@@ -77,10 +75,10 @@ For Claude Desktop, Cursor, or other MCP clients:
 ```json
 {
   "mcpServers": {
-    "skill-garden": {
-      "command": "/path/to/skill-garden/venv/bin/python",
+    "skyll": {
+      "command": "/path/to/skyll/venv/bin/python",
       "args": ["-m", "src.mcp_server"],
-      "cwd": "/path/to/skill-garden"
+      "cwd": "/path/to/skyll"
     }
   }
 }
@@ -121,7 +119,7 @@ Then submit a PR. Requirements:
 | [Ranking Algorithm](./docs/ranking.md) | How skills are scored and ranked |
 | [Skill Sources](./docs/sources.md) | Available sources and adding new ones |
 | [References](./docs/references.md) | Fetching additional skill documentation |
-| [Architecture](./docs/architecture.md) | System design and extending Skill Garden |
+| [Architecture](./docs/architecture.md) | System design and extending Skyll |
 
 ## Use Cases
 
@@ -143,4 +141,4 @@ Apache-2.0 License. See [LICENSE](LICENSE) for details.
 
 ---
 
-Built with 🌱 for autonomous agents
+Built for autonomous agents

@@ -1,10 +1,10 @@
 # Ranking Algorithm
 
-Skill Garden uses a multi-signal ranking algorithm to order search results by relevance. Each skill receives a score from 0-100 based on four weighted factors.
+Skyll uses a multi-signal ranking algorithm to order search results by relevance. Each skill receives a score from 0-100 based on four weighted factors.
 
 ## Why Options Matter
 
-Today, developers pre-install skills manually before agents can use them. With Skill Garden, agents can explore and make their own decisions. The ranked list enables:
+Today, developers pre-install skills manually before agents can use them. With Skyll, agents can explore and make their own decisions. The ranked list enables:
 
 - **Agent autonomy**: Agents choose skills based on user requests, task context, or their own judgment
 - **Discovery**: Surface popular and trending skills the agent (or developer) didn't know existed

@@ -1,4 +1,4 @@
-# Skill Garden - Agent Skills Search Service
+# Skyll - Agent Skills Search Service
 # Python 3.11+ required
 
 # Web framework

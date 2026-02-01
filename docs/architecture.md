@@ -1,12 +1,12 @@
 # Architecture
 
-Skill Garden is designed as a modular, extensible system for skill discovery.
+Skyll is designed as a modular, extensible system for skill discovery.
 
 ## System Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Skill Garden                             │
+│                        Skyll                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌───────────────────┐    ┌──────────────┐ │
@@ -96,7 +96,7 @@ Parses SKILL.md files:
 6. **Rank** by relevance score
 7. **Return** structured JSON
 
-## Extending Skill Garden
+## Extending Skyll
 
 ### Custom Cache Backend
 

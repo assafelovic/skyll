@@ -1,5 +1,5 @@
 """
-Skill Garden - Agent Skills Search Service
+Skyll - Agent Skills Search Service
 
 Main entry point for the FastAPI application.
 """
@@ -46,7 +46,7 @@ async def lifespan(app: FastAPI):
     """
     global _service
 
-    logger.info("Starting Skill Garden service...")
+    logger.info("Starting Skyll service...")
 
     # Initialize service with multi-source support
     _service = SkillSearchService(
@@ -59,7 +59,7 @@ async def lifespan(app: FastAPI):
     await _service.__aenter__()
     set_service(_service)
 
-    logger.info("Skill Garden service started successfully")
+    logger.info("Skyll service started successfully")
     logger.info(f"Cache TTL: {CACHE_TTL}s")
     logger.info(f"GitHub token: {'configured' if GITHUB_TOKEN else 'not configured'}")
     logger.info(f"Skill registry: {'enabled' if ENABLE_REGISTRY else 'disabled'}")
@@ -67,15 +67,15 @@ async def lifespan(app: FastAPI):
     yield
 
     # Cleanup
-    logger.info("Shutting down Skill Garden service...")
+    logger.info("Shutting down Skyll service...")
     if _service:
         await _service.__aexit__(None, None, None)
-    logger.info("Skill Garden service stopped")
+    logger.info("Skyll service stopped")
 
 
 # Create FastAPI application
 app = FastAPI(
-    title="Skill Garden",
+    title="Skyll",
     description="""
 ## Agent Skills Search Service
 
@@ -120,8 +120,8 @@ Each skill includes:
         "url": "https://opensource.org/licenses/MIT",
     },
     contact={
-        "name": "Skill Garden",
-        "url": "https://github.com/assafelovic/skill-garden",
+        "name": "Skyll",
+        "url": "https://github.com/assafelovic/skyll",
     },
     lifespan=lifespan,
 )

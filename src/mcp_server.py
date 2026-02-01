@@ -1,5 +1,5 @@
 """
-Skill Garden MCP Server
+Skyll MCP Server
 
 Exposes skill search as MCP tools for Claude and other MCP-compatible agents.
 Built with the official MCP Python SDK (https://github.com/modelcontextprotocol/python-sdk).
@@ -14,10 +14,10 @@ Usage:
     # In Claude Desktop config (~/.claude/claude_desktop_config.json)
     {
         "mcpServers": {
-            "skill-garden": {
+            "skyll": {
                 "command": "python",
                 "args": ["-m", "src.mcp_server"],
-                "cwd": "/path/to/skill-garden"
+                "cwd": "/path/to/skyll"
             }
         }
     }
@@ -59,7 +59,7 @@ async def lifespan(mcp: FastMCP):
     """Initialize and cleanup the skill search service."""
     global _service
     
-    logger.info("Initializing Skill Garden MCP Server...")
+    logger.info("Initializing Skyll MCP Server...")
     
     _service = SkillSearchService(
         github_token=GITHUB_TOKEN,
@@ -67,23 +67,23 @@ async def lifespan(mcp: FastMCP):
     )
     await _service.__aenter__()
     
-    logger.info("Skill Garden MCP Server ready")
+    logger.info("Skyll MCP Server ready")
     logger.info(f"GitHub token: {'configured' if GITHUB_TOKEN else 'not configured (60 req/hr limit)'}")
     
     yield {"service": _service}
     
     # Cleanup
-    logger.info("Shutting down Skill Garden MCP Server...")
+    logger.info("Shutting down Skyll MCP Server...")
     if _service:
         await _service.__aexit__(None, None, None)
-    logger.info("Skill Garden MCP Server stopped")
+    logger.info("Skyll MCP Server stopped")
 
 
 # Create the MCP server
 mcp = FastMCP(
-    name="skill-garden",
+    name="skyll",
     instructions="""
-Skill Garden provides access to the skills.sh ecosystem - a directory of agent skills 
+Skyll provides access to the skills.sh ecosystem - a directory of agent skills 
 (SKILL.md files) that teach AI agents how to complete specific tasks.
 
 Use these tools to dynamically discover and retrieve skills at runtime, without 
@@ -309,7 +309,7 @@ def main():
     """Run the MCP server."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="Skill Garden MCP Server")
+    parser = argparse.ArgumentParser(description="Skyll MCP Server")
     parser.add_argument(
         "--transport",
         choices=["stdio", "sse"],

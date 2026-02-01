@@ -238,7 +238,7 @@ async def health_check(
 async def root() -> dict:
     """Root endpoint with API information."""
     return {
-        "name": "Skill Garden",
+        "name": "Skyll",
         "version": "0.1.0",
         "description": "Search and retrieve agent skills with full markdown content",
         "documentation": "/docs",
@@ -251,6 +251,6 @@ async def root() -> dict:
         "links": {
             "skills.sh": "https://skills.sh",
             "agent_skills_spec": "https://agentskills.io",
-            "github": "https://github.com/assafelovic/skill-garden",
+            "github": "https://github.com/assafelovic/skyll",
         },
     }

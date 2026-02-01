@@ -1,10 +1,10 @@
-# 🌱 Skill Garden Registry
+# 🔍 Skyll Registry
 
 This directory contains the community-curated skill registry.
 
 ## Files
 
-- **[SKILLS.md](./SKILLS.md)** - The main skill registry file, parsed by Skill Garden
+- **[SKILLS.md](./SKILLS.md)** - The main skill registry file, parsed by Skyll
 
 ## Contributing
 

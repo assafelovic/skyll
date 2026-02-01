@@ -100,7 +100,7 @@ class GitHubClient:
         """Enter async context, creating HTTP client."""
         headers = {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "skill-garden/0.1.0",
+            "User-Agent": "skyll/0.1.0",
         }
         if self._token:
             headers["Authorization"] = f"token {self._token}"

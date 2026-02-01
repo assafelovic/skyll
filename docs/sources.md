@@ -1,13 +1,13 @@
 # Skill Sources
 
-Skill Garden aggregates skills from multiple sources, providing a unified search interface.
+Skyll aggregates skills from multiple sources, providing a unified search interface.
 
 ## Available Sources
 
 | Source | Description | Install Counts | Status |
 |--------|-------------|----------------|--------|
 | **[skills.sh](https://skills.sh)** | Vercel's skill marketplace | ✅ Yes | Enabled by default |
-| **[Skill Garden Registry](../registry/SKILLS.md)** | Community-curated list | ❌ No | Enabled by default |
+| **[Skyll Registry](../registry/SKILLS.md)** | Community-curated list | ❌ No | Enabled by default |
 
 ## How Multi-Source Works
 
@@ -27,7 +27,7 @@ The primary source, powered by [skills.sh](https://skills.sh). Provides:
 
 Skills from skills.sh have popularity data, which contributes to ranking.
 
-## Skill Garden Registry
+## Skyll Registry
 
 A community-curated list maintained in this repository at [`registry/SKILLS.md`](../registry/SKILLS.md).
 

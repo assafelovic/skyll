@@ -1,4 +1,4 @@
-# 🌱 Skill Garden Registry
+# 🔍 Skyll Registry
 
 > Community-curated agent skills. **Add yours via PR!**
 

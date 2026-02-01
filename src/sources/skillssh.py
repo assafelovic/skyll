@@ -53,7 +53,7 @@ class SkillsShSource:
             timeout=self._timeout,
             headers={
                 "Accept": "application/json",
-                "User-Agent": "skill-garden/0.1.0",
+                "User-Agent": "skyll/0.1.0",
             },
         )
         return self

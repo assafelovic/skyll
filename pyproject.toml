@@ -1,12 +1,12 @@
 [project]
-name = "skill-garden"
+name = "skyll"
 version = "0.1.0"
 description = "REST API service for searching and retrieving agent skills with full markdown content"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
 authors = [
-    { name = "Skill Garden Contributors" }
+    { name = "Skyll Contributors" }
 ]
 keywords = ["agent-skills", "llm", "ai", "skills.sh", "mcp"]
 classifiers = [
@@ -37,12 +37,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/assafelovic/skill-garden"
-Repository = "https://github.com/assafelovic/skill-garden"
-Issues = "https://github.com/assafelovic/skill-garden/issues"
+Homepage = "https://github.com/assafelovic/skyll"
+Repository = "https://github.com/assafelovic/skyll"
+Issues = "https://github.com/assafelovic/skyll/issues"
 
 [project.scripts]
-skill-garden = "src.main:run"
+skyll = "src.main:run"
 
 [build-system]
 requires = ["hatchling"]

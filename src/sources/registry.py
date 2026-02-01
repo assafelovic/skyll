@@ -1,5 +1,5 @@
 """
-Skill Garden Registry source.
+Skyll Registry source.
 
 Reads skills from the local SKILLS_REGISTRY.md file - a community-curated
 list of agent skills that's easy to parse and contribute to.
@@ -40,7 +40,7 @@ class SkillRegistrySource:
         - skill-id | owner/repo | path/to/skill | Description
     """
     
-    REGISTRY_NAME = "skill-garden"
+    REGISTRY_NAME = "skyll"
     
     def __init__(self, enabled: bool = True):
         self._enabled = enabled

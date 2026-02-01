@@ -1,6 +1,6 @@
 # Skill References
 
-Many skills include additional documentation beyond the main SKILL.md file. Skill Garden can fetch these "reference files" to provide richer context.
+Many skills include additional documentation beyond the main SKILL.md file. Skyll can fetch these "reference files" to provide richer context.
 
 ## What are References?
 
@@ -28,7 +28,7 @@ skill-folder/
 └── rules/                # Alternative directory
 ```
 
-Skill Garden also detects sibling `.md` files in the same directory as SKILL.md.
+Skyll also detects sibling `.md` files in the same directory as SKILL.md.
 
 ## Fetching References
 
@@ -82,7 +82,7 @@ When `include_references=true`, the response includes a `references` array:
 
 ## Reference Detection
 
-Skill Garden looks for reference files in these directories (relative to SKILL.md):
+Skyll looks for reference files in these directories (relative to SKILL.md):
 
 1. `references/`
 2. `resources/`
