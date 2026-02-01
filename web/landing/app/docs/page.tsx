@@ -632,7 +632,7 @@ class MyCustomSource(SkillSource):
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t-4 border-ink/20 text-center">
         <p className="text-sm text-green-dark">
-          Built with 🌱 for autonomous agents ·{" "}
+          Built with ❤️ for autonomous agents ·{" "}
           <a href="https://agentskills.io" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
             Agent Skills Spec
           </a>

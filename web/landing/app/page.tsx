@@ -243,8 +243,8 @@ export default function Home() {
     <div className="min-h-screen bg-green-light bg-gradient-garden flex flex-col">
       <TopIcons />
 
-      {/* Main Content - Centered */}
-      <main className="flex-1 container mx-auto px-4 py-12 flex flex-col">
+      {/* Main Content - Centered, fills viewport */}
+      <main className="flex-1 container mx-auto px-4 py-12 flex flex-col min-h-[calc(100vh-4rem)]">
         {/* Hero */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
@@ -279,7 +279,7 @@ export default function Home() {
             transition={{ delay: 0.3 }}
             className="mt-6 max-w-xl mx-auto text-green-dark leading-relaxed"
           >
-            Search and retrieve agent skills from multiple sources. Full SKILL.md content with metadata, ready for context injection.
+            Give any AI agent the power to discover and use new skills on demand. Search, retrieve, inject into context.
           </motion.p>
         </motion.header>
 
@@ -358,8 +358,11 @@ export default function Home() {
         )}
       </main>
 
+      {/* Spacer to push footer below viewport */}
+      <div className="flex-1 min-h-[20vh]" />
+
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 border-t-4 border-ink/20">
+      <footer className="container mx-auto px-4 py-8 border-t-4 border-ink/20 mt-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <Image src="/logo.png" alt="Skyll" width={28} height={28} />
@@ -383,7 +386,7 @@ export default function Home() {
         </div>
         
         <p className="text-center mt-6 text-xs text-green-dark">
-          Built with 🌱 for autonomous agents ·{" "}
+          Built with ❤️ for autonomous agents ·{" "}
           <a href="https://agentskills.io" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
             Agent Skills Spec
           </a>
