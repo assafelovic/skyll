@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* Custom theme for Tailwind v4 */
+@theme {
+  --color-green-light: #c1f0b2;
+  --color-green-mid: #7ed957;
+  --color-green-dark: #2d5016;
+  --color-yellow: #fff06b;
+  --color-pink: #ffb3d9;
+  --color-orange: #ffb347;
+  --color-blue: #87ceeb;
+  --color-cream: #fffef0;
+  --color-ink: #1a1a1a;
+  
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  --shadow-brutal: 6px 6px 0 var(--color-ink);
+  --shadow-brutal-sm: 4px 4px 0 var(--color-ink);
+  --shadow-brutal-hover: 8px 8px 0 var(--color-ink);
+}
+
+/* JetBrains Mono via Google Fonts link in layout.tsx head instead */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--color-green-light);
+  color: var(--color-ink);
+  min-height: 100vh;
+}
+
+/* Neobrutalist button base */
+.btn-brutal {
+  @apply font-mono font-bold px-6 py-3 border-4 border-ink transition-all duration-150;
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+.btn-brutal:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--color-ink);
+}
+
+.btn-brutal:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Card styling */
+.card-brutal {
+  @apply bg-cream border-4 border-ink;
+  box-shadow: var(--shadow-brutal);
+}
+
+.card-brutal:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-hover);
+}
+
+/* Badge styling */
+.badge {
+  @apply font-mono font-bold text-xs px-2 py-1 border-2 border-ink;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-green-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-green-mid);
+  border: 2px solid var(--color-green-dark);
+}
+
+/* Gradient background */
+.bg-gradient-garden {
+  background-image: 
+    radial-gradient(circle at 20% 80%, var(--color-yellow) 0%, transparent 25%),
+    radial-gradient(circle at 80% 20%, var(--color-pink) 0%, transparent 20%),
+    radial-gradient(circle at 50% 50%, var(--color-blue) 0%, transparent 30%);
+}
+
+/* Focus states */
+input:focus, textarea:focus {
+  outline: none;
+  box-shadow: var(--shadow-brutal-sm);
+  background: var(--color-yellow);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-yellow);
+  color: var(--color-ink);
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: var(--color-ink); }
+  50% { border-color: var(--color-green-mid); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

@@ -85,10 +85,16 @@ curl "http://localhost:8000/search?q=react+performance&limit=5"
 
 ### Demo UI
 
-<img width="800" height="350" alt="Screenshot 2026-02-01 at 10 17 08" src="https://github.com/user-attachments/assets/7aed6627-b365-41d5-adf1-2bc4bdcdc8b9" />
+<img width="800" alt="Skyll Demo" src="https://github.com/user-attachments/assets/7aed6627-b365-41d5-adf1-2bc4bdcdc8b9" />
 
+Open `web/index.html` in your browser for an interactive demo, or run the full landing page:
 
-Open `web/index.html` in your browser for an interactive demo. Search for skills, view results with scores, and explore skill content visually.
+```bash
+cd web/landing
+npm install
+npm run dev
+# Open http://localhost:3000
+```
 
 ## MCP Server
 
