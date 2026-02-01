@@ -42,10 +42,11 @@ interface SearchResponse {
 
 function TopIcons() {
   return (
-    <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
+    <div className="absolute top-4 right-4 flex items-center gap-3">
       <Link
         href="/docs"
-        className="p-3 bg-cream border-4 border-ink shadow-brutal-sm hover:bg-yellow transition-colors"
+        className="p-3 bg-cream border-4 border-ink hover:bg-yellow transition-colors"
+        style={{ boxShadow: '4px 4px 0 #1a1a1a' }}
         title="Documentation"
       >
         <BookOpen className="w-5 h-5" />
@@ -54,7 +55,8 @@ function TopIcons() {
         href="https://github.com/assafelovic/skyll"
         target="_blank"
         rel="noopener noreferrer"
-        className="p-3 bg-cream border-4 border-ink shadow-brutal-sm hover:bg-yellow transition-colors"
+        className="p-3 bg-cream border-4 border-ink hover:bg-yellow transition-colors"
+        style={{ boxShadow: '4px 4px 0 #1a1a1a' }}
         title="GitHub"
       >
         <Github className="w-5 h-5" />
