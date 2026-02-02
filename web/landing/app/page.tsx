@@ -144,7 +144,9 @@ function SkillCard({ skill, index }: { skill: Skill; index: number }) {
       )}
 
       {skill.fetch_error && (
-        <p className="px-6 pb-4 text-red-600 text-sm">⚠️ {skill.fetch_error}</p>
+        <p className="px-6 pb-4 text-amber-700 text-sm italic">
+          Content unavailable — view on GitHub for details
+        </p>
       )}
 
       {hasRefs && (

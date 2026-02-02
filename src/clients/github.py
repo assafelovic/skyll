@@ -204,6 +204,7 @@ class GitHubClient:
         - Direct match: skill_id matches folder name exactly
         - Prefix stripping: "vercel-react-skills" matches "react-skills" 
         - Suffix matching: matches if skill_id ends with folder name
+        - Contains matching: folder ends with skill_id (e.g., "optimization-gptq" matches "gptq")
         """
         # Generate ID variants to try (original + without common prefixes)
         id_variants = [skill_id]
@@ -243,6 +244,19 @@ class GitHubClient:
             for part in parts:
                 if skill_id.endswith(part) and len(part) > 5:  # Avoid matching short names
                     return path
+        
+        # Contains match - folder name ends with skill_id (e.g., "optimization-gptq" matches "gptq")
+        # This handles cases where skills.sh indexes skills by a short name that's 
+        # part of the full folder name
+        for variant_id in id_variants:
+            if len(variant_id) >= 4:  # Avoid matching very short IDs
+                for path in skill_paths:
+                    # Get the skill folder name (parent of SKILL.md)
+                    parts = path.split("/")
+                    if len(parts) >= 2:
+                        folder_name = parts[-2]  # e.g., "optimization-gptq"
+                        if folder_name.endswith(f"-{variant_id}") or folder_name.endswith(f"_{variant_id}"):
+                            return path
         
         # Last resort - if there's only one SKILL.md, use it
         if len(skill_paths) == 1:
@@ -344,10 +358,9 @@ class GitHubClient:
         skill_path = self._find_skill_path(skill_paths, skill_id)
         
         if not skill_path:
-            available = [p.split("/")[-2] for p in skill_paths.keys() if "/" in p]
             return FetchResult(
                 content=None,
-                error=f"Skill '{skill_id}' not found. Available: {available[:5]}",
+                error=f"Could not locate skill content in repository",
             )
         
         # Get the skill directory (parent of SKILL.md)
