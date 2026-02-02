@@ -350,7 +350,7 @@ export default function Home() {
           <AnimatePresence mode="wait">
             {loading && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-4 p-4 bg-yellow border-2 border-ink animate-pulse">
-                🌱 Searching the garden...
+                🔍 Discovering skills...
               </motion.div>
             )}
             {error && (
