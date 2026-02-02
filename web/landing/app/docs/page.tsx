@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { 
   ArrowLeft, Github, Terminal, Code, Cpu, Globe, FlaskConical, 
   Wrench, Copy, Check, Star, Search, FileText, Zap, Package,
-  ArrowRight, BookOpen, ExternalLink, Users
+  ArrowRight, BookOpen, ExternalLink, Users, MessageCircle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -883,7 +883,7 @@ class MyCustomSource(SkillSource):
         <Section id="links">
           <h2 className="text-3xl font-bold mb-6">Resources</h2>
           
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-4 gap-4">
             <a 
               href="https://github.com/assafelovic/skyll" 
               target="_blank" 
@@ -893,6 +893,16 @@ class MyCustomSource(SkillSource):
               <Github className="w-8 h-8 mb-3" />
               <h3 className="font-bold mb-1">GitHub</h3>
               <p className="text-sm text-green-dark">Source code & issues</p>
+            </a>
+            <a 
+              href="https://discord.gg/CxdMdfZS" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
+            >
+              <MessageCircle className="w-8 h-8 mb-3" />
+              <h3 className="font-bold mb-1">Discord</h3>
+              <p className="text-sm text-green-dark">Community & support</p>
             </a>
             <a 
               href={`${API_URL}/docs`}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, Github, BookOpen, Zap, Package, Star, FileText, 
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, MessageCircle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,24 +42,36 @@ interface SearchResponse {
 
 function TopIcons() {
   return (
-    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 md:gap-3 z-10">
+    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 md:gap-2 z-10">
       <Link
         href="/docs"
-        className="p-2 md:p-3 bg-cream border-3 md:border-4 border-ink hover:bg-yellow transition-colors"
-        style={{ boxShadow: '3px 3px 0 #1a1a1a' }}
+        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-orange transition-colors"
+        style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
         title="Documentation"
       >
-        <BookOpen className="w-4 h-4 md:w-5 md:h-5" />
+        <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
       </Link>
       <a
         href="https://github.com/assafelovic/skyll"
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 md:p-3 bg-cream border-3 md:border-4 border-ink hover:bg-yellow transition-colors"
-        style={{ boxShadow: '3px 3px 0 #1a1a1a' }}
+        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-ink hover:text-cream transition-colors"
+        style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
         title="GitHub"
       >
-        <Github className="w-4 h-4 md:w-5 md:h-5" />
+        <Github className="w-3.5 h-3.5 md:w-4 md:h-4" />
+      </a>
+      <a
+        href="https://discord.gg/CxdMdfZS"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:text-white transition-colors"
+        style={{ boxShadow: '2px 2px 0 #1a1a1a', backgroundColor: undefined }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5865F2'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 254, 240, 0.9)'}
+        title="Discord"
+      >
+        <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
       </a>
     </div>
   );
@@ -381,6 +393,9 @@ export default function Home() {
             <Link href="/docs" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
               <BookOpen className="w-4 h-4" /> Docs
             </Link>
+            <a href="https://discord.gg/CxdMdfZS" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
+              <MessageCircle className="w-4 h-4" /> Discord
+            </a>
           </div>
         </div>
         
