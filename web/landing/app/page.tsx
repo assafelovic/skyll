@@ -393,9 +393,6 @@ export default function Home() {
           </div>
           
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a href="https://skyll.app" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
-              🧩 skyll.app
-            </a>
             <a href="https://github.com/assafelovic/skyll" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
               <Github className="w-4 h-4" /> GitHub
             </a>
