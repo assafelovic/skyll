@@ -65,10 +65,8 @@ function TopIcons() {
         href="https://discord.gg/CxdMdfZS"
         target="_blank"
         rel="noopener noreferrer"
-        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:text-white transition-colors"
-        style={{ boxShadow: '2px 2px 0 #1a1a1a', backgroundColor: undefined }}
-        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5865F2'}
-        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 254, 240, 0.9)'}
+        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-discord hover:text-white transition-colors"
+        style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
         title="Discord"
       >
         <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
