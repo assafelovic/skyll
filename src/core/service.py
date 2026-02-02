@@ -39,7 +39,7 @@ class SkillSearchService:
         cache: Cache backend for skill content (default: InMemoryCache)
         ranker: Ranking strategy (default: InstallCountRanker)
         github_token: Optional GitHub token for higher rate limits
-        cache_ttl: Cache time-to-live in seconds (default: 1 hour)
+        cache_ttl: Cache time-to-live in seconds (default: 24 hours)
         enable_awesome_list: Enable the awesome-claude-skills source (default: True)
     
     Example:
@@ -55,7 +55,7 @@ class SkillSearchService:
         cache: CacheBackend | None = None,
         ranker: Ranker | None = None,
         github_token: str | None = None,
-        cache_ttl: int = 3600,
+        cache_ttl: int = 86400,  # 24 hours
         enable_registry: bool = True,
     ):
         self._cache = cache or InMemoryCache(default_ttl=cache_ttl)

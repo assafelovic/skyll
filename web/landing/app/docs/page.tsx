@@ -117,14 +117,14 @@ export default function DocsPage() {
         {/* Quick nav */}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           {[
+            { href: "#install", label: "Installation" },
             { href: "#why", label: "Why Skyll?" },
             { href: "#features", label: "Features" },
-            { href: "#quickstart", label: "Quick Start" },
-            { href: "#api", label: "API" },
-            { href: "#ranking", label: "Ranking" },
+            { href: "#python", label: "Python Client" },
+            { href: "#api", label: "REST API" },
+            { href: "#selfhosted", label: "Self-Hosted" },
             { href: "#mcp", label: "MCP Server" },
             { href: "#usecases", label: "Use Cases" },
-            { href: "#contributing", label: "Contributing" },
           ].map((item) => (
             <a
               key={item.href}
@@ -139,6 +139,34 @@ export default function DocsPage() {
 
       {/* Content */}
       <main className="container mx-auto px-4 pb-16 max-w-4xl space-y-16">
+
+        {/* Installation */}
+        <Section id="install">
+          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+            <Package className="w-8 h-8" />
+            <span className="bg-green-mid px-3 py-1 border-4 border-ink">Installation</span>
+          </h2>
+
+          <div className="card-brutal p-8">
+            <p className="text-lg mb-6">
+              Install the Python package to search and retrieve skills in your agents:
+            </p>
+            <CodeBlock code="pip install skyll" />
+            
+            <div className="mt-8 grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-green-mid/20 border-2 border-ink">
+                <h4 className="font-bold mb-2">Client Only (Default)</h4>
+                <p className="text-sm text-green-dark">Lightweight client that uses the hosted API at api.skyll.app</p>
+                <code className="block mt-2 text-sm bg-ink text-green-light px-2 py-1">pip install skyll</code>
+              </div>
+              <div className="p-4 bg-blue/20 border-2 border-ink">
+                <h4 className="font-bold mb-2">With Server</h4>
+                <p className="text-sm text-green-dark">Full server for self-hosting your own Skyll instance</p>
+                <code className="block mt-2 text-sm bg-ink text-green-light px-2 py-1">pip install skyll[server]</code>
+              </div>
+            </div>
+          </div>
+        </Section>
         
         {/* Why Skyll */}
         <Section id="why">
@@ -223,40 +251,137 @@ export default function DocsPage() {
           </div>
         </Section>
 
-        {/* Quick Start */}
-        <Section id="quickstart">
+        {/* Python Client */}
+        <Section id="python">
+          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+            <Code className="w-8 h-8" />
+            <span className="bg-yellow px-3 py-1 border-4 border-ink">Python Client</span>
+          </h2>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-bold text-xl mb-3">Basic Usage</h3>
+              <CodeBlock code={`from skyll import Skyll
+
+async with Skyll() as client:
+    # Search for skills
+    skills = await client.search("react performance", limit=5)
+    
+    for skill in skills:
+        print(f"📦 {skill.title}")
+        print(f"   Source: {skill.source}")
+        print(f"   Installs: {skill.install_count:,}")
+        
+        if skill.content:
+            print(f"   Content: {len(skill.content):,} chars")`} />
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-3">One-liner Helper</h3>
+              <CodeBlock code={`from skyll import search_skills
+
+# Simple function for quick searches
+skills = await search_skills("python testing")`} />
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-3">Get a Specific Skill</h3>
+              <CodeBlock code={`async with Skyll() as client:
+    skill = await client.get("anthropics/skills", "skill-creator")
+    if skill:
+        print(skill.content)`} />
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-3">Include References</h3>
+              <p className="text-green-dark mb-3">Some skills have additional documentation in <code className="bg-ink text-green-light px-1">references/</code> directories:</p>
+              <CodeBlock code={`async with Skyll() as client:
+    skills = await client.search("react", include_references=True)
+    
+    for skill in skills:
+        for ref in skill.references:
+            print(f"📎 {ref.name}: {len(ref.content)} chars")`} />
+            </div>
+
+            <div className="card-brutal p-6 bg-cream">
+              <h3 className="font-bold text-xl mb-4">Client Methods</h3>
+              <table className="w-full text-sm">
+                <tbody>
+                  <tr className="border-b-2 border-ink/20">
+                    <td className="py-3 font-mono font-bold">search(query, limit=10)</td>
+                    <td className="py-3">Search for skills matching a query</td>
+                  </tr>
+                  <tr className="border-b-2 border-ink/20">
+                    <td className="py-3 font-mono font-bold">get(source, skill_id)</td>
+                    <td className="py-3">Get a specific skill by source and ID</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono font-bold">health()</td>
+                    <td className="py-3">Check API health status</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="card-brutal p-6 bg-cream">
+              <h3 className="font-bold text-xl mb-4">Skill Properties</h3>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <code className="font-bold">skill.id</code> - Skill identifier<br/>
+                  <code className="font-bold">skill.title</code> - Display name<br/>
+                  <code className="font-bold">skill.description</code> - What it does<br/>
+                  <code className="font-bold">skill.source</code> - GitHub owner/repo<br/>
+                </div>
+                <div>
+                  <code className="font-bold">skill.content</code> - Full SKILL.md<br/>
+                  <code className="font-bold">skill.install_count</code> - Popularity<br/>
+                  <code className="font-bold">skill.relevance_score</code> - Ranking (0-100)<br/>
+                  <code className="font-bold">skill.references</code> - Reference files<br/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* Self-Hosted */}
+        <Section id="selfhosted">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Terminal className="w-8 h-8" />
-            <span className="bg-green-mid px-3 py-1 border-4 border-ink">Quick Start</span>
+            <span className="bg-orange px-3 py-1 border-4 border-ink">Self-Hosted</span>
           </h2>
+
+          <div className="card-brutal p-6 mb-6">
+            <p className="text-lg leading-relaxed">
+              Run your own Skyll server for full control, higher rate limits, or private deployments.
+            </p>
+          </div>
 
           <div className="space-y-6">
             <div>
               <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 1</span>
-                Clone & Install
+                Install with Server
               </h3>
-              <CodeBlock code={`git clone https://github.com/assafelovic/skyll.git
+              <CodeBlock code={`pip install skyll[server]
+
+# Or from source
+git clone https://github.com/assafelovic/skyll.git
 cd skyll
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt`} />
+pip install -e ".[server]"`} />
             </div>
 
             <div>
               <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 2</span>
-                Configure (Optional but Recommended)
+                Configure (Recommended)
               </h3>
               <CodeBlock 
                 title=".env"
-                code={`# GitHub token for higher rate limits (5000 vs 60 requests/hour)
+                code={`# GitHub token for 5000 req/hr (vs 60 unauthenticated)
 GITHUB_TOKEN=ghp_your_token_here
 
-# Cache TTL in seconds (default: 3600)
-CACHE_TTL=3600
-
-# Enable community registry (default: true)
-ENABLE_REGISTRY=true`} 
+# Cache TTL in seconds (default: 86400 = 24 hours)
+CACHE_TTL=86400`} 
               />
               <p className="mt-3 text-sm text-green-dark">
                 Get a GitHub token at{" "}
@@ -277,9 +402,13 @@ ENABLE_REGISTRY=true`}
             <div>
               <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 4</span>
-                Search for Skills
+                Point Client to Your Server
               </h3>
-              <CodeBlock code={`curl "http://localhost:8000/search?q=react+performance&limit=5"`} />
+              <CodeBlock code={`from skyll import Skyll
+
+# Use your self-hosted instance
+async with Skyll(base_url="http://localhost:8000") as client:
+    skills = await client.search("testing")`} />
             </div>
           </div>
         </Section>
@@ -287,9 +416,23 @@ ENABLE_REGISTRY=true`}
         {/* API Reference */}
         <Section id="api">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Code className="w-8 h-8" />
-            <span className="bg-pink px-3 py-1 border-4 border-ink">API Reference</span>
+            <Globe className="w-8 h-8" />
+            <span className="bg-pink px-3 py-1 border-4 border-ink">REST API</span>
           </h2>
+
+          <div className="card-brutal p-6 mb-6">
+            <p className="text-lg leading-relaxed">
+              The hosted API is available at <code className="bg-ink text-green-light px-2 py-1">https://api.skyll.app</code>
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <a href="https://api.skyll.app/docs" target="_blank" rel="noopener noreferrer" className="btn-brutal bg-green-mid text-sm">
+                Interactive Docs <ExternalLink className="inline w-4 h-4 ml-1" />
+              </a>
+              <a href="https://api.skyll.app/health" target="_blank" rel="noopener noreferrer" className="btn-brutal bg-cream text-sm">
+                Health Check <ExternalLink className="inline w-4 h-4 ml-1" />
+              </a>
+            </div>
+          </div>
 
           <div className="space-y-8">
             {/* Search endpoint */}
@@ -310,40 +453,39 @@ ENABLE_REGISTRY=true`}
                     </tr>
                     <tr className="border-b-2 border-ink/20">
                       <td className="py-2 font-mono font-bold">limit</td>
-                      <td className="py-2">Max results, default 5, max 20</td>
+                      <td className="py-2">Max results, default 10, max 50</td>
+                    </tr>
+                    <tr className="border-b-2 border-ink/20">
+                      <td className="py-2 font-mono font-bold">include_content</td>
+                      <td className="py-2">Fetch full SKILL.md (default: true)</td>
                     </tr>
                     <tr>
                       <td className="py-2 font-mono font-bold">include_references</td>
-                      <td className="py-2">Fetch additional .md files (true/false)</td>
+                      <td className="py-2">Fetch reference files (default: false)</td>
                     </tr>
                   </tbody>
                 </table>
 
-                <h4 className="font-bold mb-2">Example Response</h4>
+                <h4 className="font-bold mb-2">Example</h4>
+                <CodeBlock code={`curl "https://api.skyll.app/search?q=react+performance&limit=3"`} />
+                
+                <h4 className="font-bold mb-2 mt-6">Response</h4>
                 <CodeBlock code={`{
   "query": "react performance",
   "count": 1,
   "skills": [
     {
-      "id": "react-best-practices",
+      "id": "vercel-react-best-practices",
       "title": "React Best Practices",
-      "description": "Guidelines for building performant React apps",
-      "source": "vercel/ai-skills",
+      "description": "Performance optimization guidelines from Vercel",
+      "source": "vercel-labs/agent-skills",
       "relevance_score": 85.5,
-      "install_count": 1250,
+      "install_count": 83000,
       "content": "# React Best Practices\\n\\n## Performance\\n...",
       "refs": {
-        "skills_sh": "https://skills.sh/skills/react-best-practices",
-        "github": "https://github.com/vercel/ai-skills"
-      },
-      "references": [
-        {
-          "name": "examples.md",
-          "path": "skills/react-best-practices/examples.md",
-          "content": "# Examples\\n...",
-          "raw_url": "https://raw.githubusercontent.com/..."
-        }
-      ]
+        "skills_sh": "https://skills.sh/vercel-labs/agent-skills/...",
+        "github": "https://github.com/vercel-labs/agent-skills/..."
+      }
     }
   ]
 }`} />
@@ -358,7 +500,7 @@ ENABLE_REGISTRY=true`}
               </div>
               <div className="p-6">
                 <p className="mb-4">Get a specific skill by source and ID.</p>
-                <CodeBlock code={`curl "http://localhost:8000/skills/skills.sh/vercel-react-best-practices"`} />
+                <CodeBlock code={`curl "https://api.skyll.app/skills/anthropics/skills/skill-creator"`} />
               </div>
             </div>
 
