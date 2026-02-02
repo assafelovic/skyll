@@ -4,7 +4,6 @@
 
 <p align="center">
   <a href="https://pypi.org/project/skyll/"><img src="https://img.shields.io/pypi/v/skyll?color=7ed957&labelColor=1a1a1a" alt="PyPI"></a>
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-7ed957?style=flat&labelColor=1a1a1a" alt="Python 3.10+"></a>
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.109+-87ceeb?style=flat&labelColor=1a1a1a" alt="FastAPI"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-ffb3d9?style=flat&labelColor=1a1a1a" alt="MCP"></a>
   <a href="https://discord.gg/CxdMdfZS"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=flat&labelColor=1a1a1a&logo=discord&logoColor=white" alt="Discord"></a>

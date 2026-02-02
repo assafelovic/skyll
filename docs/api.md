@@ -1,10 +1,83 @@
 # API Reference
 
-Skyll provides two interfaces: a REST API and an MCP server.
+Skyll provides three interfaces: a **Python client**, a **REST API**, and an **MCP server**.
 
-Both return a **ranked list of skills** with relevance scores (0-100), giving agents and developers multiple options to choose from. This enables dynamic filtering, custom selection logic, or letting agents pick based on context.
+All interfaces return a **ranked list of skills** with relevance scores (0-100), giving agents and developers multiple options to choose from. This enables dynamic filtering, custom selection logic, or letting agents pick based on context.
+
+## Python Client
+
+The recommended way to use Skyll in Python agents. Uses the hosted API by default.
+
+### Installation
+
+```bash
+pip install skyll
+```
+
+### Basic Usage
+
+```python
+from skyll import Skyll
+
+async with Skyll() as client:
+    # Search for skills
+    skills = await client.search("react performance", limit=5)
+    
+    for skill in skills:
+        print(f"{skill.title}: {skill.description}")
+        print(skill.content)  # Full SKILL.md content
+```
+
+### Client Methods
+
+| Method | Description |
+|--------|-------------|
+| `search(query, limit=10, include_content=True, include_references=False)` | Search for skills |
+| `get(source, skill_id, include_references=False)` | Get a specific skill |
+| `health()` | Check API health status |
+
+### Examples
+
+```python
+from skyll import Skyll
+
+async with Skyll() as client:
+    # Basic search
+    skills = await client.search("react performance", limit=5)
+    
+    # Get a specific skill
+    skill = await client.get("anthropics/skills", "skill-creator")
+    
+    # Include reference files
+    skills = await client.search("react native", include_references=True)
+    for skill in skills:
+        for ref in skill.references:
+            print(f"Reference: {ref.name}")
+    
+    # Health check
+    status = await client.health()
+    print(f"API status: {status['status']}")
+```
+
+### Using a Self-Hosted Server
+
+```python
+async with Skyll(base_url="http://localhost:8000") as client:
+    skills = await client.search("testing")
+```
+
+### One-liner Helper
+
+```python
+from skyll import search_skills
+
+# Simple function for quick searches
+skills = await search_skills("python testing", limit=5)
+```
 
 ## REST API
+
+The hosted API is available at `https://api.skyll.app`. For self-hosted, replace with your server URL.
 
 ### Endpoints
 
@@ -21,26 +94,42 @@ Both return a **ranked list of skills** with relevance scores (0-100), giving ag
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `q` | string | required | Search query |
-| `limit` | int | 10 | Maximum results to return |
+| `limit` | int | 10 | Maximum results (1-50) |
+| `include_content` | bool | true | Fetch full SKILL.md content |
 | `include_references` | bool | false | Include reference files |
 
 ### Examples
 
 ```bash
-# Basic search
-curl "http://localhost:8000/search?q=react+performance&limit=5"
+# Basic search (hosted API)
+curl "https://api.skyll.app/search?q=react+performance&limit=5"
 
 # Include reference files
-curl "http://localhost:8000/search?q=react+native&limit=1&include_references=true"
+curl "https://api.skyll.app/search?q=react+native&limit=1&include_references=true"
 
 # Get specific skill
-curl "http://localhost:8000/skills/vercel-labs/agent-skills/react-best-practices"
+curl "https://api.skyll.app/skills/anthropics/skills/skill-creator"
 
 # POST search with JSON body
-curl -X POST "http://localhost:8000/search" \
+curl -X POST "https://api.skyll.app/search" \
   -H "Content-Type: application/json" \
   -d '{"query": "react performance", "limit": 5}'
+
+# Health check
+curl "https://api.skyll.app/health"
 ```
+
+### Self-Hosted Examples
+
+```bash
+# Start your own server
+uvicorn src.main:app --port 8000
+
+# Then use localhost
+curl "http://localhost:8000/search?q=react+performance&limit=5"
+```
+
+Interactive API docs: [api.skyll.app/docs](https://api.skyll.app/docs)
 
 ## MCP Server
 
@@ -127,7 +216,7 @@ python -m src.mcp_server --transport sse --port 8080
 }
 ```
 
-### Field Descriptions
+### Skill Fields
 
 | Field | Type | Description |
 |-------|------|-------------|
