@@ -6,6 +6,7 @@
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-7ed957?style=flat&labelColor=1a1a1a" alt="Python 3.11+"></a>
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.109+-87ceeb?style=flat&labelColor=1a1a1a" alt="FastAPI"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-ffb3d9?style=flat&labelColor=1a1a1a" alt="MCP"></a>
+  <a href="https://discord.gg/CxdMdfZS"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=flat&labelColor=1a1a1a&logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-fff06b?style=flat&labelColor=1a1a1a" alt="License: Apache-2.0"></a>
 </p>
 
@@ -172,5 +173,5 @@ Apache-2.0 License. See [LICENSE](LICENSE) for details.
 ---
 
 <p align="center">
-  Built for autonomous agents • <a href="https://skyll.app">skyll.app</a>
+  Built for autonomous agents • <a href="https://skyll.app">skyll.app</a> • <a href="https://discord.gg/CxdMdfZS">Discord</a>
 </p>
