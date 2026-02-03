@@ -3,8 +3,9 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/skyll/"><img src="https://img.shields.io/pypi/v/skyll?color=7ed957&labelColor=1a1a1a" alt="PyPI"></a>
-  <a href="https://skills.sh/assafelovic/skyll/skyll"><img src="https://img.shields.io/badge/Claude_Skill-skyll-ff6b6b?style=flat&labelColor=1a1a1a" alt="Claude Skill"></a>
+  <a href="https://pypi.org/project/skyll/"><img src="https://img.shields.io/pypi/v/skyll?color=7ed957&labelColor=1a1a1a&logo=pypi&logoColor=white" alt="PyPI"></a>
+  <a href="https://skills.sh/assafelovic/skyll/skyll"><img src="https://img.shields.io/badge/Claude_Skill-skyll-ff6b6b?style=flat&labelColor=1a1a1a&logo=anthropic&logoColor=white" alt="Claude Skill"></a>
+  <a href="https://skyll.app/docs"><img src="https://img.shields.io/badge/Docs-skyll.app-87ceeb?style=flat&labelColor=1a1a1a&logo=readthedocs&logoColor=white" alt="Docs"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-ffb3d9?style=flat&labelColor=1a1a1a" alt="MCP"></a>
   <a href="https://discord.gg/CxdMdfZS"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=flat&labelColor=1a1a1a&logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-fff06b?style=flat&labelColor=1a1a1a" alt="License: Apache-2.0"></a>
