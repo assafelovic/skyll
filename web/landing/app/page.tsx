@@ -4,8 +4,34 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, Github, BookOpen, Zap, Package, Star, FileText, 
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Copy, Check
 } from "lucide-react";
+
+// Copyable code block component
+function CopyableCode({ code, className = "text-sm" }: { code: string; className?: string }) {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  
+  return (
+    <div className="relative group">
+      <pre className={`bg-ink text-green-light p-4 ${className} overflow-x-auto pr-12`}>
+        <code>{code}</code>
+      </pre>
+      <button
+        onClick={handleCopy}
+        className="absolute top-2 right-2 p-1.5 bg-green-dark/50 hover:bg-green-dark text-green-light rounded transition-colors"
+        title={copied ? "Copied!" : "Copy to clipboard"}
+      >
+        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+      </button>
+    </div>
+  );
+}
 
 // Discord logo SVG component
 function DiscordIcon({ className }: { className?: string }) {
@@ -381,8 +407,106 @@ export default function Home() {
         )}
       </main>
 
+      {/* Quick Start Section */}
+      <section className="container mx-auto px-4 py-16 max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-10"
+        >
+          <h2 className="font-mono font-bold text-3xl mb-3">Get Started</h2>
+          <p className="text-green-dark max-w-2xl mx-auto">
+            Agents can dynamically discover and learn skills at runtime. Instead of humans pre-loading skills, agents can search autonomously and inject into context.
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6 mb-10">
+          {/* Skills.sh */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="card-brutal p-6"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-green-mid px-3 py-1 border-2 border-ink font-bold text-sm">skills.sh</span>
+            </div>
+            <p className="text-xs text-green-dark mb-4">
+              Add as a skill so agents can discover other skills on demand
+            </p>
+            <CopyableCode code="npx skills add assafelovic/skyll" />
+            <p className="mt-4 text-xs text-green-dark">
+              View on{" "}
+              <a href="https://skills.sh/assafelovic/skyll/skyll" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+                skills.sh
+              </a>
+            </p>
+          </motion.div>
+
+          {/* Python */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="card-brutal p-6"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">Python</span>
+            </div>
+            <p className="text-xs text-green-dark mb-4">
+              Use the client library for programmatic access
+            </p>
+            <CopyableCode code="pip install skyll" className="text-sm mb-4" />
+            <CopyableCode 
+              code={`from skyll import Skyll
+
+async with Skyll() as client:
+    skills = await client.search("react")`}
+              className="text-xs"
+            />
+          </motion.div>
+        </div>
+
+        {/* Scoring */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="card-brutal p-6 bg-yellow/30"
+        >
+          <div className="flex items-start gap-4">
+            <Star className="w-6 h-6 mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-bold text-lg mb-2">How Scoring Works</h3>
+              <p className="text-sm text-green-dark leading-relaxed mb-2">
+                Skills are fetched in realtime from top sources like <strong>skills.sh</strong>, so results are always fresh. 
+                Each skill is ranked 0-100 based on four signals: <strong>content availability</strong> (40 pts), 
+                <strong> query match</strong> (30 pts), <strong>popularity</strong> (15 pts), and <strong>references</strong> (15 pts).
+              </p>
+              <p className="text-xs text-green-dark/70 italic">
+                Semantic search with embeddings coming soon.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-10"
+        >
+          <Link href="/docs" className="btn-brutal bg-green-mid inline-flex items-center gap-2">
+            <BookOpen className="w-5 h-5" />
+            Read the Docs
+          </Link>
+        </motion.div>
+      </section>
+
       {/* Spacer to push footer below viewport */}
-      <div className="flex-1 min-h-[20vh]" />
+      <div className="flex-1 min-h-[10vh]" />
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t-4 border-ink/20 mt-auto">
