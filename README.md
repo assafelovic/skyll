@@ -8,7 +8,6 @@
   <a href="https://skyll.app/docs"><img src="https://img.shields.io/badge/Docs-skyll.app-87ceeb?style=flat&labelColor=1a1a1a&logo=readthedocs&logoColor=white" alt="Docs"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-ffb3d9?style=flat&labelColor=1a1a1a" alt="MCP"></a>
   <a href="https://discord.gg/CxdMdfZS"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=flat&labelColor=1a1a1a&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-fff06b?style=flat&labelColor=1a1a1a" alt="License: Apache-2.0"></a>
 </p>
 
 <p align="center">
