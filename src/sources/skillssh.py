@@ -84,11 +84,18 @@ class SkillsShSource:
             
             results = []
             for skill in data.get("skills", []):
+                skill_id = skill.get("id", "")
+                # Extract source from topSource, or fall back to skill_id if it contains owner/repo
+                source = skill.get("topSource", "")
+                if not source and "/" in skill_id:
+                    parts = skill_id.split("/")
+                    if len(parts) >= 2:
+                        source = f"{parts[0]}/{parts[1]}"
                 results.append(
                     SkillSearchResult(
-                        id=skill.get("id", ""),
-                        name=skill.get("name", skill.get("id", "")),
-                        source=skill.get("topSource", ""),
+                        id=skill_id,
+                        name=skill.get("name", skill_id),
+                        source=source,
                         source_registry=self.REGISTRY_NAME,
                         installs=skill.get("installs", 0),
                     )

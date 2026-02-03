@@ -410,10 +410,28 @@ class GitHubClient:
 
     def get_github_url(self, source: str, skill_id: str) -> str:
         """Get the GitHub web URL for a skill."""
+        # Handle empty source by extracting from skill_id or returning search URL
+        if not source:
+            if "/" in skill_id:
+                parts = skill_id.split("/")
+                if len(parts) >= 2:
+                    source = f"{parts[0]}/{parts[1]}"
+                    skill_id = parts[-1] if len(parts) > 2 else skill_id
+            if not source:
+                return f"https://github.com/search?q={skill_id}+SKILL.md"
         repo_info = self._repo_cache.get(source)
         branch = repo_info["branch"] if repo_info else "main"
         return f"https://github.com/{source}/tree/{branch}/skills/{skill_id}"
 
     def get_skills_sh_url(self, source: str, skill_id: str) -> str:
         """Get the skills.sh page URL for a skill."""
+        # Handle empty source by extracting from skill_id or returning search URL
+        if not source:
+            if "/" in skill_id:
+                parts = skill_id.split("/")
+                if len(parts) >= 2:
+                    source = f"{parts[0]}/{parts[1]}"
+                    skill_id = parts[-1] if len(parts) > 2 else skill_id
+            if not source:
+                return f"https://skills.sh/search?q={skill_id}"
         return f"https://skills.sh/{source}/{skill_id}"
