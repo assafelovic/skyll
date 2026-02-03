@@ -86,9 +86,9 @@ class SkillsShSource:
             for skill in data.get("skills", []):
                 results.append(
                     SkillSearchResult(
-                        id=skill.get("id", ""),
-                        name=skill.get("name", skill.get("id", "")),
-                        source=skill.get("topSource", ""),
+                        id=skill.get("skillId", skill.get("id", "")),
+                        name=skill.get("name", skill.get("skillId", "")),
+                        source=skill.get("source", ""),
                         source_registry=self.REGISTRY_NAME,
                         installs=skill.get("installs", 0),
                     )
