@@ -53,6 +53,11 @@ CACHE_TTL = int(os.getenv("CACHE_TTL", "3600"))
 # Global service instance (initialized in lifespan)
 _service: SkillSearchService | None = None
 
+# Input validation constants
+MAX_QUERY_LENGTH = 500
+MAX_SOURCE_LENGTH = 200
+MAX_SKILL_ID_LENGTH = 200
+
 
 @asynccontextmanager
 async def lifespan(mcp: FastMCP):
@@ -145,14 +150,20 @@ async def search_skills(
         - "nextjs authentication"
         - "database migrations"
     """
+    # Validate input first for clear error messages
+    if not query or not query.strip():
+        return {"error": "Query cannot be empty. Please provide a search term."}
+    if len(query) > MAX_QUERY_LENGTH:
+        return {"error": f"Query too long. Maximum length is {MAX_QUERY_LENGTH} characters."}
+
     if _service is None:
         return {"error": "Service not initialized"}
-    
+
     if ctx:
         await ctx.info(f"Searching skills for: {query}")
-    
-    # Clamp limit
-    limit = max(1, min(limit, 20))
+
+    # Clamp limit (allow 0 for "check if exists" use case)
+    limit = max(0, min(limit, 20))
     
     try:
         response = await _service.search(
@@ -236,9 +247,21 @@ async def get_skill(
     Example:
         get_skill("vercel-labs/agent-skills", "vercel-react-best-practices")
     """
+    # Validate input first for clear error messages
+    if not source or not source.strip():
+        return {"error": "Source cannot be empty. Expected format: owner/repo"}
+    if len(source) > MAX_SOURCE_LENGTH:
+        return {"error": f"Source too long. Maximum length is {MAX_SOURCE_LENGTH} characters."}
+    if "/" not in source:
+        return {"error": f"Invalid source format '{source}'. Expected format: owner/repo"}
+    if not skill_id or not skill_id.strip():
+        return {"error": "Skill ID cannot be empty."}
+    if len(skill_id) > MAX_SKILL_ID_LENGTH:
+        return {"error": f"Skill ID too long. Maximum length is {MAX_SKILL_ID_LENGTH} characters."}
+
     if _service is None:
         return {"error": "Service not initialized"}
-    
+
     if ctx:
         await ctx.info(f"Fetching skill: {source}/{skill_id}")
     
