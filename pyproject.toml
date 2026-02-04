@@ -1,6 +1,6 @@
 [project]
 name = "skyll"
-version = "0.1.0"
+version = "0.1.1"
 description = "Skill discovery for AI agents - search and retrieve agent skills on demand"
 readme = "README.md"
 license = { text = "Apache-2.0" }

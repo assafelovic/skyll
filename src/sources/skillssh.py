@@ -93,9 +93,10 @@ class SkillsShSource:
                         source = f"{parts[0]}/{parts[1]}"
                 results.append(
                     SkillSearchResult(
-                        id=skill_id,
-                        name=skill.get("name", skill_id),
-                        source=source,
+
+                        id=skill.get("skillId", skill.get("id", "")),
+                        name=skill.get("name", skill.get("skillId", "")),
+                        source=skill.get("source", ""),
                         source_registry=self.REGISTRY_NAME,
                         installs=skill.get("installs", 0),
                     )
