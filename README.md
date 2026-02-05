@@ -140,7 +140,27 @@ npm run dev
 
 ## MCP Server
 
-For Claude Desktop, Cursor, or other MCP clients:
+Skyll provides a hosted MCP server at `api.skyll.app/mcp` - no installation required.
+
+### Hosted MCP (Recommended)
+
+For Claude Desktop, Cursor, or other MCP clients, add to your configuration:
+
+```json
+{
+  "mcpServers": {
+    "skyll": {
+      "url": "https://api.skyll.app/mcp"
+    }
+  }
+}
+```
+
+That's it! The hosted server provides the same tools as the self-hosted version.
+
+### Self-Hosted MCP
+
+If you prefer to run your own MCP server:
 
 ```json
 {
@@ -157,8 +177,9 @@ For Claude Desktop, Cursor, or other MCP clients:
 Or run standalone:
 
 ```bash
-python -m src.mcp_server                          # stdio (default)
-python -m src.mcp_server --transport sse --port 8080  # SSE
+python -m src.mcp_server                           # stdio (default)
+python -m src.mcp_server --transport http --port 8080  # HTTP
+python -m src.mcp_server --transport sse --port 8080   # SSE (legacy)
 ```
 
 ## Configuration

@@ -2,6 +2,7 @@
 Skyll - Agent Skills Search Service
 
 Main entry point for the FastAPI application.
+Provides both REST API and MCP (Model Context Protocol) endpoints.
 """
 
 import logging
@@ -15,6 +16,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes import router, set_service
 from src.core.service import SkillSearchService
+from src.mcp_server import create_mcp_server
+import src.mcp_server as mcp_module
+
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -35,6 +40,14 @@ ENABLE_REGISTRY = os.getenv("ENABLE_REGISTRY", "true").lower() == "true"
 # Global service instance
 _service: SkillSearchService | None = None
 
+# Create MCP server for mounting (will share service via module-level reference)
+# Using stateless_http=True for better compatibility with load balancers and horizontal scaling
+_mcp_server = create_mcp_server()
+
+# Create MCP ASGI app for mounting - path="/" because we mount at /mcp prefix
+# stateless_http=True means each request creates a fresh context (no session affinity needed)
+_mcp_app = _mcp_server.http_app(path="/", stateless_http=True)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,7 +55,10 @@ async def lifespan(app: FastAPI):
     Application lifespan manager.
     
     Initializes the skill search service on startup
-    and cleans up on shutdown.
+    and cleans up on shutdown. The service is shared
+    with both the REST API routes and MCP server.
+    
+    Also initializes the MCP session manager via nested lifespan.
     """
     global _service
 
@@ -57,14 +73,22 @@ async def lifespan(app: FastAPI):
 
     # Enter service context
     await _service.__aenter__()
+    
+    # Share service with REST API routes
     set_service(_service)
+    
+    # Share service with MCP server (set module-level _service)
+    mcp_module._service = _service
 
     logger.info("Skyll service started successfully")
     logger.info(f"Cache TTL: {CACHE_TTL}s")
     logger.info(f"GitHub token: {'configured' if GITHUB_TOKEN else 'not configured'}")
     logger.info(f"Skill registry: {'enabled' if ENABLE_REGISTRY else 'disabled'}")
+    logger.info("MCP endpoint available at /mcp")
 
-    yield
+    # Enter MCP app's lifespan (initializes session manager)
+    async with _mcp_app.lifespan(app):
+        yield
 
     # Cleanup
     logger.info("Shutting down Skyll service...")
@@ -73,7 +97,7 @@ async def lifespan(app: FastAPI):
     logger.info("Skyll service stopped")
 
 
-# Create FastAPI application
+# Create FastAPI application with combined lifespan
 app = FastAPI(
     title="Skyll",
     description="""
@@ -94,16 +118,28 @@ They follow the [Agent Skills specification](https://agentskills.io) and are sup
 - 📄 **Full Content** - Get complete SKILL.md with parsed metadata
 - 📊 **Ranked Results** - Sorted by popularity (install count)
 - ⚡ **Cached** - Fast responses with intelligent caching
-- 🔌 **MCP Ready** - Designed for future MCP server integration
+- 🔌 **MCP Server** - Native MCP support at `/mcp` endpoint
 
 ### Quick Start
 
+**REST API:**
 ```bash
 # Search for React skills
-curl "http://localhost:8000/search?q=react+performance&limit=5"
+curl "https://api.skyll.app/search?q=react+performance&limit=5"
 
 # Get a specific skill
-curl "http://localhost:8000/skills/vercel-labs/agent-skills/vercel-react-best-practices"
+curl "https://api.skyll.app/skills/vercel-labs/agent-skills/vercel-react-best-practices"
+```
+
+**MCP Client (Claude Desktop, Cursor):**
+```json
+{
+  "mcpServers": {
+    "skyll": {
+      "url": "https://api.skyll.app/mcp"
+    }
+  }
+}
 ```
 
 ### Response Format
@@ -137,6 +173,10 @@ app.add_middleware(
 
 # Include API routes
 app.include_router(router)
+
+# Mount MCP server at /mcp endpoint
+# This enables MCP clients to connect via https://api.skyll.app/mcp
+app.mount("/mcp", _mcp_app)
 
 
 def run():

@@ -17,6 +17,7 @@ pyyaml>=6.0.1
 
 # MCP Server (Model Context Protocol)
 mcp>=1.0.0
+fastmcp>=2.14.0
 
 # Development
 pytest>=8.0.0
