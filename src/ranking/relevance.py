@@ -15,26 +15,33 @@ class RelevanceRanker(Ranker):
     """
     Default ranker combining multiple relevance signals.
     
-    Signals (weighted):
-    - Content availability: Has actual SKILL.md content (required to rank)
-    - References: Has associated reference files
-    - Query match: How well skill ID/title/description/content matches query
-    - Popularity: Install count from skills.sh
+    Signals (weighted, total 100 points):
+    - Content availability (40 pts): Has actual SKILL.md content
+    - References (15 pts): Has associated reference files
+    - Query match (30 pts): How well skill ID/title/description/content matches query
+    - Popularity (15 pts): Install count from skills.sh
     
-    Skills without content are filtered out entirely since they provide
-    no value to agents.
+    Additionally, skills from the curated local registry receive a small
+    boost scaled by query relevance (up to 8 pts for strong matches).
+    
+    Skills without content are sorted last (not filtered) since they may
+    still serve as pointers to the skill.
     
     Produces normalized 0-100 score for display.
     """
 
-    # Weight constants for score calculation
+    # Weight constants for score calculation (total: 100 points)
+    # See docs/ranking.md for full explanation
     CONTENT_WEIGHT = 40.0      # 40 points for having content
     REFERENCES_WEIGHT = 15.0   # 15 points for having references
     QUERY_MATCH_WEIGHT = 30.0  # 30 points max for query match
     POPULARITY_WEIGHT = 15.0   # 15 points max for popularity
-    CURATED_BOOST = 15.0       # 15 points boost for curated registry skills
     
-    # Registry name for curated skills (from SkillRegistrySource)
+    # Boost for curated registry skills, scaled by query relevance.
+    # A curated skill with strong query match (ID or description) gets
+    # the full boost; weak matches get proportionally less.
+    # This prevents irrelevant registry skills from jumping the ranks.
+    CURATED_BOOST = 8.0
     CURATED_REGISTRY = "skyll"
 
     def _normalize(self, text: str) -> str:
@@ -169,17 +176,18 @@ class RelevanceRanker(Ranker):
             # Popularity signal (0-1, log scaled)
             popularity = self._compute_popularity_score(skill.install_count)
             
-            # Curated registry boost: skills from the local curated registry
-            # get a boost since they've been hand-picked for quality
+            # Curated registry boost: scales with query relevance so only
+            # registry skills that actually match the query get boosted
             is_curated = 1.0 if getattr(skill, 'source_registry', None) == self.CURATED_REGISTRY else 0.0
+            curated_score = is_curated * self.CURATED_BOOST * query_match
             
-            # Compute weighted score (0-100 base, curated can push slightly above)
+            # Compute weighted score (0-100 base + curated boost for relevant registry skills)
             score = (
                 has_content * self.CONTENT_WEIGHT +
                 has_refs * self.REFERENCES_WEIGHT +
                 query_match * self.QUERY_MATCH_WEIGHT +
                 popularity * self.POPULARITY_WEIGHT +
-                is_curated * self.CURATED_BOOST
+                curated_score
             )
             
             # Round to 2 decimal places

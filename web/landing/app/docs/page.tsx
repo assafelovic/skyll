@@ -477,7 +477,8 @@ async with Skyll(base_url="http://localhost:8000") as client:
           <div className="card-brutal p-6 mb-6">
             <p className="text-lg leading-relaxed">
               Skyll uses a <strong>multi-signal ranking algorithm</strong> to order search results by relevance. 
-              Each skill receives a score from <strong>0-100</strong> based on four weighted factors.
+              Each skill receives a score from <strong>0-100</strong> based on weighted factors, with a small 
+              additional boost for curated registry skills.
             </p>
           </div>
 
@@ -489,7 +490,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
               </div>
               <div className="p-6">
                 <code className="block bg-green-mid/30 p-4 font-mono text-lg border-2 border-ink">
-                  score = content + references + query_match + popularity
+                  score = content + references + query_match + popularity + curated_boost
                 </code>
               </div>
             </div>
@@ -509,7 +510,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </div>
                 <p className="text-green-dark mb-4">
                   Skills with successfully fetched SKILL.md content receive 40 points. 
-                  This ensures skills with actual content rank above those that failed to fetch.
+                  Skills without content are sorted last (not filtered).
                 </p>
                 <table className="w-full text-sm">
                   <tbody>
@@ -518,7 +519,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                       <td className="py-2 text-right font-bold text-green-dark">+40</td>
                     </tr>
                     <tr>
-                      <td className="py-2">No content (fetch failed)</td>
+                      <td className="py-2">No content (sorted last)</td>
                       <td className="py-2 text-right font-bold">0</td>
                     </tr>
                   </tbody>
@@ -537,7 +538,8 @@ async with Skyll(base_url="http://localhost:8000") as client:
                   </div>
                 </div>
                 <p className="text-green-dark mb-4">
-                  How well the skill ID matches the search query.
+                  How well the skill matches the query. Checks ID, title, description, and content
+                  in priority order, taking the best score.
                 </p>
                 <table className="w-full text-sm">
                   <tbody>
@@ -550,11 +552,15 @@ async with Skyll(base_url="http://localhost:8000") as client:
                       <td className="py-2 text-right font-bold text-green-dark">+27</td>
                     </tr>
                     <tr className="border-b border-ink/20">
-                      <td className="py-2">All ID terms in query</td>
-                      <td className="py-2 text-right font-bold">+25.5</td>
+                      <td className="py-2">All query terms in title</td>
+                      <td className="py-2 text-right font-bold">+24</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="py-2">All query terms in description</td>
+                      <td className="py-2 text-right font-bold">+21</td>
                     </tr>
                     <tr>
-                      <td className="py-2">Partial matches</td>
+                      <td className="py-2">Partial / content matches</td>
                       <td className="py-2 text-right font-bold">0-15</td>
                     </tr>
                   </tbody>
@@ -628,6 +634,31 @@ async with Skyll(base_url="http://localhost:8000") as client:
               </div>
             </div>
 
+            {/* Curated Boost */}
+            <div className="card-brutal p-6 border-l-4 border-l-green-mid">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-green-mid p-2 border-2 border-ink">
+                  <Star className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">Curated Registry Boost</h3>
+                  <span className="text-sm font-mono bg-ink text-green-light px-2">up to 8 pts</span>
+                </div>
+              </div>
+              <p className="text-green-dark mb-4">
+                Skills from the curated <code className="bg-ink text-green-light px-1">registry/SKILLS.md</code> receive 
+                a boost <strong>scaled by query relevance</strong>. This rewards hand-picked quality skills without 
+                letting irrelevant registry entries jump the ranks.
+              </p>
+              <code className="block bg-ink text-green-light p-3 font-mono text-sm mb-4">
+                curated_boost = is_curated &times; 8 &times; query_match
+              </code>
+              <p className="text-sm text-green-dark">
+                A curated skill with a strong ID match gets +7.2 pts, a description match gets +5.6 pts, 
+                and a weak partial match gets just +2 pts.
+              </p>
+            </div>
+
             {/* Example Scores Table */}
             <div className="card-brutal overflow-hidden">
               <div className="bg-yellow px-4 py-3 border-b-4 border-ink font-bold">
@@ -642,6 +673,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                       <th className="text-center p-3 border-b-2 border-ink">Refs</th>
                       <th className="text-center p-3 border-b-2 border-ink">Query</th>
                       <th className="text-center p-3 border-b-2 border-ink">Pop.</th>
+                      <th className="text-center p-3 border-b-2 border-ink">Curated</th>
                       <th className="text-center p-3 border-b-2 border-ink font-bold">Total</th>
                     </tr>
                   </thead>
@@ -652,6 +684,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                       <td className="text-center p-3">15</td>
                       <td className="text-center p-3">30</td>
                       <td className="text-center p-3">15</td>
+                      <td className="text-center p-3">0</td>
                       <td className="text-center p-3 font-bold bg-green-mid/30">100</td>
                     </tr>
                     <tr className="border-b border-ink/20">
@@ -660,13 +693,24 @@ async with Skyll(base_url="http://localhost:8000") as client:
                       <td className="text-center p-3">0</td>
                       <td className="text-center p-3">25</td>
                       <td className="text-center p-3">12</td>
+                      <td className="text-center p-3">0</td>
                       <td className="text-center p-3 font-bold bg-green-mid/20">77</td>
+                    </tr>
+                    <tr className="border-b border-ink/20">
+                      <td className="p-3">Curated, description match</td>
+                      <td className="text-center p-3">40</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3">21</td>
+                      <td className="text-center p-3">0</td>
+                      <td className="text-center p-3">5.6</td>
+                      <td className="text-center p-3 font-bold">66.6</td>
                     </tr>
                     <tr className="border-b border-ink/20">
                       <td className="p-3">Partial match, new skill</td>
                       <td className="text-center p-3">40</td>
                       <td className="text-center p-3">0</td>
                       <td className="text-center p-3">15</td>
+                      <td className="text-center p-3">0</td>
                       <td className="text-center p-3">0</td>
                       <td className="text-center p-3 font-bold">55</td>
                     </tr>
@@ -676,6 +720,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                       <td className="text-center p-3">0</td>
                       <td className="text-center p-3">30</td>
                       <td className="text-center p-3">15</td>
+                      <td className="text-center p-3">0</td>
                       <td className="text-center p-3 font-bold text-pink">45</td>
                     </tr>
                   </tbody>
@@ -689,11 +734,11 @@ async with Skyll(base_url="http://localhost:8000") as client:
               <div className="space-y-4 text-green-dark">
                 <div className="flex items-start gap-3">
                   <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">1</span>
-                  <p><strong>Content is king.</strong> Skills without content are not useful, so content availability dominates the score.</p>
+                  <p><strong>Content is king.</strong> Skills without content are less useful, so content availability dominates the score.</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">2</span>
-                  <p><strong>Query relevance matters.</strong> Exact matches should rank above partial matches, regardless of popularity.</p>
+                  <p><strong>Multi-field matching.</strong> Skills match via ID, title, description, or content. A skill about &quot;deep research&quot; surfaces even if its ID is &quot;gpt-researcher&quot;.</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">3</span>
@@ -701,6 +746,10 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">4</span>
+                  <p><strong>Curated skills get a nudge.</strong> Registry skills are hand-picked for quality. The boost is scaled by relevance to prevent irrelevant registry skills from jumping the ranks.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">5</span>
                   <p><strong>References add value.</strong> When users request references, skills that provide them are more valuable.</p>
                 </div>
               </div>

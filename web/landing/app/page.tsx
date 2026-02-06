@@ -417,7 +417,8 @@ export default function Home() {
         >
           <h2 className="font-mono font-bold text-3xl mb-3">Get Started</h2>
           <p className="text-green-dark max-w-2xl mx-auto">
-            Agents can dynamically discover and learn skills at runtime. Instead of humans pre-loading skills, agents can search autonomously and inject into context.
+            Skyll aggregates skills from multiple sources (like skills.sh, registries, and more), ranks them by relevance, and returns the best matches. 
+            Agents discover and fetch skills at runtime - no pre-installation needed.
           </p>
         </motion.div>
 
@@ -435,20 +436,10 @@ export default function Home() {
                   <span className="bg-pink px-3 py-1 border-2 border-ink font-bold text-sm">MCP Server</span>
                   <span className="text-xs text-green-dark">Recommended</span>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Hosted MCP for Claude & Cursor</h3>
-                <p className="text-sm text-green-dark mb-4 leading-relaxed">
-                  Add Skyll to Claude Desktop, Cursor, or any MCP-compatible client. No installation required - 
-                  just add the URL to your config and your agent gets access to <strong>4 tools</strong>:
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">add_skill</span>
-                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">search_skills</span>
-                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">get_skill</span>
-                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">get_cache_stats</span>
-                </div>
-                <p className="text-xs text-green-dark">
-                  The <code className="bg-ink text-green-light px-1">add_skill</code> tool lets agents fetch skills by name - 
-                  like <code className="bg-ink text-green-light px-1">npx skills add</code> but at runtime.
+                <h3 className="font-bold text-lg mb-2">Hosted MCP</h3>
+                <p className="text-sm text-green-dark leading-relaxed">
+                  Add Skyll to any MCP-compatible client. No installation required - 
+                  just add the URL and your agent can search, discover, and fetch skills on demand.
                 </p>
               </div>
               <div className="md:w-1/2">
@@ -480,27 +471,15 @@ export default function Home() {
                   <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">REST API</span>
                 </div>
                 <h3 className="font-bold text-lg mb-2">Direct API Access</h3>
-                <p className="text-sm text-green-dark mb-4 leading-relaxed">
-                  Call the API directly from any language or framework. Get the <strong>latest version</strong> of any skill 
-                  with a simple GET request - perfect for custom agents and integrations.
+                <p className="text-sm text-green-dark leading-relaxed">
+                  Call the API from any language or framework. Fetch the latest version of any skill 
+                  by name, or search across all sources with a single request.
                 </p>
-                <div className="space-y-2 text-sm text-green-dark">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-green-mid px-2 py-0.5 border border-ink text-xs font-bold">GET</span>
-                    <code className="text-xs">/skill/&#123;name&#125;</code>
-                    <span className="text-xs">- fetch by name</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-green-mid px-2 py-0.5 border border-ink text-xs font-bold">GET</span>
-                    <code className="text-xs">/search?q=&#123;query&#125;</code>
-                    <span className="text-xs">- search skills</span>
-                  </div>
-                </div>
               </div>
               <div className="md:w-1/2 space-y-3">
                 <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Get skill by name:</p>
-                  <CopyableCode code={`curl "https://api.skyll.app/skill/react-best-practices"`} className="text-xs" />
+                  <p className="text-xs text-green-dark mb-1 font-medium">Get a specific skill:</p>
+                  <CopyableCode code={`curl "https://api.skyll.app/skill/tavily-ai/skills/search"`} className="text-xs" />
                 </div>
                 <div>
                   <p className="text-xs text-green-dark mb-1 font-medium">Search for skills:</p>
@@ -510,7 +489,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Python + skills.sh */}
+          {/* Python + Skill */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -521,32 +500,18 @@ export default function Home() {
               <div className="md:w-1/2">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="bg-blue px-3 py-1 border-2 border-ink font-bold text-sm">Python</span>
-                  <span className="bg-green-mid px-3 py-1 border-2 border-ink font-bold text-sm">skills.sh</span>
+                  <span className="bg-green-mid px-3 py-1 border-2 border-ink font-bold text-sm">Skill</span>
                 </div>
                 <h3 className="font-bold text-lg mb-2">Client Library & Meta-Skill</h3>
-                <p className="text-sm text-green-dark mb-4 leading-relaxed">
-                  Use the Python client for typed, async access. Or install Skyll as a <strong>meta-skill</strong> via 
-                  skills.sh - this teaches your agent how to discover and use other skills autonomously.
-                </p>
-                <p className="text-xs text-green-dark">
-                  View on{" "}
-                  <a href="https://skills.sh/assafelovic/skyll/skyll" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink font-medium">
-                    skills.sh
-                  </a>
-                  {" · "}
-                  <a href="https://pypi.org/project/skyll/" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink font-medium">
-                    PyPI
-                  </a>
+                <p className="text-sm text-green-dark leading-relaxed">
+                  Use the Python client for typed, async access. Or install Skyll as a <strong>meta-skill</strong> - 
+                  this teaches your agent how to discover and use other skills autonomously.
                 </p>
               </div>
               <div className="md:w-1/2 space-y-3">
                 <div>
                   <p className="text-xs text-green-dark mb-1 font-medium">Install Python client:</p>
                   <CopyableCode code="pip install skyll" className="text-xs" />
-                </div>
-                <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Or add as a skill:</p>
-                  <CopyableCode code="npx skills add assafelovic/skyll" className="text-xs" />
                 </div>
                 <CopyableCode 
                   code={`from skyll import Skyll
@@ -555,6 +520,10 @@ async with Skyll() as client:
     skills = await client.search("react")`}
                   className="text-xs"
                 />
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Or add as a skill:</p>
+                  <CopyableCode code="npx skills add assafelovic/skyll" className="text-xs" />
+                </div>
               </div>
             </div>
           </motion.div>
@@ -572,9 +541,11 @@ async with Skyll() as client:
             <div>
               <h3 className="font-bold text-lg mb-2">How Scoring Works</h3>
               <p className="text-sm text-green-dark leading-relaxed mb-2">
-                Skills are fetched in realtime from top sources like <strong>skills.sh</strong>, so results are always fresh. 
-                Each skill is ranked 0-100 based on four signals: <strong>content availability</strong> (40 pts), 
-                <strong> query match</strong> (30 pts), <strong>popularity</strong> (15 pts), and <strong>references</strong> (15 pts).
+                Skills are fetched in realtime from top sources like <strong>skills.sh</strong> and the curated registry, so results are always fresh. 
+                Each skill is ranked 0-100 based on: <strong>content availability</strong> (40 pts), 
+                <strong>query match</strong> (30 pts - matches against ID, title, description, and content), 
+                <strong>popularity</strong> (15 pts), and <strong>references</strong> (15 pts). 
+                Curated registry skills get a small relevance-scaled boost (up to 8 pts).
               </p>
               <p className="text-xs text-green-dark/70 italic">
                 Semantic search with embeddings coming soon.
