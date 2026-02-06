@@ -25,13 +25,13 @@
 
 # Skyll
 
-Skyll is a REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
+Skyll is a REST API and MCP server that lets any AI agent search for and learn agent skills at runtime. It aggregates skills from multiple sources, fetches the full SKILL.md content from GitHub, and returns structured JSON ready for context injection.
 
 ## Why use Skyll?
 
 Agent skills (SKILL.md files) are a powerful way to extend what AI agents can do, but today they only work with a handful of tools like Claude Code and Cursor. Skills require manual installation before a session, which means developers need to know in advance which skills they will need.
 
-Skyll democratizes access to skills. Any agent, framework, or tool can discover and retrieve skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context, and use skills autonomously.
+Skyll democratizes access to skills. Any agent, framework, or tool can discover and learn skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context, and use skills autonomously.
 
 ```json
 {
@@ -174,7 +174,7 @@ That's it! The hosted server provides the following MCP tools:
 | `get_skill` | Get a specific skill by source/id |
 | `get_cache_stats` | Get cache statistics |
 
-The `add_skill` tool is the simplest way for agents to fetch skills:
+The `add_skill` tool is the simplest way for agents to learn skills:
 
 ```python
 # Simple name - searches and returns best match
@@ -224,7 +224,7 @@ python -m src.mcp_server --transport sse --port 8080   # SSE (legacy)
 
 **Testing Workflows**: User says "Add tests for this feature" → Agent finds `test-driven-development` → Follows TDD workflow: write tests first, then implement.
 
-**Building Integrations**: User wants to connect their app to external APIs → Agent retrieves `mcp-builder` → Creates Model Context Protocol servers following best practices.
+**Building Integrations**: User wants to connect their app to external APIs → Agent learns `mcp-builder` → Creates Model Context Protocol servers following best practices.
 
 ## Documentation
 
