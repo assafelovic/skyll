@@ -48,9 +48,24 @@ class RelevanceRanker(Ranker):
         """Normalize text for matching: lowercase, replace separators with spaces."""
         return text.lower().replace("-", " ").replace("_", " ").replace("/", " ")
 
+    def _to_words(self, text: str) -> set[str]:
+        """Extract unique words from normalized text for whole-word matching."""
+        return set(self._normalize(text).split())
+
+    def _word_match_count(self, terms: list[str], word_set: set[str]) -> int:
+        """Count how many terms appear as whole words in the word set."""
+        return sum(1 for term in terms if term in word_set)
+
+    def _all_terms_in(self, terms: list[str], word_set: set[str]) -> bool:
+        """Check if all terms appear as whole words in the word set."""
+        return all(term in word_set for term in terms)
+
     def _compute_query_match(self, skill: "Skill", query: str) -> float:
         """
         Compute how well the skill matches the query (0-1 scale).
+        
+        Uses whole-word matching (not substring) to avoid false positives
+        like "search" matching "research".
         
         Checks multiple fields in priority order:
         1. Skill ID (strongest signal)
@@ -61,53 +76,50 @@ class RelevanceRanker(Ranker):
         if not query:
             return 0.0
         
-        query_lower = query.lower().strip()
-        query_terms = query_lower.split()
+        query_terms = query.lower().strip().split()
+        query_words = set(query_terms)
         
-        # Normalize skill fields
-        skill_id = self._normalize(skill.id)
-        skill_title = self._normalize(skill.title or "")
-        skill_desc = self._normalize(skill.description or "")
+        # Build word sets for each field (whole-word matching)
+        id_words = self._to_words(skill.id)
+        title_words = self._to_words(skill.title or "")
+        desc_words = self._to_words(skill.description or "")
         
         # --- ID matching (highest priority) ---
         
-        # Exact match on ID
-        if query_lower == skill_id or query_lower == skill.id.lower():
+        # Exact match on ID (normalized)
+        skill_id_normalized = self._normalize(skill.id)
+        query_normalized = query.lower().strip()
+        if query_normalized == skill_id_normalized or query_normalized == skill.id.lower():
             return 1.0
         
-        # Query terms fully contained in ID
-        if all(term in skill_id for term in query_terms):
+        # Query terms fully contained in ID words
+        if self._all_terms_in(query_terms, id_words):
             return 0.9
         
-        # ID contained in query (e.g., "gpt-researcher" in "gpt researcher deep research")
-        id_terms = skill_id.split()
-        if all(term in query_lower for term in id_terms):
+        # ID words fully contained in query (e.g., "gpt-researcher" in "gpt researcher deep research")
+        if self._all_terms_in(list(id_words), query_words):
             return 0.85
         
         # --- Title matching ---
         
-        # All query terms in title
-        if skill_title and all(term in skill_title for term in query_terms):
+        # All query terms in title words
+        if title_words and self._all_terms_in(query_terms, title_words):
             return 0.8
         
         # --- Compute scores from multiple signals, take the best ---
         best_score = 0.0
         
         # Partial ID + title matching
-        id_title_combined = f"{skill_id} {skill_title}"
-        matching_in_id_title = sum(
-            1 for term in query_terms if term in id_title_combined
-        )
+        id_title_words = id_words | title_words
+        matching_in_id_title = self._word_match_count(query_terms, id_title_words)
         if matching_in_id_title == len(query_terms):
             best_score = max(best_score, 0.75)
         elif matching_in_id_title > 0:
             id_title_score = 0.5 * (matching_in_id_title / len(query_terms))
             # Description boost when partial ID match exists
             desc_boost = 0.0
-            if skill_desc:
-                matching_in_desc = sum(
-                    1 for term in query_terms if term in skill_desc
-                )
+            if desc_words:
+                matching_in_desc = self._word_match_count(query_terms, desc_words)
                 if matching_in_desc > 0:
                     desc_boost = 0.2 * (matching_in_desc / len(query_terms))
             best_score = max(best_score, min(id_title_score + desc_boost, 0.7))
@@ -115,10 +127,8 @@ class RelevanceRanker(Ranker):
         # Description-only matching - if all query terms appear in the
         # description, the skill is genuinely about the topic even if the
         # ID doesn't match (e.g., "gpt-researcher" for "deep research")
-        if skill_desc:
-            matching_in_desc = sum(
-                1 for term in query_terms if term in skill_desc
-            )
+        if desc_words:
+            matching_in_desc = self._word_match_count(query_terms, desc_words)
             if matching_in_desc == len(query_terms):
                 best_score = max(best_score, 0.7)
             elif matching_in_desc > 0:
@@ -127,10 +137,8 @@ class RelevanceRanker(Ranker):
         # Content matching (weakest signal)
         # Only check first 2000 chars to avoid performance issues
         if skill.content and best_score < 0.15:
-            content_preview = self._normalize(skill.content[:2000])
-            matching_in_content = sum(
-                1 for term in query_terms if term in content_preview
-            )
+            content_words = self._to_words(skill.content[:2000])
+            matching_in_content = self._word_match_count(query_terms, content_words)
             if matching_in_content > 0:
                 best_score = max(best_score, 0.15 * (matching_in_content / len(query_terms)))
         

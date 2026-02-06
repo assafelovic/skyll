@@ -271,6 +271,7 @@ export default function Home() {
 
     setLoading(true);
     setError(null);
+    setResults(null);
 
     try {
       const params = new URLSearchParams({ q: query, limit: limit.toString() });
