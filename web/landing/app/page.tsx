@@ -262,6 +262,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<SearchResponse | null>(null);
+  const [searchTime, setSearchTime] = useState<number | null>(null);
 
   const handleSearch = async () => {
     if (!query.trim()) {
@@ -272,15 +273,18 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResults(null);
+    setSearchTime(null);
 
     try {
       const params = new URLSearchParams({ q: query, limit: limit.toString() });
       if (includeRefs) params.append("include_references", "true");
 
+      const start = performance.now();
       const response = await fetch(`${API_URL}/search?${params}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 
       const data: SearchResponse = await response.json();
+      setSearchTime(Math.round(performance.now() - start));
       setResults(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Search failed");
@@ -393,6 +397,9 @@ export default function Home() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8 max-w-3xl mx-auto w-full">
             {results.skills.length > 0 ? (
               <div className="space-y-6">
+                <p className="text-xs text-green-dark/60 text-right">
+                  {results.count} {results.count === 1 ? "result" : "results"}{searchTime !== null && <> in {searchTime}ms</>}
+                </p>
                 {results.skills.map((skill, index) => (
                   <SkillCard key={skill.id} skill={skill} index={index} />
                 ))}
