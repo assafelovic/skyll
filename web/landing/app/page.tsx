@@ -438,8 +438,8 @@ export default function Home() {
                 </div>
                 <h3 className="font-bold text-lg mb-2">Hosted MCP</h3>
                 <p className="text-sm text-green-dark leading-relaxed">
-                  Add Skyll to any MCP-compatible client. No installation required - 
-                  just add the URL and your agent can search, discover, and learn skills on demand.
+                  Add Skyll to any MCP-compatible client, or install as a skill for agents 
+                  that support it. Either way, your agent can search, discover, and learn skills on demand.
                 </p>
               </div>
               <div className="md:w-1/2 space-y-3">
@@ -478,8 +478,8 @@ export default function Home() {
                 </div>
                 <h3 className="font-bold text-lg mb-2">Client Library</h3>
                 <p className="text-sm text-green-dark leading-relaxed">
-                  Use the Python client for typed, async access. Uses the hosted API by default - 
-                  no server setup required.
+                  Use the Python client for typed, async access. Perfect for custom agents 
+                  where context engineering matters.
                 </p>
               </div>
               <div className="md:w-1/2 space-y-3">
