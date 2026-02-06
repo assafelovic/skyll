@@ -442,18 +442,24 @@ export default function Home() {
                   just add the URL and your agent can search, discover, and learn skills on demand.
                 </p>
               </div>
-              <div className="md:w-1/2">
-                <p className="text-xs text-green-dark mb-2 font-medium">Add to your MCP config:</p>
-                <CopyableCode 
-                  code={`{
+              <div className="md:w-1/2 space-y-3">
+                <div>
+                  <p className="text-xs text-green-dark mb-2 font-medium">Add to your MCP config:</p>
+                  <CopyableCode 
+                    code={`{
   "mcpServers": {
     "skyll": {
       "url": "https://api.skyll.app/mcp"
     }
   }
 }`}
-                  className="text-xs"
-                />
+                    className="text-xs"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Or add as a skill:</p>
+                  <CopyableCode code="npx skills add assafelovic/skyll" className="text-xs" />
+                </div>
               </div>
             </div>
           </motion.div>
@@ -469,17 +475,16 @@ export default function Home() {
               <div className="md:w-1/2">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="bg-blue px-3 py-1 border-2 border-ink font-bold text-sm">Python</span>
-                  <span className="bg-green-mid px-3 py-1 border-2 border-ink font-bold text-sm">Skill</span>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Client Library & Meta-Skill</h3>
+                <h3 className="font-bold text-lg mb-2">Client Library</h3>
                 <p className="text-sm text-green-dark leading-relaxed">
-                  Use the Python client for typed, async access. Or install Skyll as a <strong>meta-skill</strong> - 
-                  this teaches your agent how to discover and use other skills autonomously.
+                  Use the Python client for typed, async access. Uses the hosted API by default - 
+                  no server setup required.
                 </p>
               </div>
               <div className="md:w-1/2 space-y-3">
                 <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Install Python client:</p>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Install:</p>
                   <CopyableCode code="pip install skyll" className="text-xs" />
                 </div>
                 <CopyableCode 
@@ -489,10 +494,6 @@ async with Skyll() as client:
     skills = await client.search("react")`}
                   className="text-xs"
                 />
-                <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Or add as a skill:</p>
-                  <CopyableCode code="npx skills add assafelovic/skyll" className="text-xs" />
-                </div>
               </div>
             </div>
           </motion.div>
@@ -544,14 +545,13 @@ async with Skyll() as client:
                 Skills are gathered in realtime from multiple sources (skills.sh, curated registry, and more), 
                 so results are always fresh. Each skill is ranked <strong>0-100</strong> based on: <strong>content 
                 availability</strong> (40 pts), <strong>query match</strong> (30 pts), <strong>popularity</strong> (15 pts), 
-                and <strong>references</strong> (15 pts). Query matching goes beyond just the skill name - it checks 
-                the title, description, and content too, so relevant skills surface even if their name doesn&apos;t 
-                exactly match your search.
+                and <strong>references</strong> (15 pts).
               </p>
               <p className="text-sm text-green-dark leading-relaxed mb-2">
-                Skills from the curated registry get a small boost (up to 8 pts) scaled by how relevant they are 
-                to your query. These are hand-picked for quality, so the boost helps surface trusted skills - but 
-                it&apos;s never enough to override real popularity and relevance signals.
+                Skills from the community-curated registry get a small boost (up to 8 pts) scaled by how relevant 
+                they are to your query. Think of it like a Wikipedia for skills - open for anyone to contribute, 
+                validated by the community. The boost helps surface trusted skills while preserving real 
+                popularity and relevance signals.
               </p>
               <p className="text-xs text-green-dark/70 italic">
                 Semantic search with embeddings coming soon.
