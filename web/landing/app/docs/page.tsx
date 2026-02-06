@@ -864,7 +864,7 @@ self._ranker = MyCustomRanker()`} />
 
             <div>
               <h3 className="font-bold text-xl mb-3">Example: add_skill</h3>
-              <p className="text-green-dark mb-3">The simplest way for agents to fetch skills:</p>
+              <p className="text-green-dark mb-3">The simplest way for agents to learn skills:</p>
               <CodeBlock code={`# Simple name - searches and returns best match
 add_skill("react-best-practices")
 

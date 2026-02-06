@@ -418,7 +418,7 @@ export default function Home() {
           <h2 className="font-mono font-bold text-3xl mb-3">Get Started</h2>
           <p className="text-green-dark max-w-2xl mx-auto">
             Skyll aggregates skills from multiple sources (like skills.sh, registries, and more), ranks them by relevance, and returns the best matches. 
-            Agents discover and fetch skills at runtime - no pre-installation needed.
+            Agents discover and learn skills autonomously.
           </p>
         </motion.div>
 
@@ -439,7 +439,7 @@ export default function Home() {
                 <h3 className="font-bold text-lg mb-2">Hosted MCP</h3>
                 <p className="text-sm text-green-dark leading-relaxed">
                   Add Skyll to any MCP-compatible client. No installation required - 
-                  just add the URL and your agent can search, discover, and fetch skills on demand.
+                  just add the URL and your agent can search, discover, and learn skills on demand.
                 </p>
               </div>
               <div className="md:w-1/2">
@@ -454,37 +454,6 @@ export default function Home() {
 }`}
                   className="text-xs"
                 />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* REST API */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="card-brutal p-6"
-          >
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="md:w-1/2">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">REST API</span>
-                </div>
-                <h3 className="font-bold text-lg mb-2">Direct API Access</h3>
-                <p className="text-sm text-green-dark leading-relaxed">
-                  Call the API from any language or framework. Fetch the latest version of any skill 
-                  by name, or search across all sources with a single request.
-                </p>
-              </div>
-              <div className="md:w-1/2 space-y-3">
-                <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Get a specific skill:</p>
-                  <CopyableCode code={`curl "https://api.skyll.app/skill/tavily-ai/skills/search"`} className="text-xs" />
-                </div>
-                <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Search for skills:</p>
-                  <CopyableCode code={`curl "https://api.skyll.app/search?q=testing&limit=5"`} className="text-xs" />
-                </div>
               </div>
             </div>
           </motion.div>
@@ -527,6 +496,37 @@ async with Skyll() as client:
               </div>
             </div>
           </motion.div>
+
+          {/* REST API */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="card-brutal p-6"
+          >
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="md:w-1/2">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">REST API</span>
+                </div>
+                <h3 className="font-bold text-lg mb-2">Direct API Access</h3>
+                <p className="text-sm text-green-dark leading-relaxed">
+                  Call the API from any language or framework. Fetch the latest version of any skill 
+                  by name, or search across all sources with a single request.
+                </p>
+              </div>
+              <div className="md:w-1/2 space-y-3">
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Get a specific skill:</p>
+                  <CopyableCode code={`curl "https://api.skyll.app/skill/tavily-ai/skills/search"`} className="text-xs" />
+                </div>
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Search for skills:</p>
+                  <CopyableCode code={`curl "https://api.skyll.app/search?q=testing&limit=5"`} className="text-xs" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
         {/* Scoring */}
@@ -540,12 +540,18 @@ async with Skyll() as client:
             <Star className="w-6 h-6 mt-1 flex-shrink-0" />
             <div>
               <h3 className="font-bold text-lg mb-2">How Scoring Works</h3>
+              <p className="text-sm text-green-dark leading-relaxed mb-3">
+                Skills are gathered in realtime from multiple sources (skills.sh, curated registry, and more), 
+                so results are always fresh. Each skill is ranked <strong>0-100</strong> based on: <strong>content 
+                availability</strong> (40 pts), <strong>query match</strong> (30 pts), <strong>popularity</strong> (15 pts), 
+                and <strong>references</strong> (15 pts). Query matching goes beyond just the skill name - it checks 
+                the title, description, and content too, so relevant skills surface even if their name doesn&apos;t 
+                exactly match your search.
+              </p>
               <p className="text-sm text-green-dark leading-relaxed mb-2">
-                Skills are fetched in realtime from top sources like <strong>skills.sh</strong> and the curated registry, so results are always fresh. 
-                Each skill is ranked 0-100 based on: <strong>content availability</strong> (40 pts), 
-                <strong>query match</strong> (30 pts - matches against ID, title, description, and content), 
-                <strong>popularity</strong> (15 pts), and <strong>references</strong> (15 pts). 
-                Curated registry skills get a small relevance-scaled boost (up to 8 pts).
+                Skills from the curated registry get a small boost (up to 8 pts) scaled by how relevant they are 
+                to your query. These are hand-picked for quality, so the boost helps surface trusted skills - but 
+                it&apos;s never enough to override real popularity and relevance signals.
               </p>
               <p className="text-xs text-green-dark/70 italic">
                 Semantic search with embeddings coming soon.
