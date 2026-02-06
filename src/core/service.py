@@ -210,6 +210,7 @@ class SkillSearchService:
                 metadata=parsed.metadata,
                 references=references,
                 fetch_error=None,
+                source_registry=search_result.source_registry,
             )
         else:
             return Skill(
@@ -223,6 +224,7 @@ class SkillSearchService:
                 content=None,
                 references=references,
                 fetch_error=fetch_error,
+                source_registry=search_result.source_registry,
             )
 
     async def _process_search_result(
@@ -257,6 +259,7 @@ class SkillSearchService:
         Search all enabled sources and deduplicate results.
         
         Results from skills.sh take priority (they have install counts).
+        Does NOT sort or truncate - the ranker handles final ordering.
         """
         # Search all sources in parallel
         search_tasks = [
@@ -286,12 +289,10 @@ class SkillSearchService:
                     # Prefer skills.sh because it has install counts
                     seen_keys[key] = result
         
-        # Sort by install count (skills.sh results will have this)
         deduplicated = list(seen_keys.values())
-        deduplicated.sort(key=lambda r: r.installs, reverse=True)
         
         logger.debug(f"Found {len(deduplicated)} unique skills from {len(self._sources)} sources")
-        return deduplicated[:limit]
+        return deduplicated
 
     async def search(
         self,
@@ -314,8 +315,13 @@ class SkillSearchService:
         Returns:
             SearchResponse with matching skills sorted by relevance
         """
+        # Over-fetch from sources (2x limit) to give the ranker a larger
+        # candidate pool, then trim after ranking. This improves result
+        # quality since upstream search may not order by our relevance criteria.
+        fetch_limit = max(limit * 2, 15)
+        
         # Search all sources and deduplicate
-        search_results = await self._search_all_sources(query, limit=limit)
+        search_results = await self._search_all_sources(query, limit=fetch_limit)
 
         if not search_results:
             return SearchResponse(query=query, count=0, skills=[])
@@ -333,6 +339,9 @@ class SkillSearchService:
             query=query,
             include_references=include_references,
         )
+
+        # Trim to requested limit after ranking
+        ranked_skills = ranked_skills[:limit]
 
         return SearchResponse(
             query=query,

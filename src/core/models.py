@@ -149,6 +149,11 @@ class Skill(BaseModel):
         default=None,
         description="Error message if content fetch failed",
     )
+    source_registry: str | None = Field(
+        default=None,
+        description="Which registry this skill came from (internal, not exposed in API)",
+        exclude=True,
+    )
 
     @property
     def has_content(self) -> bool:
