@@ -36,13 +36,26 @@ Skyll also detects sibling `.md` files in the same directory as SKILL.md.
 
 ```bash
 # Include references in search results
-curl "http://localhost:8000/search?q=react+native&include_references=true"
+curl "https://api.skyll.app/search?q=react+native&include_references=true"
+
+# Add skill with references
+curl "https://api.skyll.app/skill/react-best-practices?include_references=true"
 
 # Fetch a specific skill with references
-curl "http://localhost:8000/skills/owner/repo/skill-id?include_references=true"
+curl "https://api.skyll.app/skills/owner/repo/skill-id?include_references=true"
 ```
 
 ### MCP
+
+```json
+{
+  "name": "add_skill",
+  "arguments": {
+    "name": "react-best-practices",
+    "include_references": true
+  }
+}
+```
 
 ```json
 {

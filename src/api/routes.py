@@ -231,6 +231,106 @@ async def health_check(
 
 
 @router.get(
+    "/skill/{name:path}",
+    response_model=Skill,
+    responses={
+        404: {"model": ErrorResponse, "description": "Skill not found"},
+    },
+    summary="Add/Get skill by name",
+    description="""
+Fetch the latest version of a skill by name. Similar to `npx skills add <name>`.
+
+Supports multiple formats:
+- Simple name: `/skill/react-best-practices` (searches and returns top match)
+- Full path: `/skill/vercel-labs/agent-skills/vercel-react-best-practices`
+
+This endpoint always fetches fresh content from GitHub, ensuring you have
+the latest version of the skill.
+
+**Example:**
+```bash
+# Get by simple name (searches for best match)
+curl "https://api.skyll.app/skill/react-best-practices"
+
+# Get by full path
+curl "https://api.skyll.app/skill/anthropics/skills/frontend-design"
+```
+""",
+)
+async def add_skill(
+    service: Annotated[SkillSearchService, Depends(get_service)],
+    name: str,
+    include_references: Annotated[
+        bool,
+        Query(description="Fetch reference files from references/ or resources/ directories"),
+    ] = False,
+) -> Skill:
+    """
+    Add/get a skill by name.
+    
+    Fetches the latest version of a skill, either by searching for a simple name
+    or by direct path lookup.
+    """
+    if not name or not name.strip():
+        raise HTTPException(status_code=400, detail="Skill name cannot be empty")
+    
+    name = name.strip()
+    parts = name.split("/")
+    
+    try:
+        if len(parts) >= 3:
+            # Full path: owner/repo/skill_id
+            source = f"{parts[0]}/{parts[1]}"
+            skill_id = "/".join(parts[2:])
+            
+            skill = await service.get_skill(
+                source, skill_id, include_references=include_references
+            )
+            
+            if skill is None:
+                # Try searching as fallback
+                response = await service.search(
+                    query=name,
+                    limit=1,
+                    include_content=True,
+                    include_references=include_references,
+                )
+                if response.count == 0:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Skill not found: {name}",
+                    )
+                skill = response.skills[0]
+        else:
+            # Simple name: search for it
+            response = await service.search(
+                query=name,
+                limit=1,
+                include_content=True,
+                include_references=include_references,
+            )
+            
+            if response.count == 0:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"No skill found matching: {name}",
+                )
+            
+            skill = response.skills[0]
+        
+        return skill
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Add skill failed: {e}")
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to fetch skill: {e}",
+        )
+
+
+@router.get(
     "/",
     summary="API info",
     description="Get API information and available endpoints.",
@@ -245,8 +345,10 @@ async def root() -> dict:
         "endpoints": {
             "search_get": "GET /search?q={query}&limit={limit}&include_content={bool}",
             "search_post": "POST /search",
+            "add_skill": "GET /skill/{name}",
             "get_skill": "GET /skills/{source}/{skill_id}",
             "health": "GET /health",
+            "mcp": "POST /mcp/",
         },
         "links": {
             "skills.sh": "https://skills.sh",

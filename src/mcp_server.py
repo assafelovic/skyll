@@ -353,6 +353,129 @@ def _register_tools(mcp: FastMCP) -> None:
             return {"error": str(e)}
 
     @mcp.tool()
+    async def add_skill(
+        name: str,
+        include_references: bool = False,
+        ctx: Context = None,
+    ) -> dict[str, Any]:
+        """
+        Add a skill by name. Fetches the latest version and returns content ready for injection.
+        
+        This is similar to `npx skills add <name>` but for runtime context injection.
+        The skill content is always fetched fresh from GitHub, ensuring you have the
+        latest version.
+        
+        Args:
+            name: Skill identifier. Supports multiple formats:
+                  - Simple name: "react-best-practices" (searches and returns top match)
+                  - Full path: "vercel-labs/agent-skills/react-best-practices"
+                  - Owner/repo format: "anthropics/skills/frontend-design"
+            include_references: If True, also fetch reference files from the skill's
+                              references/ or resources/ directories.
+        
+        Returns:
+            A skill object with:
+            - id: Skill identifier
+            - title: Human-readable name
+            - description: What the skill does
+            - source: GitHub owner/repo
+            - install_count: Number of installs (popularity indicator)
+            - content: Full markdown instructions (inject this into your context)
+            - refs: URLs to view on skills.sh and GitHub
+            
+            Or {"error": "..."} if the skill is not found.
+        
+        Examples:
+            add_skill("react-best-practices")
+            add_skill("frontend-design")
+            add_skill("vercel-labs/agent-skills/vercel-react-best-practices")
+            add_skill("anthropics/skills/mcp-builder")
+        """
+        if not name or not name.strip():
+            return {"error": "Skill name cannot be empty."}
+        
+        name = name.strip()
+        
+        service = _get_service(mcp)
+        if service is None:
+            return {"error": "Service not initialized"}
+
+        if ctx:
+            await ctx.info(f"Adding skill: {name}")
+        
+        try:
+            # Check if it's a full path (owner/repo/skill_id format)
+            parts = name.split("/")
+            
+            if len(parts) >= 3:
+                # Full path: owner/repo/skill_id or owner/repo/path/to/skill_id
+                source = f"{parts[0]}/{parts[1]}"
+                skill_id = "/".join(parts[2:])
+                
+                if ctx:
+                    await ctx.info(f"Fetching skill from {source}/{skill_id}")
+                
+                skill = await service.get_skill(
+                    source, skill_id, include_references=include_references
+                )
+                
+                if skill is None:
+                    # Try searching as fallback
+                    if ctx:
+                        await ctx.info(f"Not found at path, searching for: {name}")
+                    response = await service.search(
+                        query=name,
+                        limit=1,
+                        include_content=True,
+                        include_references=include_references,
+                    )
+                    if response.count == 0:
+                        return {"error": f"Skill not found: {name}"}
+                    skill = response.skills[0]
+            else:
+                # Simple name: search for it
+                if ctx:
+                    await ctx.info(f"Searching for skill: {name}")
+                
+                response = await service.search(
+                    query=name,
+                    limit=1,
+                    include_content=True,
+                    include_references=include_references,
+                )
+                
+                if response.count == 0:
+                    return {"error": f"No skill found matching: {name}"}
+                
+                skill = response.skills[0]
+            
+            if ctx:
+                await ctx.info(f"Found: {skill.title} ({skill.install_count:,} installs)")
+            
+            return {
+                "id": skill.id,
+                "title": skill.title,
+                "description": skill.description,
+                "source": skill.source,
+                "install_count": skill.install_count,
+                "content": skill.content,
+                "refs": {
+                    "skills_sh": skill.refs.skills_sh,
+                    "github": skill.refs.github,
+                },
+                "references": [
+                    {
+                        "name": r.name,
+                        "content": r.content,
+                    }
+                    for r in skill.references
+                ] if skill.references else [],
+            }
+        except Exception as e:
+            logger.error(f"Add skill failed: {e}")
+            return {"error": str(e)}
+
+    @mcp.tool()
     async def get_cache_stats(ctx: Context = None) -> dict[str, Any]:
         """
         Get cache statistics for debugging and monitoring.

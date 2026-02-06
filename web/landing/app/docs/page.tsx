@@ -355,6 +355,27 @@ async with Skyll() as client:
               </div>
             </div>
 
+            {/* Add skill endpoint */}
+            <div className="card-brutal overflow-hidden">
+              <div className="bg-orange p-4 border-b-4 border-ink flex items-center gap-3">
+                <span className="bg-ink text-cream px-2 py-1 font-bold text-sm">GET</span>
+                <code className="font-bold">/skill/&#123;name&#125;</code>
+              </div>
+              <div className="p-6">
+                <p className="mb-4">Get the latest version of a skill by name. Similar to <code className="bg-ink text-green-light px-1">npx skills add</code> but for runtime context injection.</p>
+                
+                <h4 className="font-bold mb-2">Simple Name (Searches for Best Match)</h4>
+                <CodeBlock code={`curl "https://api.skyll.app/skill/react-best-practices"`} />
+                
+                <h4 className="font-bold mb-2 mt-6">Full Path (Direct Lookup)</h4>
+                <CodeBlock code={`curl "https://api.skyll.app/skill/vercel-labs/agent-skills/vercel-react-best-practices"`} />
+                
+                <p className="mt-4 text-sm text-green-dark">
+                  Always fetches fresh content from GitHub, ensuring you have the latest version.
+                </p>
+              </div>
+            </div>
+
             {/* Get skill endpoint */}
             <div className="card-brutal overflow-hidden">
               <div className="bg-blue p-4 border-b-4 border-ink flex items-center gap-3">
@@ -744,14 +765,67 @@ self._ranker = MyCustomRanker()`} />
 
           <div className="card-brutal p-6 mb-6">
             <p className="text-lg leading-relaxed">
-              Skyll can run as an <strong>MCP (Model Context Protocol)</strong> server, making it available as a tool 
-              for Claude Desktop, Cursor, and other MCP-compatible clients.
+              Skyll provides a <strong>hosted MCP server</strong> at <code className="bg-ink text-green-light px-2 py-1">api.skyll.app/mcp</code> - 
+              no installation required. Works with Claude Desktop, Cursor, and other MCP-compatible clients.
             </p>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h3 className="font-bold text-xl mb-3">Claude Desktop Configuration</h3>
+              <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
+                <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm">Recommended</span>
+                Hosted MCP
+              </h3>
+              <CodeBlock 
+                title="claude_desktop_config.json"
+                code={`{
+  "mcpServers": {
+    "skyll": {
+      "url": "https://api.skyll.app/mcp"
+    }
+  }
+}`} 
+              />
+              <p className="mt-3 text-sm text-green-dark">
+                That&apos;s it! The hosted server is always up-to-date with the latest features.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-3">Available MCP Tools</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="card-brutal p-4">
+                  <h4 className="font-bold mb-2 font-mono">add_skill</h4>
+                  <p className="text-sm text-green-dark">Get a skill by name. Like <code className="bg-ink text-green-light px-1">npx skills add</code> for runtime.</p>
+                </div>
+                <div className="card-brutal p-4">
+                  <h4 className="font-bold mb-2 font-mono">search_skills</h4>
+                  <p className="text-sm text-green-dark">Search for skills by query. Returns ranked results.</p>
+                </div>
+                <div className="card-brutal p-4">
+                  <h4 className="font-bold mb-2 font-mono">get_skill</h4>
+                  <p className="text-sm text-green-dark">Get a specific skill by source and ID.</p>
+                </div>
+                <div className="card-brutal p-4">
+                  <h4 className="font-bold mb-2 font-mono">get_cache_stats</h4>
+                  <p className="text-sm text-green-dark">Get cache statistics for debugging.</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-3">Example: add_skill</h3>
+              <p className="text-green-dark mb-3">The simplest way for agents to fetch skills:</p>
+              <CodeBlock code={`# Simple name - searches and returns best match
+add_skill("react-best-practices")
+
+# Full path - direct lookup
+add_skill("vercel-labs/agent-skills/vercel-react-best-practices")`} />
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-3">Self-Hosted MCP</h3>
+              <p className="text-green-dark mb-3">If you prefer to run your own MCP server:</p>
               <CodeBlock 
                 title="claude_desktop_config.json"
                 code={`{
@@ -771,22 +845,11 @@ self._ranker = MyCustomRanker()`} />
               <CodeBlock code={`# Stdio transport (for MCP clients)
 python -m src.mcp_server
 
-# SSE transport (for web clients)
-python -m src.mcp_server --transport sse --port 8080`} />
-            </div>
+# HTTP transport (for web clients)
+python -m src.mcp_server --transport http --port 8080
 
-            <div>
-              <h3 className="font-bold text-xl mb-3">Available MCP Tools</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="card-brutal p-4">
-                  <h4 className="font-bold mb-2 font-mono">search_skills</h4>
-                  <p className="text-sm text-green-dark">Search for skills by query. Returns ranked results.</p>
-                </div>
-                <div className="card-brutal p-4">
-                  <h4 className="font-bold mb-2 font-mono">get_skill</h4>
-                  <p className="text-sm text-green-dark">Get a specific skill by source and ID.</p>
-                </div>
-              </div>
+# SSE transport (legacy)
+python -m src.mcp_server --transport sse --port 8080`} />
             </div>
           </div>
         </Section>

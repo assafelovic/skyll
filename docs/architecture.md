@@ -189,8 +189,12 @@ src/
 
 ## MCP Server
 
-Uses the official [Model Context Protocol SDK](https://github.com/modelcontextprotocol/python-sdk):
+Built with [FastMCP](https://github.com/jlowin/fastmcp):
 
+- **Hosted endpoint**: `https://api.skyll.app/mcp` - no installation required
 - **stdio transport**: For Claude Desktop, Cursor, and local agents
-- **SSE transport**: For web-based MCP clients
-- **Tools**: `search_skills`, `get_skill`, `get_cache_stats`
+- **HTTP transport**: For web-based MCP clients and hosted deployments (recommended)
+- **SSE transport**: Legacy support for older web clients
+- **Tools**: `search_skills`, `add_skill`, `get_skill`, `get_cache_stats`
+
+The `add_skill` tool provides a simplified interface for fetching skills by name, similar to `npx skills add` but for runtime context injection.

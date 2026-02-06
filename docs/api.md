@@ -85,7 +85,9 @@ The hosted API is available at `https://api.skyll.app`. For self-hosted, replace
 |--------|----------|-------------|
 | GET | `/search?q={query}` | Search skills |
 | POST | `/search` | Search skills (JSON body) |
-| GET | `/skills/{source}/{skill_id}` | Get specific skill |
+| GET | `/skill/{name}` | Get skill by name (latest version) |
+| GET | `/skills/{source}/{skill_id}` | Get specific skill by source/ID |
+| POST | `/mcp/` | MCP server endpoint |
 | GET | `/health` | Health check |
 | GET | `/docs` | OpenAPI documentation |
 
@@ -119,6 +121,24 @@ curl -X POST "https://api.skyll.app/search" \
 curl "https://api.skyll.app/health"
 ```
 
+### Add Skill by Name
+
+The `/skill/{name}` endpoint fetches the latest version of a skill by name. Similar to `npx skills add` but for runtime context injection.
+
+```bash
+# Get by simple name (searches for best match)
+curl "https://api.skyll.app/skill/react-best-practices"
+
+# Get by full path (direct lookup)
+curl "https://api.skyll.app/skill/vercel-labs/agent-skills/vercel-react-best-practices"
+curl "https://api.skyll.app/skill/anthropics/skills/frontend-design"
+
+# Include reference files
+curl "https://api.skyll.app/skill/react-best-practices?include_references=true"
+```
+
+This endpoint always fetches fresh content from GitHub, ensuring you have the latest version.
+
 ### Self-Hosted Examples
 
 ```bash
@@ -127,19 +147,37 @@ uvicorn src.main:app --port 8000
 
 # Then use localhost
 curl "http://localhost:8000/search?q=react+performance&limit=5"
+curl "http://localhost:8000/skill/react-best-practices"
 ```
 
 Interactive API docs: [api.skyll.app/docs](https://api.skyll.app/docs)
 
 ## MCP Server
 
-Built with the official [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk).
+Built with [FastMCP](https://github.com/jlowin/fastmcp) - a framework for building MCP servers.
+
+### Hosted MCP (Recommended)
+
+For Claude Desktop, Cursor, or other MCP clients, add to your configuration:
+
+```json
+{
+  "mcpServers": {
+    "skyll": {
+      "url": "https://api.skyll.app/mcp"
+    }
+  }
+}
+```
+
+No installation required - the hosted server is always up-to-date.
 
 ### Tools
 
 | Tool | Description |
 |------|-------------|
 | `search_skills` | Search for skills by query |
+| `add_skill` | Get a skill by name (like `npx skills add`) |
 | `get_skill` | Get a specific skill by source and ID |
 | `get_cache_stats` | Get cache hit/miss statistics |
 
@@ -147,7 +185,13 @@ Built with the official [MCP Python SDK](https://github.com/modelcontextprotocol
 
 **search_skills:**
 - `query` (string, required): Search query
-- `limit` (int, default 10): Maximum results
+- `limit` (int, default 5): Maximum results
+- `include_references` (bool, default false): Include reference files
+
+**add_skill:**
+- `name` (string, required): Skill name or full path. Supports:
+  - Simple name: `"react-best-practices"` (searches and returns top match)
+  - Full path: `"vercel-labs/agent-skills/vercel-react-best-practices"`
 - `include_references` (bool, default false): Include reference files
 
 **get_skill:**
@@ -155,7 +199,16 @@ Built with the official [MCP Python SDK](https://github.com/modelcontextprotocol
 - `skill_id` (string, required): Skill identifier
 - `include_references` (bool, default false): Include reference files
 
-### Example Tool Call
+### Example Tool Calls
+
+```json
+{
+  "name": "add_skill",
+  "arguments": {
+    "name": "react-best-practices"
+  }
+}
+```
 
 ```json
 {
@@ -168,6 +221,22 @@ Built with the official [MCP Python SDK](https://github.com/modelcontextprotocol
 }
 ```
 
+### Self-Hosted MCP
+
+If you prefer to run your own MCP server:
+
+```json
+{
+  "mcpServers": {
+    "skyll": {
+      "command": "/path/to/skyll/venv/bin/python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/path/to/skyll"
+    }
+  }
+}
+```
+
 ### Transport Options
 
 **stdio** (default, for Claude Desktop and Cursor):
@@ -175,7 +244,12 @@ Built with the official [MCP Python SDK](https://github.com/modelcontextprotocol
 python -m src.mcp_server
 ```
 
-**SSE** (for web clients):
+**HTTP** (for web clients and hosted deployments):
+```bash
+python -m src.mcp_server --transport http --port 8080
+```
+
+**SSE** (legacy, for older web clients):
 ```bash
 python -m src.mcp_server --transport sse --port 8080
 ```

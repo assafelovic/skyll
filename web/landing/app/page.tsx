@@ -421,11 +421,36 @@ export default function Home() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
-          {/* Skills.sh */}
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
+          {/* MCP */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="card-brutal p-6"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-pink px-3 py-1 border-2 border-ink font-bold text-sm">MCP</span>
+            </div>
+            <p className="text-xs text-green-dark mb-4">
+              For Claude Desktop, Cursor, and other MCP clients
+            </p>
+            <CopyableCode 
+              code={`{
+  "mcpServers": {
+    "skyll": {
+      "url": "https://api.skyll.app/mcp"
+    }
+  }
+}`}
+              className="text-xs"
+            />
+          </motion.div>
+
+          {/* Skills.sh */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="card-brutal p-6"
           >

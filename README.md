@@ -91,8 +91,17 @@ Uses the hosted API at `api.skyll.app` by default - no server setup required.
 For other languages or direct integration, call the API directly:
 
 ```bash
+# Search for skills
 curl "https://api.skyll.app/search?q=react+performance&limit=5"
+
+# Get a specific skill by name (always fetches latest version)
+curl "https://api.skyll.app/skill/react-best-practices"
+
+# Get by full path
+curl "https://api.skyll.app/skill/vercel-labs/agent-skills/vercel-react-best-practices"
 ```
+
+The `/skill/{name}` endpoint is similar to `npx skills add` - it returns the latest version of a skill, ensuring your agents always have up-to-date instructions.
 
 Interactive docs: [api.skyll.app/docs](https://api.skyll.app/docs)
 
@@ -156,7 +165,24 @@ For Claude Desktop, Cursor, or other MCP clients, add to your configuration:
 }
 ```
 
-That's it! The hosted server provides the same tools as the self-hosted version.
+That's it! The hosted server provides the following MCP tools:
+
+| Tool | Description |
+|------|-------------|
+| `search_skills` | Search for skills by natural language query |
+| `add_skill` | Get a skill by name (like `npx skills add`) |
+| `get_skill` | Get a specific skill by source/id |
+| `get_cache_stats` | Get cache statistics |
+
+The `add_skill` tool is the simplest way for agents to fetch skills:
+
+```python
+# Simple name - searches and returns best match
+add_skill("react-best-practices")
+
+# Full path - direct lookup
+add_skill("vercel-labs/agent-skills/vercel-react-best-practices")
+```
 
 ### Self-Hosted MCP
 
