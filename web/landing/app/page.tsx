@@ -421,75 +421,142 @@ export default function Home() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="space-y-6 mb-10">
           {/* MCP */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="card-brutal p-6"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-pink px-3 py-1 border-2 border-ink font-bold text-sm">MCP</span>
-            </div>
-            <p className="text-xs text-green-dark mb-4">
-              For Claude Desktop, Cursor, and other MCP clients
-            </p>
-            <CopyableCode 
-              code={`{
-  "mcpServers": {
-    "skyll": {
-      "url": "https://api.skyll.app/mcp"
-    }
-  }
-}`}
-              className="text-xs"
-            />
-          </motion.div>
-
-          {/* Skills.sh */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="card-brutal p-6"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-green-mid px-3 py-1 border-2 border-ink font-bold text-sm">skills.sh</span>
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="md:w-1/2">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="bg-pink px-3 py-1 border-2 border-ink font-bold text-sm">MCP Server</span>
+                  <span className="text-xs text-green-dark">Recommended</span>
+                </div>
+                <h3 className="font-bold text-lg mb-2">Hosted MCP for Claude & Cursor</h3>
+                <p className="text-sm text-green-dark mb-4 leading-relaxed">
+                  Add Skyll to Claude Desktop, Cursor, or any MCP-compatible client. No installation required - 
+                  just add the URL to your config and your agent gets access to <strong>4 tools</strong>:
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">add_skill</span>
+                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">search_skills</span>
+                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">get_skill</span>
+                  <span className="text-xs bg-cream border-2 border-ink px-2 py-1 font-mono">get_cache_stats</span>
+                </div>
+                <p className="text-xs text-green-dark">
+                  The <code className="bg-ink text-green-light px-1">add_skill</code> tool lets agents fetch skills by name - 
+                  like <code className="bg-ink text-green-light px-1">npx skills add</code> but at runtime.
+                </p>
+              </div>
+              <div className="md:w-1/2">
+                <p className="text-xs text-green-dark mb-2 font-medium">Add to your MCP config:</p>
+                <CopyableCode 
+                  code={`{
+  "mcpServers": {
+    "skyll": {
+      "url": "https://api.skyll.app/mcp"
+    }
+  }
+}`}
+                  className="text-xs"
+                />
+              </div>
             </div>
-            <p className="text-xs text-green-dark mb-4">
-              Add as a skill so agents can discover other skills on demand
-            </p>
-            <CopyableCode code="npx skills add assafelovic/skyll" />
-            <p className="mt-4 text-xs text-green-dark">
-              View on{" "}
-              <a href="https://skills.sh/assafelovic/skyll/skyll" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
-                skills.sh
-              </a>
-            </p>
           </motion.div>
 
-          {/* Python */}
+          {/* REST API */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="card-brutal p-6"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">Python</span>
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="md:w-1/2">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">REST API</span>
+                </div>
+                <h3 className="font-bold text-lg mb-2">Direct API Access</h3>
+                <p className="text-sm text-green-dark mb-4 leading-relaxed">
+                  Call the API directly from any language or framework. Get the <strong>latest version</strong> of any skill 
+                  with a simple GET request - perfect for custom agents and integrations.
+                </p>
+                <div className="space-y-2 text-sm text-green-dark">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-green-mid px-2 py-0.5 border border-ink text-xs font-bold">GET</span>
+                    <code className="text-xs">/skill/&#123;name&#125;</code>
+                    <span className="text-xs">- fetch by name</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-green-mid px-2 py-0.5 border border-ink text-xs font-bold">GET</span>
+                    <code className="text-xs">/search?q=&#123;query&#125;</code>
+                    <span className="text-xs">- search skills</span>
+                  </div>
+                </div>
+              </div>
+              <div className="md:w-1/2 space-y-3">
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Get skill by name:</p>
+                  <CopyableCode code={`curl "https://api.skyll.app/skill/react-best-practices"`} className="text-xs" />
+                </div>
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Search for skills:</p>
+                  <CopyableCode code={`curl "https://api.skyll.app/search?q=testing&limit=5"`} className="text-xs" />
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-green-dark mb-4">
-              Use the client library for programmatic access
-            </p>
-            <CopyableCode code="pip install skyll" className="text-sm mb-4" />
-            <CopyableCode 
-              code={`from skyll import Skyll
+          </motion.div>
+
+          {/* Python + skills.sh */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="card-brutal p-6"
+          >
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="md:w-1/2">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="bg-blue px-3 py-1 border-2 border-ink font-bold text-sm">Python</span>
+                  <span className="bg-green-mid px-3 py-1 border-2 border-ink font-bold text-sm">skills.sh</span>
+                </div>
+                <h3 className="font-bold text-lg mb-2">Client Library & Meta-Skill</h3>
+                <p className="text-sm text-green-dark mb-4 leading-relaxed">
+                  Use the Python client for typed, async access. Or install Skyll as a <strong>meta-skill</strong> via 
+                  skills.sh - this teaches your agent how to discover and use other skills autonomously.
+                </p>
+                <p className="text-xs text-green-dark">
+                  View on{" "}
+                  <a href="https://skills.sh/assafelovic/skyll/skyll" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink font-medium">
+                    skills.sh
+                  </a>
+                  {" · "}
+                  <a href="https://pypi.org/project/skyll/" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink font-medium">
+                    PyPI
+                  </a>
+                </p>
+              </div>
+              <div className="md:w-1/2 space-y-3">
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Install Python client:</p>
+                  <CopyableCode code="pip install skyll" className="text-xs" />
+                </div>
+                <div>
+                  <p className="text-xs text-green-dark mb-1 font-medium">Or add as a skill:</p>
+                  <CopyableCode code="npx skills add assafelovic/skyll" className="text-xs" />
+                </div>
+                <CopyableCode 
+                  code={`from skyll import Skyll
 
 async with Skyll() as client:
     skills = await client.search("react")`}
-              className="text-xs"
-            />
+                  className="text-xs"
+                />
+              </div>
+            </div>
           </motion.div>
         </div>
 
