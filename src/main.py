@@ -44,9 +44,10 @@ _service: SkillSearchService | None = None
 # Using stateless_http=True for better compatibility with load balancers and horizontal scaling
 _mcp_server = create_mcp_server()
 
-# Create MCP ASGI app for mounting - path="/" because we mount at /mcp prefix
+# Create MCP ASGI app with path="/mcp" - routes are included directly in the FastAPI app
+# (not mounted) to avoid Starlette's trailing slash redirect which breaks MCP clients.
 # stateless_http=True means each request creates a fresh context (no session affinity needed)
-_mcp_app = _mcp_server.http_app(path="/", stateless_http=True)
+_mcp_app = _mcp_server.http_app(path="/mcp", stateless_http=True)
 
 
 @asynccontextmanager
@@ -174,9 +175,12 @@ app.add_middleware(
 # Include API routes
 app.include_router(router)
 
-# Mount MCP server at /mcp endpoint
-# This enables MCP clients to connect via https://api.skyll.app/mcp
-app.mount("/mcp", _mcp_app)
+# Include MCP routes directly in the FastAPI app (instead of mounting).
+# Using app.mount("/mcp", _mcp_app) causes Starlette to issue a 307 redirect
+# from /mcp to /mcp/ (trailing slash), which MCP clients don't follow for POST
+# requests, causing connection timeouts. Including routes directly avoids this.
+# MCP clients connect via https://api.skyll.app/mcp
+app.routes.extend(_mcp_app.routes)
 
 
 def run():
