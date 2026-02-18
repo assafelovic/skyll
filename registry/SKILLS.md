@@ -117,6 +117,11 @@ Connect with external services and APIs.
 - git-pushing | mhattingpete/claude-skills-marketplace | engineering-workflow-plugin/skills/git-pushing | Automate git operations and repository interactions
 - review-implementing | mhattingpete/claude-skills-marketplace | engineering-workflow-plugin/skills/review-implementing | Evaluate code implementation plans and align with specs
 - test-fixing | mhattingpete/claude-skills-marketplace | engineering-workflow-plugin/skills/test-fixing | Detect failing tests and propose patches or fixes
+- vincent-wallet | HeyVincent-ai/agent-skills | wallet | Wallets for agents with policy controls (EVM + Solana) - https://heyvincent.ai
+- vincent-polymarket | HeyVincent-ai/agent-skills | polymarket | Trade Polymarket markets with policy-limited wallets - https://heyvincent.ai
+- vincent-trade-manager | HeyVincent-ai/agent-skills | trade-manager | Automated stop-loss and take-profit for Polymarket positions - https://heyvincent.ai
+- vincent-brave-search | HeyVincent-ai/agent-skills | brave-search | Web and news search via Vincent's Brave proxy - https://heyvincent.ai
+- vincent-twitter | HeyVincent-ai/agent-skills | twitter | Search tweets and profiles via Vincent's X/Twitter proxy - https://heyvincent.ai
 
 ## 🔒 Security
 
