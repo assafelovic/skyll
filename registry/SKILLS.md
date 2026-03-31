@@ -70,6 +70,7 @@ Brand management, lead generation, and business tools.
 - domain-brainstormer | anthropics/skills | skills/domain-name-brainstormer | Generate domain name ideas and check availability
 - internal-comms | ComposioHQ/awesome-claude-skills | internal-comms | Write internal communications, newsletters, and status reports
 - lead-research | anthropics/skills | skills/lead-research-assistant | Identify and qualify leads for sales outreach
+- missing-linkz | andrewlamamills-tech/missing-linkz | | Campaign link builder and pre-launch validator with UTM links and OG tag checks
 
 ## 📝 Writing & Communication
 
