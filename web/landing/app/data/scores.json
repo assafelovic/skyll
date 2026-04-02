@@ -1,270 +1,270 @@
 {
   "tavily-search": {
-    "relevance_score": 83.32,
-    "install_count": 3557
+    "relevance_score": 84.79,
+    "install_count": 7289
   },
   "gpt-researcher": {
-    "relevance_score": 94.74,
+    "relevance_score": 86.5,
     "install_count": 394
   },
   "mcp-builder": {
-    "relevance_score": 99.52,
+    "relevance_score": 91.93,
     "install_count": 7429
   },
   "connect-apps": {
-    "relevance_score": 81.36,
+    "relevance_score": 79.6,
     "install_count": 1071
   },
   "playwright-automation": {
-    "relevance_score": 93,
+    "relevance_score": 73.45,
     "install_count": 0
   },
   "test-driven-development": {
-    "relevance_score": 100,
+    "relevance_score": 89.19,
     "install_count": 37896
   },
   "skill-creator": {
-    "relevance_score": 100,
+    "relevance_score": 88.45,
     "install_count": 117804
   },
   "content-writer": {
-    "relevance_score": 89.05,
+    "relevance_score": 77.29,
     "install_count": 11
   },
   "canvas-design": {
-    "relevance_score": 88.58,
-    "install_count": 8
+    "relevance_score": 83.16,
+    "install_count": 28447
   },
   "tavily-extract": {
-    "relevance_score": 42.42,
+    "relevance_score": 82.45,
     "install_count": 2053
   },
   "artifacts-builder": {
-    "relevance_score": 81.42,
+    "relevance_score": 78.41,
     "install_count": 1110
   },
   "aws-skills": {
-    "relevance_score": 89.05,
-    "install_count": 11
+    "relevance_score": 72.1,
+    "install_count": 0
   },
   "tavily-crawl": {
-    "relevance_score": 42.37,
+    "relevance_score": 82.39,
     "install_count": 1987
   },
   "file-organizer": {
-    "relevance_score": 90.92,
-    "install_count": 37
+    "relevance_score": 79.79,
+    "install_count": 486
   },
   "webapp-testing": {
-    "relevance_score": 85,
+    "relevance_score": 84.87,
     "install_count": 36506
   },
   "software-architecture": {
-    "relevance_score": 87.92,
+    "relevance_score": 80.01,
     "install_count": 5
   },
   "d3-visualization": {
-    "relevance_score": 91.09,
+    "relevance_score": 83.61,
     "install_count": 41
   },
   "prompt-engineering": {
-    "relevance_score": 94.83,
+    "relevance_score": 87.5,
     "install_count": 416
   },
   "pdf": {
-    "relevance_score": 100,
+    "relevance_score": 92.7,
     "install_count": 56562
   },
   "resume-generator": {
-    "relevance_score": 77.27,
+    "relevance_score": 76.61,
     "install_count": 86
   },
   "brainstorming": {
-    "relevance_score": 92.43,
-    "install_count": 95
+    "relevance_score": 91.45,
+    "install_count": 81414
   },
   "root-cause-tracing": {
-    "relevance_score": 92.68,
+    "relevance_score": 83.82,
     "install_count": 111
   },
   "docx": {
-    "relevance_score": 96.07,
-    "install_count": 896
+    "relevance_score": 86.49,
+    "install_count": 44560
   },
   "xlsx": {
-    "relevance_score": 92.39,
-    "install_count": 588
+    "relevance_score": 85.29,
+    "install_count": 215
   },
   "threat-hunting": {
-    "relevance_score": 73.75,
-    "install_count": 9
+    "relevance_score": 36.7,
+    "install_count": 0
   },
   "subagent-development": {
-    "relevance_score": 89.41,
-    "install_count": 14
+    "relevance_score": 36.7,
+    "install_count": 0
   },
   "lead-research": {
-    "relevance_score": 75.69,
-    "install_count": 32
+    "relevance_score": 36.7,
+    "install_count": 0
   },
   "pptx": {
-    "relevance_score": 93,
+    "relevance_score": 77.7,
     "install_count": 0
   },
   "changelog-generator": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "git-worktrees": {
-    "relevance_score": 40,
+    "relevance_score": 71.7,
     "install_count": 0
   },
   "brand-guidelines": {
-    "relevance_score": 78,
+    "relevance_score": 67.96,
     "install_count": 0
   },
   "article-extractor": {
-    "relevance_score": 78,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "youtube-transcript": {
-    "relevance_score": 78,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "n8n-skills": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "video-downloader": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "twitter-optimizer": {
-    "relevance_score": 0,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "csv-summarizer": {
-    "relevance_score": 93,
+    "relevance_score": 72.2,
     "install_count": 0
   },
   "finishing-branch": {
-    "relevance_score": 40,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "meeting-analyzer": {
-    "relevance_score": 40,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "invoice-organizer": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "domain-brainstormer": {
-    "relevance_score": 0,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "tapestry": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "kaizen": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "image-enhancer": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "competitive-ads": {
-    "relevance_score": 40,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "markdown-epub": {
-    "relevance_score": 93,
+    "relevance_score": 74.7,
     "install_count": 0
   },
   "notebooklm": {
-    "relevance_score": 93,
+    "relevance_score": 77.7,
     "install_count": 0
   },
   "theme-factory": {
-    "relevance_score": 78,
+    "relevance_score": 69.2,
     "install_count": 0
   },
   "ffuf-fuzzing": {
-    "relevance_score": 93,
+    "relevance_score": 77.7,
     "install_count": 0
   },
   "internal-comms": {
-    "relevance_score": 93,
+    "relevance_score": 64.38,
     "install_count": 0
   },
   "computer-forensics": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "skill-seekers": {
-    "relevance_score": 93,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "ios-simulator": {
-    "relevance_score": 78,
+    "relevance_score": 72.1,
     "install_count": 0
   },
   "git-pushing": {
-    "relevance_score": 78,
+    "relevance_score": 52.39,
     "install_count": 0
   },
   "slack-gif-creator": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "family-history": {
-    "relevance_score": 93,
+    "relevance_score": 77.2,
     "install_count": 0
   },
   "langsmith-fetch": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "ship-learn-next": {
-    "relevance_score": 78,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "review-implementing": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "test-fixing": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "reddit-fetch": {
-    "relevance_score": 78,
+    "relevance_score": 70.45,
     "install_count": 0
   },
   "pypict": {
-    "relevance_score": 93,
+    "relevance_score": 81.7,
     "install_count": 0
   },
   "move-code-quality": {
-    "relevance_score": 93,
+    "relevance_score": 76.45,
     "install_count": 0
   },
   "raffle-picker": {
-    "relevance_score": 40,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "claude-terminal-title": {
-    "relevance_score": 78,
+    "relevance_score": 72.1,
     "install_count": 0
   },
   "file-deletion": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   },
   "metadata-extraction": {
-    "relevance_score": 38,
+    "relevance_score": 36.7,
     "install_count": 0
   }
 }
