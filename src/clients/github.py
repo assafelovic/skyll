@@ -482,7 +482,8 @@ class GitHubClient:
                     skill_id = parts[-1] if len(parts) > 2 else skill_id
             if not source:
                 return f"https://github.com/search?q={skill_id}+SKILL.md"
-        repo_info = self._repo_cache.get(source)
+        entry = self._repo_cache.get(source)
+        repo_info = entry["data"] if entry else None
         branch = repo_info["branch"] if repo_info else "main"
         return f"https://github.com/{source}/tree/{branch}/skills/{skill_id}"
 
