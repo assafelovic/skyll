@@ -5,8 +5,8 @@ import { ChevronDown, Star, Github, ExternalLink, Package } from "lucide-react";
 import Link from "next/link";
 import { type RegistrySkill, getSkillHref } from "../data/registry";
 
-const INITIAL_COUNT = 10;
-const STEP = 15;
+const INITIAL_COUNT = 7;
+const STEP = 7;
 
 interface SkillWithScore extends RegistrySkill {
   relevance_score: number;

@@ -3,6 +3,7 @@ Default relevance ranker combining multiple signals.
 """
 
 import math
+import re
 from typing import TYPE_CHECKING
 
 from src.ranking.base import Ranker
@@ -16,32 +17,29 @@ class RelevanceRanker(Ranker):
     Default ranker combining multiple relevance signals.
     
     Signals (weighted, total 100 points):
-    - Content availability (40 pts): Has actual SKILL.md content
-    - References (15 pts): Has associated reference files
+    - Content quality (30 pts): Graded by length + structure, not binary
+    - Content structure (5 pts): Has code blocks, headers, tables
+    - References depth (10 pts): Graded by count (more refs = higher)
+    - Metadata completeness (5 pts): Has description, version, allowed_tools
     - Query match (30 pts): How well skill ID/title/description/content matches query
-    - Popularity (15 pts): Install count from skills.sh
+    - Popularity (20 pts): Install count from skills.sh (log scaled, ceiling 50k)
     
     Additionally, skills from the curated local registry receive a small
-    boost scaled by query relevance (up to 8 pts for strong matches).
+    boost scaled by query relevance (up to 5 pts for strong matches).
     
-    Skills without content are sorted last (not filtered) since they may
-    still serve as pointers to the skill.
-    
-    Produces normalized 0-100 score for display.
+    Produces normalized 0-100 score for display. Reaching 100 requires
+    exceptional content depth, multiple references, complete metadata,
+    high popularity, AND strong query relevance.
     """
 
-    # Weight constants for score calculation (total: 100 points)
-    # See docs/ranking.md for full explanation
-    CONTENT_WEIGHT = 40.0      # 40 points for having content
-    REFERENCES_WEIGHT = 15.0   # 15 points for having references
-    QUERY_MATCH_WEIGHT = 30.0  # 30 points max for query match
-    POPULARITY_WEIGHT = 15.0   # 15 points max for popularity
+    CONTENT_QUALITY_WEIGHT = 30.0
+    CONTENT_STRUCTURE_WEIGHT = 5.0
+    REFERENCES_WEIGHT = 10.0
+    METADATA_WEIGHT = 5.0
+    QUERY_MATCH_WEIGHT = 30.0
+    POPULARITY_WEIGHT = 20.0
     
-    # Boost for curated registry skills, scaled by query relevance.
-    # A curated skill with strong query match (ID or description) gets
-    # the full boost; weak matches get proportionally less.
-    # This prevents irrelevant registry skills from jumping the ranks.
-    CURATED_BOOST = 8.0
+    CURATED_BOOST = 5.0
     CURATED_REGISTRY = "skyll"
 
     def _normalize(self, text: str) -> str:
@@ -144,16 +142,85 @@ class RelevanceRanker(Ranker):
         
         return best_score
 
+    def _compute_content_quality(self, content: str | None) -> float:
+        """
+        Grade content quality on 0-1 scale based on length.
+        
+        Short stubs get partial credit; comprehensive content gets full marks.
+        Thresholds: <100 chars = 0, 500 = ~0.5, 2000+ = 1.0
+        """
+        if not content:
+            return 0.0
+        length = len(content)
+        if length < 100:
+            return 0.1
+        if length >= 2000:
+            return 1.0
+        # Smooth curve between 100 and 2000
+        return 0.1 + 0.9 * ((length - 100) / 1900)
+
+    def _compute_content_structure(self, content: str | None) -> float:
+        """
+        Grade content structure on 0-1 scale.
+        
+        Checks for: markdown headers, code blocks, tables, lists.
+        Each structural element contributes 0.25, max 1.0.
+        """
+        if not content:
+            return 0.0
+        score = 0.0
+        if re.search(r'^#{1,3}\s+\S', content, re.MULTILINE):
+            score += 0.25
+        if '```' in content:
+            score += 0.25
+        if re.search(r'^\|.*\|.*\|', content, re.MULTILINE):
+            score += 0.25
+        if re.search(r'^[-*]\s+\S', content, re.MULTILINE):
+            score += 0.25
+        return score
+
+    def _compute_references_score(self, skill: "Skill", include_references: bool) -> float:
+        """
+        Grade references on 0-1 scale by count (not binary).
+        
+        1 ref = 0.3, 2-3 refs = 0.6, 4-5 refs = 0.8, 6+ refs = 1.0
+        """
+        if not include_references or not skill.references:
+            return 0.0
+        count = len(skill.references)
+        if count >= 6:
+            return 1.0
+        if count >= 4:
+            return 0.8
+        if count >= 2:
+            return 0.6
+        return 0.3
+
+    def _compute_metadata_score(self, skill: "Skill") -> float:
+        """
+        Grade metadata completeness on 0-1 scale.
+        
+        Checks: description, version, allowed_tools. Each worth 1/3.
+        """
+        score = 0.0
+        if skill.description and len(skill.description) > 20:
+            score += 0.34
+        if skill.version:
+            score += 0.33
+        if skill.allowed_tools:
+            score += 0.33
+        return score
+
     def _compute_popularity_score(self, install_count: int) -> float:
         """
         Normalize install count to 0-1 scale.
         
-        Uses logarithmic scaling: 10k+ installs = 1.0
+        Uses logarithmic scaling with higher ceiling: 50k+ installs = 1.0
         """
         if install_count <= 0:
             return 0.0
-        # Log scale: 1 install = ~0.0, 100 = ~0.5, 10000+ = 1.0
-        normalized = math.log10(install_count + 1) / 4.0  # log10(10000) = 4
+        # Log scale: 1 = ~0.0, 100 = ~0.43, 1000 = ~0.64, 10000 = ~0.85, 50000 = 1.0
+        normalized = math.log10(install_count + 1) / math.log10(50001)
         return min(normalized, 1.0)
 
     def rank(
@@ -170,36 +237,27 @@ class RelevanceRanker(Ranker):
         Sets relevance_score as normalized 0-100 value for display.
         """
         for skill in skills:
-            # Content signal (0 or 1)
-            has_content = 1.0 if skill.content else 0.0
-            
-            # References signal (0 or 1, only when requested)
-            has_refs = 0.0
-            if include_references and skill.references:
-                has_refs = 1.0
-            
-            # Query match signal (0-1)
+            content_quality = self._compute_content_quality(skill.content)
+            content_structure = self._compute_content_structure(skill.content)
+            refs_score = self._compute_references_score(skill, include_references)
+            metadata_score = self._compute_metadata_score(skill)
             query_match = self._compute_query_match(skill, query)
-            
-            # Popularity signal (0-1, log scaled)
             popularity = self._compute_popularity_score(skill.install_count)
             
-            # Curated registry boost: scales with query relevance so only
-            # registry skills that actually match the query get boosted
             is_curated = 1.0 if getattr(skill, 'source_registry', None) == self.CURATED_REGISTRY else 0.0
             curated_score = is_curated * self.CURATED_BOOST * query_match
             
-            # Compute weighted score (0-100 base + curated boost for relevant registry skills)
             score = (
-                has_content * self.CONTENT_WEIGHT +
-                has_refs * self.REFERENCES_WEIGHT +
+                content_quality * self.CONTENT_QUALITY_WEIGHT +
+                content_structure * self.CONTENT_STRUCTURE_WEIGHT +
+                refs_score * self.REFERENCES_WEIGHT +
+                metadata_score * self.METADATA_WEIGHT +
                 query_match * self.QUERY_MATCH_WEIGHT +
                 popularity * self.POPULARITY_WEIGHT +
                 curated_score
             )
             
-            # Round to 2 decimal places
-            skill.relevance_score = round(score, 2)
+            skill.relevance_score = round(min(score, 100.0), 2)
         
         return sorted(skills, key=lambda s: s.relevance_score, reverse=True)
 
