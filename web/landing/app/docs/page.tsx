@@ -13,12 +13,12 @@ function CodeBlock({ code, title }: { code: string; title?: string }) {
   return (
     <div className="card-brutal overflow-hidden">
       {title && (
-        <div className="bg-ink text-cream px-4 py-2 text-sm font-bold border-b-4 border-ink">
+        <div className="bg-ink text-cream px-3 py-1.5 text-xs font-bold border-b-3 border-ink">
           {title}
         </div>
       )}
       <div className="relative">
-        <pre className="bg-ink text-green-light p-4 pr-14 text-sm leading-relaxed overflow-x-auto font-mono">
+        <pre className="bg-ink text-green-light p-3 pr-12 text-xs leading-relaxed overflow-x-auto font-mono">
           <code>{code}</code>
         </pre>
         <CopyButton text={code} />
@@ -27,27 +27,17 @@ function CodeBlock({ code, title }: { code: string; title?: string }) {
   );
 }
 
-function FeatureCard({ icon, title, description, color }: { icon: React.ReactNode; title: string; description: string; color: string }) {
-  return (
-    <div className="card-brutal p-6">
-      <div className={`inline-block p-3 ${color} border-2 border-ink mb-4`}>{icon}</div>
-      <h3 className="font-bold text-lg mb-2">{title}</h3>
-      <p className="text-sm text-green-dark leading-relaxed">{description}</p>
-    </div>
-  );
-}
-
 function UseCaseCard({ icon, title, skill, description, color }: { icon: React.ReactNode; title: string; skill: string; description: string; color: string }) {
   return (
-    <div className="card-brutal p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`p-2 ${color} border-2 border-ink`}>{icon}</div>
+    <div className="card-brutal p-4">
+      <div className="flex items-center gap-2.5 mb-3">
+        <div className={`p-1.5 ${color} border-2 border-ink`}>{icon}</div>
         <div>
-          <h3 className="font-bold text-lg">{title}</h3>
-          <span className="text-sm font-mono bg-ink text-green-light px-2 py-0.5">{skill}</span>
+          <h3 className="font-bold text-base">{title}</h3>
+          <span className="text-xs font-mono bg-ink text-green-light px-1.5 py-0.5">{skill}</span>
         </div>
       </div>
-      <p className="text-sm text-green-dark leading-relaxed">{description}</p>
+      <p className="text-xs text-green-dark leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -59,150 +49,82 @@ export default function DocsPage() {
       <div className="fixed top-4 left-4 z-50">
         <Link
           href="/"
-          className="flex items-center gap-2 p-3 bg-cream border-4 border-ink shadow-brutal-sm hover:bg-yellow transition-colors font-bold"
+          className="flex items-center gap-1.5 p-2 bg-cream border-3 border-ink shadow-brutal-sm hover:bg-yellow transition-colors font-bold text-sm"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4" />
           Back
         </Link>
       </div>
 
       {/* Header */}
-      <header className="container mx-auto px-4 pt-20 pb-12 text-center">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Image src="/logo.png" alt="Skyll" width={48} height={48} />
-          <h1 className="font-mono font-extrabold text-4xl md:text-5xl">Documentation</h1>
+      <header className="container mx-auto px-4 pt-16 pb-8 text-center">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <Image src="/logo.png" alt="Skyll" width={40} height={40} />
+          <h1 className="font-mono font-extrabold text-3xl md:text-4xl">Documentation</h1>
         </div>
-        <p className="text-green-dark max-w-2xl mx-auto">
+        <p className="text-green-dark max-w-2xl mx-auto text-sm">
           Everything you need to know about Skyll - from quick start to advanced configuration.
         </p>
 
-        {/* Quick nav */}
-        <nav className="mt-8 flex flex-wrap justify-center gap-3">
-          {[
-            { href: "#why", label: "Why Skyll?" },
-            { href: "#features", label: "Features" },
-            { href: "#python", label: "Install with pip" },
-            { href: "#api", label: "REST API" },
-            { href: "#quickstart", label: "Self-Hosted" },
-            { href: "#ranking", label: "Ranking" },
-            { href: "#mcp", label: "MCP Server" },
-            { href: "#usecases", label: "Use Cases" },
-            { href: "#contributing", label: "Contributing" },
-          ].map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="px-4 py-2 bg-cream border-2 border-ink text-sm font-medium hover:bg-yellow transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
       </header>
 
       {/* Content */}
-      <main className="container mx-auto px-4 pb-16 max-w-4xl space-y-16">
+      <main className="container mx-auto px-4 pb-12 max-w-3xl space-y-10">
 
         {/* Why Skyll */}
         <section id="why" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <span className="bg-yellow px-3 py-1 border-4 border-ink">Why Skyll?</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <span className="bg-yellow px-2.5 py-0.5 border-3 border-ink text-base">Why Skyll?</span>
           </h2>
 
-          <div className="card-brutal p-8 space-y-6">
-            <p className="text-lg leading-relaxed">
-              Agent skills (<code className="bg-ink text-green-light px-2 py-0.5">SKILL.md</code> files) are a powerful way
+          <div className="card-brutal p-4 space-y-4">
+            <p className="text-xs leading-relaxed">
+              Agent skills (<code className="bg-ink text-green-light px-1.5 py-0.5 text-[11px]">SKILL.md</code> files) are a powerful way
               to extend what AI agents can do. They&apos;re markdown files that teach agents how to complete specific tasks,
               following the <a href="https://agentskills.io" className="underline font-bold hover:text-green-dark">Agent Skills specification</a>.
             </p>
 
-            <div className="bg-pink/30 p-4 border-l-4 border-pink">
-              <p className="font-bold mb-2">The Problem</p>
-              <p className="text-green-dark">
+            <div className="bg-pink/30 p-3 border-l-3 border-pink">
+              <p className="font-bold mb-1 text-sm">The Problem</p>
+              <p className="text-green-dark text-xs">
                 Today, skills only work with a handful of tools like <strong>Claude Code</strong> and <strong>Cursor</strong>.
                 They require manual installation before a session, which means developers need to know in advance which skills they&apos;ll need.
               </p>
             </div>
 
-            <div className="bg-green-mid/30 p-4 border-l-4 border-green-mid">
-              <p className="font-bold mb-2">The Solution</p>
-              <p className="text-green-dark">
+            <div className="bg-green-mid/30 p-3 border-l-3 border-green-mid">
+              <p className="font-bold mb-1 text-sm">The Solution</p>
+              <p className="text-green-dark text-xs">
                 <strong>Skyll democratizes access to skills.</strong> Any agent, framework, or tool can discover and retrieve
                 skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context,
                 and use skills autonomously.
               </p>
             </div>
 
-            <p className="text-lg leading-relaxed">
+            <p className="text-xs leading-relaxed">
               Think of Skyll as a <strong>search engine for agent capabilities</strong>. Your agent asks &quot;How do I do X?&quot;
               and Skyll returns the relevant skill with full instructions, ready to use.
             </p>
           </div>
         </section>
 
-        {/* Features */}
-        <section id="features" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <span className="bg-blue px-3 py-1 border-4 border-ink">Features</span>
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <FeatureCard
-              icon={<Search className="w-6 h-6" />}
-              title="Multi-Source Search"
-              description="Query skills.sh, community registry, and extensible to more sources. Results are deduplicated automatically."
-              color="bg-yellow"
-            />
-            <FeatureCard
-              icon={<FileText className="w-6 h-6" />}
-              title="Full Content Retrieval"
-              description="Get complete SKILL.md content with parsed YAML frontmatter, not just metadata. Ready for context injection."
-              color="bg-pink"
-            />
-            <FeatureCard
-              icon={<Star className="w-6 h-6" />}
-              title="Relevance Ranking"
-              description="Skills scored 0-100 based on content availability, query match, references, and popularity (install count)."
-              color="bg-blue"
-            />
-            <FeatureCard
-              icon={<Zap className="w-6 h-6" />}
-              title="Aggressive Caching"
-              description="Intelligent caching respects GitHub rate limits. Configure TTL via environment variables."
-              color="bg-orange"
-            />
-            <FeatureCard
-              icon={<Package className="w-6 h-6" />}
-              title="References Support"
-              description="Optionally fetch additional .md files from references/, docs/, examples/ directories."
-              color="bg-green-mid"
-            />
-            <FeatureCard
-              icon={<Cpu className="w-6 h-6" />}
-              title="Dual Interface"
-              description="Use as REST API for any integration, or as MCP server for Claude Desktop, Cursor, and more."
-              color="bg-cream"
-            />
-          </div>
-        </section>
-
         {/* Install with pip */}
         <section id="python" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Package className="w-8 h-8" />
-            <span className="bg-orange px-3 py-1 border-4 border-ink">Install with pip</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Package className="w-6 h-6" />
+            <span className="bg-orange px-2.5 py-0.5 border-3 border-ink text-base">Install with pip</span>
           </h2>
 
-          <div className="card-brutal p-6 mb-6">
-            <p className="text-lg leading-relaxed mb-4">
-              The easiest way to use Skyll in your agents. Uses the hosted API at <code className="bg-ink text-green-light px-2 py-0.5">api.skyll.app</code> - no server setup required.
+          <div className="card-brutal p-4 mb-4">
+            <p className="text-xs leading-relaxed mb-2">
+              The easiest way to use Skyll in your agents. Uses the hosted API at <code className="bg-ink text-green-light px-1.5 py-0.5 text-[11px]">api.skyll.app</code> - no server setup required.
             </p>
             <CodeBlock code="pip install skyll" />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="font-bold text-xl mb-3">Basic Usage</h3>
+              <h3 className="font-bold text-sm mb-1.5">Basic Usage</h3>
               <CodeBlock code={`from skyll import Skyll
 
 async with Skyll() as client:
@@ -214,7 +136,7 @@ async with Skyll() as client:
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Get a Specific Skill</h3>
+              <h3 className="font-bold text-sm mb-1.5">Get a Specific Skill</h3>
               <CodeBlock code={`async with Skyll() as client:
     skill = await client.get("anthropics/skills", "skill-creator")
     if skill:
@@ -222,7 +144,7 @@ async with Skyll() as client:
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Include References</h3>
+              <h3 className="font-bold text-sm mb-1.5">Include References</h3>
               <p className="text-green-dark mb-3">Some skills have additional documentation in <code className="bg-ink text-green-light px-1">references/</code> directories:</p>
               <CodeBlock code={`async with Skyll() as client:
     skills = await client.search("react", include_references=True)
@@ -233,7 +155,7 @@ async with Skyll() as client:
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Point to Self-Hosted Server</h3>
+              <h3 className="font-bold text-sm mb-1.5">Point to Self-Hosted Server</h3>
               <CodeBlock code={`async with Skyll(base_url="http://localhost:8000") as client:
     skills = await client.search("testing")`} />
             </div>
@@ -242,32 +164,32 @@ async with Skyll() as client:
 
         {/* REST API */}
         <section id="api" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Globe className="w-8 h-8" />
-            <span className="bg-pink px-3 py-1 border-4 border-ink">REST API</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Globe className="w-6 h-6" />
+            <span className="bg-pink px-2.5 py-0.5 border-3 border-ink text-base">REST API</span>
           </h2>
 
-          <div className="card-brutal p-6 mb-6">
-            <p className="text-lg leading-relaxed">
-              The hosted API is available at <code className="bg-ink text-green-light px-2 py-1">https://api.skyll.app</code>.
+          <div className="card-brutal p-4 mb-4">
+            <p className="text-xs leading-relaxed">
+              The hosted API is available at <code className="bg-ink text-green-light px-1.5 py-0.5 text-[11px]">https://api.skyll.app</code>.
               For other languages or direct integration.
             </p>
-            <div className="mt-4">
-              <a href="https://api.skyll.app/docs" target="_blank" rel="noopener noreferrer" className="btn-brutal bg-green-mid text-sm inline-flex items-center gap-2">
+            <div className="mt-3">
+              <a href="https://api.skyll.app/docs" target="_blank" rel="noopener noreferrer" className="btn-brutal bg-green-mid text-xs inline-flex items-center gap-1.5">
                 Interactive API Docs <ExternalLink className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-5">
             {/* Search endpoint */}
             <div className="card-brutal overflow-hidden">
-              <div className="bg-green-mid p-4 border-b-4 border-ink flex items-center gap-3">
+              <div className="bg-green-mid p-3 border-b-3 border-ink flex items-center gap-2">
                 <span className="bg-ink text-cream px-2 py-1 font-bold text-sm">GET</span>
                 <code className="font-bold">/search</code>
               </div>
-              <div className="p-6">
-                <p className="mb-4">Search for skills by query. Returns ranked results with full content.</p>
+              <div className="p-4">
+                <p className="mb-3 text-xs">Search for skills by query. Returns ranked results with full content.</p>
 
                 <h4 className="font-bold mb-2">Example</h4>
                 <CodeBlock code={`curl "https://api.skyll.app/search?q=react+performance&limit=5"`} />
@@ -319,12 +241,12 @@ async with Skyll() as client:
 
             {/* Add skill endpoint */}
             <div className="card-brutal overflow-hidden">
-              <div className="bg-orange p-4 border-b-4 border-ink flex items-center gap-3">
+              <div className="bg-orange p-3 border-b-3 border-ink flex items-center gap-2">
                 <span className="bg-ink text-cream px-2 py-1 font-bold text-sm">GET</span>
                 <code className="font-bold">/skill/&#123;name&#125;</code>
               </div>
-              <div className="p-6">
-                <p className="mb-4">Get the latest version of a skill by name. Similar to <code className="bg-ink text-green-light px-1">npx skills add</code> but for runtime context injection.</p>
+              <div className="p-4">
+                <p className="mb-3 text-xs">Get the latest version of a skill by name. Similar to <code className="bg-ink text-green-light px-1">npx skills add</code> but for runtime context injection.</p>
 
                 <h4 className="font-bold mb-2">Simple Name (Searches for Best Match)</h4>
                 <CodeBlock code={`curl "https://api.skyll.app/skill/react-best-practices"`} />
@@ -340,24 +262,24 @@ async with Skyll() as client:
 
             {/* Get skill endpoint */}
             <div className="card-brutal overflow-hidden">
-              <div className="bg-blue p-4 border-b-4 border-ink flex items-center gap-3">
+              <div className="bg-blue p-3 border-b-3 border-ink flex items-center gap-2">
                 <span className="bg-ink text-cream px-2 py-1 font-bold text-sm">GET</span>
                 <code className="font-bold">/skills/&#123;source&#125;/&#123;skill_id&#125;</code>
               </div>
-              <div className="p-6">
-                <p className="mb-4">Get a specific skill by source and ID.</p>
+              <div className="p-4">
+                <p className="mb-3 text-xs">Get a specific skill by source and ID.</p>
                 <CodeBlock code={`curl "https://api.skyll.app/skills/anthropics/skills/skill-creator"`} />
               </div>
             </div>
 
             {/* Health endpoint */}
             <div className="card-brutal overflow-hidden">
-              <div className="bg-yellow p-4 border-b-4 border-ink flex items-center gap-3">
+              <div className="bg-yellow p-3 border-b-3 border-ink flex items-center gap-2">
                 <span className="bg-ink text-cream px-2 py-1 font-bold text-sm">GET</span>
                 <code className="font-bold">/health</code>
               </div>
-              <div className="p-6">
-                <p>Health check endpoint. Returns service status.</p>
+              <div className="p-4">
+                <p className="text-xs">Health check endpoint. Returns service status.</p>
               </div>
             </div>
           </div>
@@ -365,20 +287,20 @@ async with Skyll() as client:
 
         {/* Self-Hosted */}
         <section id="quickstart" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Terminal className="w-8 h-8" />
-            <span className="bg-green-mid px-3 py-1 border-4 border-ink">Self-Hosted</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Terminal className="w-6 h-6" />
+            <span className="bg-green-mid px-2.5 py-0.5 border-3 border-ink text-base">Self-Hosted</span>
           </h2>
 
-          <div className="card-brutal p-6 mb-6">
-            <p className="text-lg leading-relaxed">
+          <div className="card-brutal p-4 mb-4">
+            <p className="text-xs leading-relaxed">
               Run your own Skyll server for full control, higher rate limits, or private deployments.
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
+              <h3 className="font-bold text-sm mb-1.5 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 1</span>
                 Clone &amp; Install
               </h3>
@@ -388,7 +310,7 @@ pip install -e ".[server]"`} />
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
+              <h3 className="font-bold text-sm mb-1.5 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 2</span>
                 Configure (Optional but Recommended)
               </h3>
@@ -409,7 +331,7 @@ CACHE_TTL=86400`}
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
+              <h3 className="font-bold text-sm mb-1.5 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 3</span>
                 Start the Server
               </h3>
@@ -417,7 +339,7 @@ CACHE_TTL=86400`}
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
+              <h3 className="font-bold text-sm mb-1.5 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 4</span>
                 Point Client to Your Server
               </h3>
@@ -431,49 +353,49 @@ async with Skyll(base_url="http://localhost:8000") as client:
 
         {/* Ranking Algorithm */}
         <section id="ranking" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Star className="w-8 h-8" />
-            <span className="bg-orange px-3 py-1 border-4 border-ink">Ranking Algorithm</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Star className="w-6 h-6" />
+            <span className="bg-orange px-2.5 py-0.5 border-3 border-ink text-base">Ranking Algorithm</span>
           </h2>
 
-          <div className="card-brutal p-6 mb-6">
-            <p className="text-lg leading-relaxed">
+          <div className="card-brutal p-4 mb-4">
+            <p className="text-xs leading-relaxed">
               Skyll uses a <strong>multi-signal ranking algorithm</strong> to order search results by relevance.
               Each skill receives a score from <strong>0-100</strong> based on weighted factors, with a small
               additional boost for curated registry skills.
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-5">
             {/* Scoring Formula */}
             <div className="card-brutal overflow-hidden">
               <div className="bg-ink text-cream px-4 py-3 font-bold">
                 Scoring Formula
               </div>
-              <div className="p-6">
-                <code className="block bg-green-mid/30 p-4 font-mono text-lg border-2 border-ink">
+              <div className="p-4">
+                <code className="block bg-green-mid/30 p-3 font-mono text-sm border-2 border-ink">
                   score = content + references + query_match + popularity + curated_boost
                 </code>
               </div>
             </div>
 
             {/* Signals Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="card-brutal p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-green-mid p-2 border-2 border-ink">
-                    <FileText className="w-5 h-5" />
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="card-brutal p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-green-mid p-1.5 border-2 border-ink">
+                    <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">Content Availability</h3>
-                    <span className="text-sm font-mono bg-ink text-green-light px-2">40 pts max</span>
+                    <h3 className="font-bold text-sm">Content Availability</h3>
+                    <span className="text-[11px] font-mono bg-ink text-green-light px-1.5">40 pts max</span>
                   </div>
                 </div>
-                <p className="text-green-dark mb-4">
+                <p className="text-green-dark mb-3 text-xs">
                   Skills with successfully fetched SKILL.md content receive 40 points.
                   Skills without content are sorted last (not filtered).
                 </p>
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <tbody>
                     <tr className="border-b border-ink/20">
                       <td className="py-2">Has content</td>
@@ -487,21 +409,21 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </table>
               </div>
 
-              <div className="card-brutal p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-yellow p-2 border-2 border-ink">
-                    <Search className="w-5 h-5" />
+              <div className="card-brutal p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-yellow p-1.5 border-2 border-ink">
+                    <Search className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">Query Match</h3>
-                    <span className="text-sm font-mono bg-ink text-green-light px-2">30 pts max</span>
+                    <h3 className="font-bold text-sm">Query Match</h3>
+                    <span className="text-[11px] font-mono bg-ink text-green-light px-1.5">30 pts max</span>
                   </div>
                 </div>
-                <p className="text-green-dark mb-4">
+                <p className="text-green-dark mb-3 text-xs">
                   How well the skill matches the query. Checks ID, title, description, and content
                   in priority order, taking the best score.
                 </p>
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <tbody>
                     <tr className="border-b border-ink/20">
                       <td className="py-2">Exact ID match</td>
@@ -527,21 +449,21 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </table>
               </div>
 
-              <div className="card-brutal p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-pink p-2 border-2 border-ink">
-                    <Package className="w-5 h-5" />
+              <div className="card-brutal p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-pink p-1.5 border-2 border-ink">
+                    <Package className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">References</h3>
-                    <span className="text-sm font-mono bg-ink text-green-light px-2">15 pts max</span>
+                    <h3 className="font-bold text-sm">References</h3>
+                    <span className="text-[11px] font-mono bg-ink text-green-light px-1.5">15 pts max</span>
                   </div>
                 </div>
-                <p className="text-green-dark mb-4">
+                <p className="text-green-dark mb-3 text-xs">
                   When <code className="bg-ink text-green-light px-1">include_references=true</code>, skills with
                   additional .md files receive a boost.
                 </p>
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <tbody>
                     <tr className="border-b border-ink/20">
                       <td className="py-2">Has references (when requested)</td>
@@ -555,21 +477,21 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </table>
               </div>
 
-              <div className="card-brutal p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-blue p-2 border-2 border-ink">
-                    <Zap className="w-5 h-5" />
+              <div className="card-brutal p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-blue p-1.5 border-2 border-ink">
+                    <Zap className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">Popularity</h3>
-                    <span className="text-sm font-mono bg-ink text-green-light px-2">15 pts max</span>
+                    <h3 className="font-bold text-sm">Popularity</h3>
+                    <span className="text-[11px] font-mono bg-ink text-green-light px-1.5">15 pts max</span>
                   </div>
                 </div>
-                <p className="text-green-dark mb-4">
+                <p className="text-green-dark mb-3 text-xs">
                   Install count from skills.sh, using <strong>logarithmic scaling</strong> to prevent
                   extremely popular skills from dominating.
                 </p>
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <tbody>
                     <tr className="border-b border-ink/20">
                       <td className="py-2">10,000+ installs</td>
@@ -593,17 +515,17 @@ async with Skyll(base_url="http://localhost:8000") as client:
             </div>
 
             {/* Curated Boost */}
-            <div className="card-brutal p-6 border-l-4 border-l-green-mid">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="bg-green-mid p-2 border-2 border-ink">
-                  <Star className="w-5 h-5" />
+            <div className="card-brutal p-4 border-l-3 border-l-green-mid">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-green-mid p-1.5 border-2 border-ink">
+                  <Star className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Curated Registry Boost</h3>
-                  <span className="text-sm font-mono bg-ink text-green-light px-2">up to 8 pts</span>
+                  <h3 className="font-bold text-sm">Curated Registry Boost</h3>
+                  <span className="text-[11px] font-mono bg-ink text-green-light px-1.5">up to 8 pts</span>
                 </div>
               </div>
-              <p className="text-green-dark mb-4">
+              <p className="text-green-dark mb-3 text-xs">
                 Skills from the curated <code className="bg-ink text-green-light px-1">registry/SKILLS.md</code> receive
                 a boost <strong>scaled by query relevance</strong>. This rewards hand-picked quality skills without
                 letting irrelevant registry entries jump the ranks.
@@ -619,67 +541,67 @@ async with Skyll(base_url="http://localhost:8000") as client:
 
             {/* Example Scores Table */}
             <div className="card-brutal overflow-hidden">
-              <div className="bg-yellow px-4 py-3 border-b-4 border-ink font-bold">
+              <div className="bg-yellow px-3 py-2 border-b-3 border-ink font-bold text-sm">
                 Example Scores
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-cream">
-                      <th className="text-left p-3 border-b-2 border-ink">Skill</th>
-                      <th className="text-center p-3 border-b-2 border-ink">Content</th>
-                      <th className="text-center p-3 border-b-2 border-ink">Refs</th>
-                      <th className="text-center p-3 border-b-2 border-ink">Query</th>
-                      <th className="text-center p-3 border-b-2 border-ink">Pop.</th>
-                      <th className="text-center p-3 border-b-2 border-ink">Curated</th>
-                      <th className="text-center p-3 border-b-2 border-ink font-bold">Total</th>
+                      <th className="text-left p-2 border-b-2 border-ink">Skill</th>
+                      <th className="text-center p-2 border-b-2 border-ink">Content</th>
+                      <th className="text-center p-2 border-b-2 border-ink">Refs</th>
+                      <th className="text-center p-2 border-b-2 border-ink">Query</th>
+                      <th className="text-center p-2 border-b-2 border-ink">Pop.</th>
+                      <th className="text-center p-2 border-b-2 border-ink">Curated</th>
+                      <th className="text-center p-2 border-b-2 border-ink font-bold">Total</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-b border-ink/20">
-                      <td className="p-3">Exact match, popular, with content</td>
-                      <td className="text-center p-3">40</td>
-                      <td className="text-center p-3">15</td>
-                      <td className="text-center p-3">30</td>
-                      <td className="text-center p-3">15</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3 font-bold bg-green-mid/30">100</td>
+                      <td className="p-2">Exact match, popular, with content</td>
+                      <td className="text-center p-2">40</td>
+                      <td className="text-center p-2">15</td>
+                      <td className="text-center p-2">30</td>
+                      <td className="text-center p-2">15</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2 font-bold bg-green-mid/30">100</td>
                     </tr>
                     <tr className="border-b border-ink/20">
-                      <td className="p-3">Good match, popular, with content</td>
-                      <td className="text-center p-3">40</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">25</td>
-                      <td className="text-center p-3">12</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3 font-bold bg-green-mid/20">77</td>
+                      <td className="p-2">Good match, popular, with content</td>
+                      <td className="text-center p-2">40</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">25</td>
+                      <td className="text-center p-2">12</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2 font-bold bg-green-mid/20">77</td>
                     </tr>
                     <tr className="border-b border-ink/20">
-                      <td className="p-3">Curated, description match</td>
-                      <td className="text-center p-3">40</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">21</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">5.6</td>
-                      <td className="text-center p-3 font-bold">66.6</td>
+                      <td className="p-2">Curated, description match</td>
+                      <td className="text-center p-2">40</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">21</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">5.6</td>
+                      <td className="text-center p-2 font-bold">66.6</td>
                     </tr>
                     <tr className="border-b border-ink/20">
-                      <td className="p-3">Partial match, new skill</td>
-                      <td className="text-center p-3">40</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">15</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3 font-bold">55</td>
+                      <td className="p-2">Partial match, new skill</td>
+                      <td className="text-center p-2">40</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">15</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2 font-bold">55</td>
                     </tr>
                     <tr>
-                      <td className="p-3">No content (fetch failed)</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3">30</td>
-                      <td className="text-center p-3">15</td>
-                      <td className="text-center p-3">0</td>
-                      <td className="text-center p-3 font-bold text-pink">45</td>
+                      <td className="p-2">No content (fetch failed)</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2">30</td>
+                      <td className="text-center p-2">15</td>
+                      <td className="text-center p-2">0</td>
+                      <td className="text-center p-2 font-bold text-pink">45</td>
                     </tr>
                   </tbody>
                 </table>
@@ -687,9 +609,9 @@ async with Skyll(base_url="http://localhost:8000") as client:
             </div>
 
             {/* Design Rationale */}
-            <div className="card-brutal p-6 bg-cream">
-              <h3 className="font-bold text-xl mb-4">Design Rationale</h3>
-              <div className="space-y-4 text-green-dark">
+            <div className="card-brutal p-4 bg-cream">
+              <h3 className="font-bold text-sm mb-2">Design Rationale</h3>
+              <div className="space-y-2.5 text-green-dark text-xs">
                 <div className="flex items-start gap-3">
                   <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm font-bold shrink-0">1</span>
                   <p><strong>Content is king.</strong> Skills without content are less useful, so content availability dominates the score.</p>
@@ -715,7 +637,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
 
             {/* Custom Ranker */}
             <div>
-              <h3 className="font-bold text-xl mb-4">Create a Custom Ranker</h3>
+              <h3 className="font-bold text-sm mb-2">Create a Custom Ranker</h3>
               <p className="text-green-dark mb-4">
                 The ranking algorithm is modular. Implement the <code className="bg-ink text-green-light px-1">Ranker</code> protocol to create your own:
               </p>
@@ -733,9 +655,9 @@ self._ranker = MyCustomRanker()`} />
             </div>
 
             {/* Future Enhancements */}
-            <div className="card-brutal p-6 border-l-4 border-l-blue">
-              <h3 className="font-bold text-xl mb-4">Future Enhancements</h3>
-              <p className="text-green-dark mb-4">
+            <div className="card-brutal p-4 border-l-3 border-l-blue">
+              <h3 className="font-bold text-sm mb-2">Future Enhancements</h3>
+              <p className="text-green-dark mb-3 text-xs">
                 The ranking system is designed for extension. We welcome community contributions:
               </p>
               <ul className="space-y-2 text-green-dark">
@@ -765,22 +687,22 @@ self._ranker = MyCustomRanker()`} />
 
         {/* MCP Server */}
         <section id="mcp" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Cpu className="w-8 h-8" />
-            <span className="bg-pink px-3 py-1 border-4 border-ink">MCP Server</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Cpu className="w-6 h-6" />
+            <span className="bg-pink px-2.5 py-0.5 border-3 border-ink text-base">MCP Server</span>
           </h2>
 
-          <div className="card-brutal p-6 mb-6">
-            <p className="text-lg leading-relaxed">
+          <div className="card-brutal p-4 mb-4">
+            <p className="text-xs leading-relaxed">
               Skyll provides a <strong>hosted MCP server</strong> at <code className="bg-ink text-green-light px-2 py-1">api.skyll.app/mcp</code> -
               no installation required. Works with Claude Desktop, Cursor, and other MCP-compatible clients.
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
-                <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm">Recommended</span>
+              <h3 className="font-bold text-sm mb-1.5 flex items-center gap-2">
+                <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-xs">Recommended</span>
                 Hosted MCP
               </h3>
               <CodeBlock
@@ -799,7 +721,7 @@ self._ranker = MyCustomRanker()`} />
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Available MCP Tools</h3>
+              <h3 className="font-bold text-sm mb-1.5">Available MCP Tools</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="card-brutal p-4">
                   <h4 className="font-bold mb-2 font-mono">add_skill</h4>
@@ -821,7 +743,7 @@ self._ranker = MyCustomRanker()`} />
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Example: add_skill</h3>
+              <h3 className="font-bold text-sm mb-1.5">Example: add_skill</h3>
               <p className="text-green-dark mb-3">The simplest way for agents to learn skills:</p>
               <CodeBlock code={`# Simple name - searches and returns best match
 add_skill("react-best-practices")
@@ -831,7 +753,7 @@ add_skill("vercel-labs/agent-skills/vercel-react-best-practices")`} />
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Self-Hosted MCP</h3>
+              <h3 className="font-bold text-sm mb-1.5">Self-Hosted MCP</h3>
               <p className="text-green-dark mb-3">If you prefer to run your own MCP server:</p>
               <CodeBlock
                 title="claude_desktop_config.json"
@@ -848,7 +770,7 @@ add_skill("vercel-labs/agent-skills/vercel-react-best-practices")`} />
             </div>
 
             <div>
-              <h3 className="font-bold text-xl mb-3">Standalone Mode</h3>
+              <h3 className="font-bold text-sm mb-1.5">Standalone Mode</h3>
               <CodeBlock code={`# Stdio transport (for MCP clients)
 python -m src.mcp_server
 
@@ -863,15 +785,15 @@ python -m src.mcp_server --transport sse --port 8080`} />
 
         {/* Use Cases */}
         <section id="usecases" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <span className="bg-blue px-3 py-1 border-4 border-ink">Use Cases</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <span className="bg-blue px-2.5 py-0.5 border-3 border-ink text-base">Use Cases</span>
           </h2>
 
-          <p className="text-lg mb-8 text-green-dark">
+          <p className="text-sm mb-6 text-green-dark">
             Real examples of how agents can use Skyll to discover and apply skills dynamically.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4">
             <UseCaseCard
               icon={<Globe className="w-6 h-6" />}
               title="Web Research"
@@ -902,8 +824,8 @@ python -m src.mcp_server --transport sse --port 8080`} />
             />
           </div>
 
-          <div className="mt-8 card-brutal p-6 bg-cream">
-            <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+          <div className="mt-5 card-brutal p-4 bg-cream">
+            <h3 className="font-bold text-sm mb-2 flex items-center gap-2">
               <Star className="w-5 h-5" />
               Why Options Matter
             </h3>
@@ -933,14 +855,14 @@ python -m src.mcp_server --transport sse --port 8080`} />
 
         {/* Contributing */}
         <section id="contributing" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Users className="w-8 h-8" />
-            <span className="bg-green-mid px-3 py-1 border-4 border-ink">Contributing</span>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Users className="w-6 h-6" />
+            <span className="bg-green-mid px-2.5 py-0.5 border-3 border-ink text-base">Contributing</span>
           </h2>
 
-          <div className="space-y-8">
-            <div className="card-brutal p-6">
-              <h3 className="font-bold text-xl mb-4">Add Your Skill to the Registry</h3>
+          <div className="space-y-4">
+            <div className="card-brutal p-4">
+              <h3 className="font-bold text-sm mb-2">Add Your Skill to the Registry</h3>
               <p className="mb-4 text-green-dark">
                 The community registry at <code className="bg-ink text-green-light px-2">registry/SKILLS.md</code> is
                 the easiest way to make your skill discoverable.
@@ -972,8 +894,8 @@ python -m src.mcp_server --transport sse --port 8080`} />
               </div>
             </div>
 
-            <div className="card-brutal p-6">
-              <h3 className="font-bold text-xl mb-4">Requirements</h3>
+            <div className="card-brutal p-4">
+              <h3 className="font-bold text-sm mb-2">Requirements</h3>
               <ul className="space-y-3 text-green-dark">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 mt-0.5 text-green-mid flex-shrink-0" />
@@ -994,8 +916,8 @@ python -m src.mcp_server --transport sse --port 8080`} />
               </ul>
             </div>
 
-            <div className="card-brutal p-6">
-              <h3 className="font-bold text-xl mb-4">Add a New Skill Source</h3>
+            <div className="card-brutal p-4">
+              <h3 className="font-bold text-sm mb-2">Add a New Skill Source</h3>
               <p className="text-green-dark mb-4">
                 Want to add a new source beyond skills.sh and the registry? Implement the <code className="bg-ink text-green-light px-1">SkillSource</code> protocol:
               </p>
@@ -1022,48 +944,48 @@ class MyCustomSource(SkillSource):
 
         {/* Links */}
         <section id="links" className="scroll-mt-24">
-          <h2 className="text-3xl font-bold mb-6">Resources</h2>
+          <h2 className="text-2xl font-bold mb-4">Resources</h2>
 
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <a
               href="https://github.com/assafelovic/skyll"
               target="_blank"
               rel="noopener noreferrer"
-              className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
+              className="card-brutal p-3 hover:bg-yellow/20 transition-colors"
             >
-              <Github className="w-8 h-8 mb-3" />
-              <h3 className="font-bold mb-1">GitHub</h3>
-              <p className="text-sm text-green-dark">Source code &amp; issues</p>
+              <Github className="w-5 h-5 mb-2" />
+              <h3 className="font-bold text-sm mb-0.5">GitHub</h3>
+              <p className="text-xs text-green-dark">Source code &amp; issues</p>
             </a>
             <a
               href="https://discord.gg/CxdMdfZS"
               target="_blank"
               rel="noopener noreferrer"
-              className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
+              className="card-brutal p-3 hover:bg-yellow/20 transition-colors"
             >
-              <MessageCircle className="w-8 h-8 mb-3" />
-              <h3 className="font-bold mb-1">Discord</h3>
-              <p className="text-sm text-green-dark">Community &amp; support</p>
+              <MessageCircle className="w-5 h-5 mb-2" />
+              <h3 className="font-bold text-sm mb-0.5">Discord</h3>
+              <p className="text-xs text-green-dark">Community &amp; support</p>
             </a>
             <a
               href={`${API_URL}/docs`}
               target="_blank"
               rel="noopener noreferrer"
-              className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
+              className="card-brutal p-3 hover:bg-yellow/20 transition-colors"
             >
-              <Code className="w-8 h-8 mb-3" />
-              <h3 className="font-bold mb-1">API Docs</h3>
-              <p className="text-sm text-green-dark">OpenAPI / Swagger</p>
+              <Code className="w-5 h-5 mb-2" />
+              <h3 className="font-bold text-sm mb-0.5">API Docs</h3>
+              <p className="text-xs text-green-dark">OpenAPI / Swagger</p>
             </a>
             <a
               href="https://skills.sh"
               target="_blank"
               rel="noopener noreferrer"
-              className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
+              className="card-brutal p-3 hover:bg-yellow/20 transition-colors"
             >
-              <ExternalLink className="w-8 h-8 mb-3" />
-              <h3 className="font-bold mb-1">skills.sh</h3>
-              <p className="text-sm text-green-dark">Skill ecosystem</p>
+              <ExternalLink className="w-5 h-5 mb-2" />
+              <h3 className="font-bold text-sm mb-0.5">skills.sh</h3>
+              <p className="text-xs text-green-dark">Skill ecosystem</p>
             </a>
           </div>
         </section>
@@ -1071,8 +993,8 @@ class MyCustomSource(SkillSource):
       </main>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 border-t-4 border-ink/20 text-center">
-        <p className="text-sm text-green-dark">
+      <footer className="container mx-auto px-4 py-5 border-t-3 border-ink/20 text-center">
+        <p className="text-[10px] text-green-dark">
           Built with ❤️ for autonomous agents ·{" "}
           <a href="https://agentskills.io" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
             Agent Skills Spec

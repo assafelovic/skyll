@@ -110,6 +110,18 @@ class SkillSearchService:
         if hasattr(self._cache, "stop"):
             await self._cache.stop()
 
+    @staticmethod
+    def _is_github_source(source: str) -> bool:
+        """Check if a source looks like a valid GitHub owner/repo (not a domain)."""
+        if not source or "/" not in source:
+            return False
+        parts = source.split("/")
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            return False
+        # Domains like "skills.volces.com" have multiple dots — exclude them
+        owner = parts[0]
+        return owner.count(".") < 2
+
     def _cache_key(self, source: str, skill_id: str) -> str:
         """Generate cache key for a skill."""
         return f"skill:{source}:{skill_id}"
@@ -125,13 +137,17 @@ class SkillSearchService:
         
         Returns: (content, raw_url, references, error)
         """
+        # Skip sources that aren't GitHub repos (e.g., skills.volces.com)
+        if not self._is_github_source(source):
+            return None, None, [], f"Non-GitHub source not supported: {source}"
+
         cache_key = self._cache_key(source, skill_id)
 
         # Check cache first (content only, references fetched fresh if needed)
         cached = await self._cache.get(cache_key)
         if cached is not None and not include_references:
             logger.debug(f"Cache hit for {cache_key}")
-            return cached.get("content"), cached.get("raw_url"), [], None
+            return cached.get("content"), cached.get("raw_url"), [], cached.get("error")
 
         # Fetch from GitHub
         result = await self._github_client.fetch_skill(

@@ -192,17 +192,15 @@ class SkillRegistrySource:
         # Convert to results
         results = []
         for score, skill in scored_skills[:limit]:
-            # Determine the skill path for fetching
             source = f"{skill.owner}/{skill.repo}"
-            skill_id = skill.path.rstrip('/').split('/')[-1] if skill.path else skill.id
             
             results.append(
                 SkillSearchResult(
-                    id=skill_id,
-                    name=skill.id,  # Use the registry ID as display name
+                    id=skill.id,
+                    name=skill.id,
                     source=source,
                     source_registry=self.REGISTRY_NAME,
-                    installs=0,  # No popularity data
+                    installs=0,
                     description=skill.description,
                 )
             )

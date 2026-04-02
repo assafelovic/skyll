@@ -65,12 +65,12 @@ function ReferenceItem({ reference }: { reference: SkillReference }) {
   );
 }
 
-function SkillCard({ skill, index, displayRefs }: { skill: Skill; index: number; displayRefs: boolean }) {
+function SkillCard({ skill, index }: { skill: Skill; index: number }) {
   const [showContent, setShowContent] = useState(false);
   const [showRefs, setShowRefs] = useState(false);
 
   const hasContent = skill.content && !skill.fetch_error;
-  const hasRefs = displayRefs && skill.references && skill.references.length > 0;
+  const hasRefs = skill.references && skill.references.length > 0;
 
   return (
     <motion.div
@@ -97,9 +97,6 @@ function SkillCard({ skill, index, displayRefs }: { skill: Skill; index: number;
           {hasRefs && (
             <span className="badge bg-pink">📎 {skill.references!.length}</span>
           )}
-          <Link href={`/skill/${skill.id}`} className="btn-brutal bg-green-mid py-1 px-2.5 inline-flex items-center gap-1 text-xs">
-            <ExternalLink className="w-3 h-3" /> View Page
-          </Link>
         </div>
       </div>
 
@@ -109,31 +106,48 @@ function SkillCard({ skill, index, displayRefs }: { skill: Skill; index: number;
         </p>
       )}
 
-      {hasContent && (
-        <>
+      <div className="px-4 mb-3 flex flex-wrap items-center gap-2">
+        {hasContent && (
           <button
             onClick={() => setShowContent(!showContent)}
-            className="mx-4 mb-3 btn-brutal bg-orange py-1.5 px-3"
+            className="btn-brutal bg-orange py-1.5 px-3"
           >
             <FileText className="inline w-4 h-4 mr-2" />
             {showContent ? "Hide" : "Show"} Content
             {showContent ? <ChevronUp className="inline w-4 h-4 ml-2" /> : <ChevronDown className="inline w-4 h-4 ml-2" />}
           </button>
-          <AnimatePresence>
-            {showContent && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <pre className="bg-ink text-green-light p-6 text-sm leading-relaxed max-h-80 overflow-y-auto whitespace-pre-wrap break-words">
-                  {skill.content}
-                </pre>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
+        )}
+
+        {hasRefs && (
+          <button
+            onClick={() => setShowRefs(!showRefs)}
+            className="btn-brutal bg-pink py-1.5 px-3"
+          >
+            📎 {showRefs ? "Hide" : "Show"} {skill.references!.length} References
+            {showRefs ? <ChevronUp className="inline w-4 h-4 ml-2" /> : <ChevronDown className="inline w-4 h-4 ml-2" />}
+          </button>
+        )}
+
+        <Link href={`/skill/${skill.id}`} target="_blank" rel="noopener noreferrer" className="btn-brutal bg-green-mid py-1.5 px-3 inline-flex items-center gap-1 text-xs">
+          <ExternalLink className="w-3.5 h-3.5" /> View Page
+        </Link>
+      </div>
+
+      {hasContent && (
+        <AnimatePresence>
+          {showContent && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <pre className="bg-ink text-green-light p-6 text-sm leading-relaxed max-h-80 overflow-y-auto whitespace-pre-wrap break-words">
+                {skill.content}
+              </pre>
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
 
       {skill.fetch_error && (
@@ -144,13 +158,6 @@ function SkillCard({ skill, index, displayRefs }: { skill: Skill; index: number;
 
       {hasRefs && (
         <>
-          <button
-            onClick={() => setShowRefs(!showRefs)}
-            className="mx-4 mb-3 btn-brutal bg-pink py-1.5 px-3"
-          >
-            📎 {showRefs ? "Hide" : "Show"} {skill.references!.length} References
-            {showRefs ? <ChevronUp className="inline w-4 h-4 ml-2" /> : <ChevronDown className="inline w-4 h-4 ml-2" />}
-          </button>
           <AnimatePresence>
             {showRefs && (
               <motion.div
@@ -177,7 +184,6 @@ function SkillCard({ skill, index, displayRefs }: { skill: Skill; index: number;
 export default function SkillSearch() {
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(5);
-  const [includeRefs, setIncludeRefs] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<SearchResponse | null>(null);
@@ -242,10 +248,6 @@ export default function SkillSearch() {
               className="w-14 p-1.5 border-2 border-ink text-center font-mono text-xs"
             />
           </label>
-          <label className="flex items-center gap-2 text-xs cursor-pointer">
-            <input type="checkbox" checked={includeRefs} onChange={(e) => setIncludeRefs(e.target.checked)} className="w-4 h-4 accent-green-mid" />
-            Include references
-          </label>
         </div>
 
         <AnimatePresence mode="wait">
@@ -270,7 +272,7 @@ export default function SkillSearch() {
                 {results.count} {results.count === 1 ? "result" : "results"}{searchTime !== null && <> in {searchTime}ms</>}
               </p>
               {results.skills.map((skill, index) => (
-                <SkillCard key={`${skill.id}-${skill.source}`} skill={skill} index={index} displayRefs={includeRefs} />
+                <SkillCard key={`${skill.id}-${skill.source}`} skill={skill} index={index} />
               ))}
             </div>
           ) : (

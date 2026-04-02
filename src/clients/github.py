@@ -7,6 +7,7 @@ associated reference documents (in references/ or resources/ directories).
 
 import asyncio
 import logging
+import time
 from dataclasses import dataclass, field
 
 import httpx
@@ -85,6 +86,9 @@ class GitHubClient:
     # Common directory names for reference files
     REFERENCE_DIRS = ["references", "resources", "docs", "examples", "rules"]
 
+    REPO_CACHE_TTL = 3600  # Refresh repo trees after 1 hour
+    REPO_CACHE_ERROR_TTL = 300  # Retry failed repo fetches after 5 min
+
     def __init__(
         self,
         timeout: float = 10.0,
@@ -93,7 +97,7 @@ class GitHubClient:
         self._timeout = timeout
         self._token = token
         self._client: httpx.AsyncClient | None = None
-        # Cache for repo info: {owner/repo: {"branch": str, "tree": list}}
+        # Cache: {source: {"data": dict|None, "cached_at": float}}
         self._repo_cache: dict[str, dict] = {}
 
     async def __aenter__(self) -> "GitHubClient":
@@ -142,20 +146,31 @@ class GitHubClient:
             logger.warning(f"Error getting repo info for {source}: {e}")
             return None
 
+    def _invalidate_repo_cache(self, source: str) -> None:
+        """Remove a repo from the tree cache, forcing a fresh fetch next time."""
+        self._repo_cache.pop(source, None)
+
     async def _get_repo_tree(self, source: str) -> dict | None:
         """
         Get the full file tree and default branch for a repository.
         
         Returns a dict with 'branch' and 'tree' (all files), or None if failed.
-        Cached per repo.
+        Cached per repo with TTL.
         """
-        if source in self._repo_cache:
-            return self._repo_cache[source]
+        entry = self._repo_cache.get(source)
+        if entry is not None:
+            age = time.monotonic() - entry["cached_at"]
+            ttl = self.REPO_CACHE_TTL if entry["data"] is not None else self.REPO_CACHE_ERROR_TTL
+            if age < ttl:
+                return entry["data"]
+            del self._repo_cache[source]
+
+        now = time.monotonic()
 
         # First get the default branch
         branch = await self._get_default_branch(source)
         if not branch:
-            self._repo_cache[source] = None
+            self._repo_cache[source] = {"data": None, "cached_at": now}
             return None
 
         # Get the tree
@@ -166,11 +181,15 @@ class GitHubClient:
             
             if response.status_code != 200:
                 logger.warning(f"GitHub tree API returned {response.status_code} for {source}")
-                self._repo_cache[source] = None
+                self._repo_cache[source] = {"data": None, "cached_at": now}
                 return None
 
             data = response.json()
             tree = data.get("tree", [])
+            truncated = data.get("truncated", False)
+            
+            if truncated:
+                logger.warning(f"GitHub tree for {source} is truncated ({len(tree)} items) — some skills may need fallback fetch")
             
             # Store all blob paths (not just SKILL.md)
             all_paths = {}
@@ -182,19 +201,24 @@ class GitHubClient:
                     if path.endswith("SKILL.md"):
                         skill_paths[path] = item.get("sha", "")
             
-            result = {"branch": branch, "tree": all_paths, "skills": skill_paths}
-            self._repo_cache[source] = result
+            result = {"branch": branch, "tree": all_paths, "skills": skill_paths, "truncated": truncated}
+            self._repo_cache[source] = {"data": result, "cached_at": now}
             logger.debug(f"Found {len(skill_paths)} SKILL.md files in {source} (branch: {branch})")
             return result
 
         except httpx.TimeoutException:
             logger.warning(f"Timeout getting tree for {source}")
-            self._repo_cache[source] = None
+            self._repo_cache[source] = {"data": None, "cached_at": now}
             return None
         except Exception as e:
             logger.warning(f"Error getting tree for {source}: {e}")
-            self._repo_cache[source] = None
+            self._repo_cache[source] = {"data": None, "cached_at": now}
             return None
+
+    @staticmethod
+    def _normalize_skill_id(skill_id: str) -> str:
+        """Normalize a skill_id by replacing path separators with hyphens."""
+        return skill_id.replace("/", "-").strip("-")
 
     def _find_skill_path(self, skill_paths: dict[str, str], skill_id: str) -> str | None:
         """
@@ -354,13 +378,52 @@ class GitHubClient:
                 error=f"No SKILL.md files found in {source}",
             )
         
+        # Normalize the skill_id (handles "tavily/research" → "tavily-research")
+        skill_id = self._normalize_skill_id(skill_id)
+
         # Find the specific skill
         skill_path = self._find_skill_path(skill_paths, skill_id)
         
+        # If not found, the cached tree might be stale — refresh and retry once
         if not skill_path:
+            self._invalidate_repo_cache(source)
+            fresh_info = await self._get_repo_tree(source)
+            if fresh_info and fresh_info is not repo_info:
+                skill_paths = fresh_info["skills"]
+                all_paths = fresh_info["tree"]
+                branch = fresh_info["branch"]
+                skill_path = self._find_skill_path(skill_paths, skill_id)
+                if skill_path:
+                    logger.info(f"Found {skill_id} after tree cache refresh for {source}")
+
+        if not skill_path:
+            # Fallback: try common direct URL patterns before giving up
+            fallback_paths = [
+                f"skills/{skill_id}/SKILL.md",
+                f"{skill_id}/SKILL.md",
+                f".claude/skills/{skill_id}/SKILL.md",
+                f".cursor/skills/{skill_id}/SKILL.md",
+            ]
+            for fb_path in fallback_paths:
+                content = await self._fetch_raw_content(source, branch, fb_path)
+                if content:
+                    logger.info(f"Fallback fetch succeeded for {source}/{fb_path}")
+                    raw_url = f"{self.RAW_BASE_URL}/{source}/{branch}/{fb_path}"
+                    skill_dir = "/".join(fb_path.split("/")[:-1])
+                    references = []
+                    if include_references:
+                        ref_files = self._find_reference_files(all_paths, skill_dir)
+                        if ref_files:
+                            async def fetch_ref(name: str, path: str) -> ReferenceFile:
+                                ref_content = await self._fetch_raw_content(source, branch, path)
+                                ref_url = f"{self.RAW_BASE_URL}/{source}/{branch}/{path}"
+                                return ReferenceFile(name=name, path=path, content=ref_content, raw_url=ref_url)
+                            references = list(await asyncio.gather(*[fetch_ref(n, p) for n, p in ref_files]))
+                    return FetchResult(content=content, raw_url=raw_url, skill_dir=skill_dir, references=references)
+            
             return FetchResult(
                 content=None,
-                error=f"Could not locate skill content in repository",
+                error=f"Could not locate skill '{skill_id}' in {source}",
             )
         
         # Get the skill directory (parent of SKILL.md)

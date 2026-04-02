@@ -4,6 +4,7 @@ import Link from "next/link";
 import SkillSearch from "./components/SkillSearch";
 import CopyBlock from "./components/CopyBlock";
 import FeaturedSkillsList from "./components/FeaturedSkillsList";
+import { FadeDown, FadeUp, FadeIn, SpringIn, ScrollReveal } from "./components/AnimatedSection";
 import { REGISTRY_SKILLS, type RegistrySkill } from "./data/registry";
 import scoresData from "./data/scores.json";
 
@@ -70,53 +71,63 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 pt-14 md:pt-10 py-10 flex flex-col min-h-[calc(100vh-4rem)]">
-        {/* Hero - Server rendered for SEO/AI crawlers */}
-        <header className="text-center mb-6">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <Image src="/logo.png" alt="Skyll" width={52} height={52} className="drop-shadow-lg" />
-            <h1 className="font-mono font-extrabold text-4xl md:text-5xl tracking-tight">skyll</h1>
-          </div>
+        {/* Hero */}
+        <FadeDown>
+          <header className="text-center mb-6">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <SpringIn>
+                <Image src="/logo.png" alt="Skyll" width={52} height={52} className="drop-shadow-lg" />
+              </SpringIn>
+              <h1 className="font-mono font-extrabold text-4xl md:text-5xl tracking-tight">skyll</h1>
+            </div>
 
-          <div className="inline-block">
-            <p data-speakable="tagline" className="bg-yellow border-3 border-ink px-5 py-2.5 font-bold text-base shadow-brutal-sm">
-              Skill discovery for AI agents
-            </p>
-          </div>
+            <FadeIn delay={0.2} className="inline-block">
+              <p data-speakable="tagline" className="bg-yellow border-3 border-ink px-5 py-2.5 font-bold text-base shadow-brutal-sm">
+                Skill discovery for AI agents
+              </p>
+            </FadeIn>
 
-          <p data-speakable="description" className="mt-5 max-w-lg mx-auto text-green-dark leading-relaxed text-sm">
-            Give any AI agent the power to discover and use new skills on demand. Search, retrieve, inject into context.
-          </p>
-        </header>
+            <FadeIn delay={0.3}>
+              <p data-speakable="description" className="mt-5 max-w-lg mx-auto text-green-dark leading-relaxed text-sm">
+                Give any AI agent the power to discover and use new skills on demand. Search, retrieve, inject into context.
+              </p>
+            </FadeIn>
+          </header>
+        </FadeDown>
 
         {/* Interactive Search - Client component */}
-        <SkillSearch />
+        <FadeUp delay={0.4}>
+          <SkillSearch />
+        </FadeUp>
       </main>
 
-      {/* Skill Registry - Server rendered heading, client list */}
+      {/* Skill Registry */}
       <section className="container mx-auto px-4 py-12 max-w-3xl">
-        <div className="text-center mb-6">
+        <ScrollReveal className="text-center mb-6">
           <h2 className="font-mono font-bold text-2xl mb-2">Skill Registry</h2>
           <p className="text-green-dark max-w-xl mx-auto text-sm">
             A curated collection of verified, security-audited agent skills maintained by trusted open-source authors.
           </p>
-        </div>
+        </ScrollReveal>
 
-        <FeaturedSkillsList skills={skillsWithScores} />
+        <ScrollReveal>
+          <FeaturedSkillsList skills={skillsWithScores} />
+        </ScrollReveal>
       </section>
 
-      {/* Get Started Section - Server rendered */}
+      {/* Get Started Section */}
       <section className="container mx-auto px-4 py-12 max-w-3xl">
-        <div className="text-center mb-8">
+        <ScrollReveal className="text-center mb-8">
           <h2 className="font-mono font-bold text-2xl mb-2">Get Started</h2>
           <p className="text-green-dark max-w-xl mx-auto text-sm">
             Skyll aggregates skills from multiple sources, ranks them by relevance, and returns the best matches.
             Agents discover and learn skills autonomously.
           </p>
-        </div>
+        </ScrollReveal>
 
         <div className="space-y-4 mb-8">
           {/* MCP */}
-          <div className="card-brutal p-5">
+          <ScrollReveal><div className="card-brutal p-5">
             <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-1/2">
                 <div className="flex items-center gap-2 mb-2">
@@ -149,10 +160,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </div></ScrollReveal>
 
           {/* Python */}
-          <div className="card-brutal p-5">
+          <ScrollReveal><div className="card-brutal p-5">
             <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-1/2">
                 <div className="flex items-center gap-2 mb-2">
@@ -178,10 +189,10 @@ async with Skyll() as client:
                 />
               </div>
             </div>
-          </div>
+          </div></ScrollReveal>
 
           {/* REST API */}
-          <div className="card-brutal p-5">
+          <ScrollReveal><div className="card-brutal p-5">
             <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-1/2">
                 <div className="flex items-center gap-2 mb-2">
@@ -204,11 +215,11 @@ async with Skyll() as client:
                 </div>
               </div>
             </div>
-          </div>
+          </div></ScrollReveal>
         </div>
 
         {/* Scoring */}
-        <div className="card-brutal p-5 bg-yellow/30">
+        <ScrollReveal><div className="card-brutal p-5 bg-yellow/30">
           <div className="flex items-start gap-3">
             <Star className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <div>
@@ -229,15 +240,15 @@ async with Skyll() as client:
               </p>
             </div>
           </div>
-        </div>
+        </div></ScrollReveal>
 
         {/* CTA */}
-        <div className="text-center mt-8">
+        <ScrollReveal className="text-center mt-8">
           <Link href="/docs" className="btn-brutal bg-green-mid inline-flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Read the Docs
           </Link>
-        </div>
+        </ScrollReveal>
       </section>
 
       <div className="flex-1 min-h-[6vh]" />
