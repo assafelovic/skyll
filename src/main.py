@@ -107,6 +107,11 @@ app = FastAPI(
 Search and retrieve agent skills (SKILL.md files) from the [skills.sh](https://skills.sh) 
 ecosystem with full markdown content.
 
+### Authentication
+
+**No authentication required.** All endpoints are free and open — no API keys, no tokens, no rate limits.
+Just call the API directly. This is by design: Skyll is a public utility for the agent ecosystem.
+
 ### What are Agent Skills?
 
 Agent skills are markdown files that teach AI coding agents how to complete specific tasks.
@@ -117,9 +122,10 @@ They follow the [Agent Skills specification](https://agentskills.io) and are sup
 
 - 🔍 **Search** - Find skills by natural language query
 - 📄 **Full Content** - Get complete SKILL.md with parsed metadata
-- 📊 **Ranked Results** - Sorted by popularity (install count)
+- 📊 **Ranked Results** - Sorted by relevance (0-100 score)
 - ⚡ **Cached** - Fast responses with intelligent caching
 - 🔌 **MCP Server** - Native MCP support at `/mcp` endpoint
+- 🔓 **Open Access** - No API keys or authentication needed
 
 ### Quick Start
 
@@ -142,6 +148,13 @@ curl "https://api.skyll.app/skills/vercel-labs/agent-skills/vercel-react-best-pr
   }
 }
 ```
+
+### Access & Pricing
+
+- **Free** - No cost, no tiers, no usage limits
+- **No auth** - No API keys, OAuth, or tokens required
+- **Open source** - Apache-2.0 license, self-host if you prefer
+- **CORS enabled** - Call from any origin, including browsers
 
 ### Response Format
 

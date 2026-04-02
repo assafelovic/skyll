@@ -1,36 +1,13 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { 
-  ArrowLeft, Github, Terminal, Code, Cpu, Globe, FlaskConical, 
-  Wrench, Copy, Check, Star, Search, FileText, Zap, Package,
-  ArrowRight, BookOpen, ExternalLink, Users, MessageCircle
+import {
+  ArrowLeft, Github, Terminal, Code, Cpu, Globe, FlaskConical,
+  Wrench, Star, Search, FileText, Zap, Package,
+  ArrowRight, BookOpen, ExternalLink, Users, MessageCircle, Check
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import CopyButton from "../components/CopyButton";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="absolute top-3 right-3 p-2 bg-green-mid border-2 border-ink hover:bg-yellow transition-colors"
-      title="Copy to clipboard"
-    >
-      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-    </button>
-  );
-}
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.skyll.app";
 
 function CodeBlock({ code, title }: { code: string; title?: string }) {
   return (
@@ -47,21 +24,6 @@ function CodeBlock({ code, title }: { code: string; title?: string }) {
         <CopyButton text={code} />
       </div>
     </div>
-  );
-}
-
-function Section({ id, children }: { id: string; children: React.ReactNode }) {
-  return (
-    <motion.section
-      id={id}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.5 }}
-      className="scroll-mt-24"
-    >
-      {children}
-    </motion.section>
   );
 }
 
@@ -115,7 +77,7 @@ export default function DocsPage() {
         </p>
 
         {/* Quick nav */}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <nav className="mt-8 flex flex-wrap justify-center gap-3">
           {[
             { href: "#why", label: "Why Skyll?" },
             { href: "#features", label: "Features" },
@@ -135,29 +97,29 @@ export default function DocsPage() {
               {item.label}
             </a>
           ))}
-        </div>
+        </nav>
       </header>
 
       {/* Content */}
       <main className="container mx-auto px-4 pb-16 max-w-4xl space-y-16">
-        
+
         {/* Why Skyll */}
-        <Section id="why">
+        <section id="why" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <span className="bg-yellow px-3 py-1 border-4 border-ink">Why Skyll?</span>
           </h2>
-          
+
           <div className="card-brutal p-8 space-y-6">
             <p className="text-lg leading-relaxed">
-              Agent skills (<code className="bg-ink text-green-light px-2 py-0.5">SKILL.md</code> files) are a powerful way 
-              to extend what AI agents can do. They&apos;re markdown files that teach agents how to complete specific tasks, 
+              Agent skills (<code className="bg-ink text-green-light px-2 py-0.5">SKILL.md</code> files) are a powerful way
+              to extend what AI agents can do. They&apos;re markdown files that teach agents how to complete specific tasks,
               following the <a href="https://agentskills.io" className="underline font-bold hover:text-green-dark">Agent Skills specification</a>.
             </p>
-            
+
             <div className="bg-pink/30 p-4 border-l-4 border-pink">
               <p className="font-bold mb-2">The Problem</p>
               <p className="text-green-dark">
-                Today, skills only work with a handful of tools like <strong>Claude Code</strong> and <strong>Cursor</strong>. 
+                Today, skills only work with a handful of tools like <strong>Claude Code</strong> and <strong>Cursor</strong>.
                 They require manual installation before a session, which means developers need to know in advance which skills they&apos;ll need.
               </p>
             </div>
@@ -165,67 +127,67 @@ export default function DocsPage() {
             <div className="bg-green-mid/30 p-4 border-l-4 border-green-mid">
               <p className="font-bold mb-2">The Solution</p>
               <p className="text-green-dark">
-                <strong>Skyll democratizes access to skills.</strong> Any agent, framework, or tool can discover and retrieve 
-                skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context, 
+                <strong>Skyll democratizes access to skills.</strong> Any agent, framework, or tool can discover and retrieve
+                skills on demand. No pre-installation. No human intervention. Agents explore, choose based on context,
                 and use skills autonomously.
               </p>
             </div>
 
             <p className="text-lg leading-relaxed">
-              Think of Skyll as a <strong>search engine for agent capabilities</strong>. Your agent asks &quot;How do I do X?&quot; 
+              Think of Skyll as a <strong>search engine for agent capabilities</strong>. Your agent asks &quot;How do I do X?&quot;
               and Skyll returns the relevant skill with full instructions, ready to use.
             </p>
           </div>
-        </Section>
+        </section>
 
         {/* Features */}
-        <Section id="features">
+        <section id="features" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <span className="bg-blue px-3 py-1 border-4 border-ink">Features</span>
           </h2>
-          
+
           <div className="grid md:grid-cols-2 gap-6">
-            <FeatureCard 
-              icon={<Search className="w-6 h-6" />} 
-              title="Multi-Source Search" 
-              description="Query skills.sh, community registry, and extensible to more sources. Results are deduplicated automatically." 
-              color="bg-yellow" 
+            <FeatureCard
+              icon={<Search className="w-6 h-6" />}
+              title="Multi-Source Search"
+              description="Query skills.sh, community registry, and extensible to more sources. Results are deduplicated automatically."
+              color="bg-yellow"
             />
-            <FeatureCard 
-              icon={<FileText className="w-6 h-6" />} 
-              title="Full Content Retrieval" 
-              description="Get complete SKILL.md content with parsed YAML frontmatter, not just metadata. Ready for context injection." 
-              color="bg-pink" 
+            <FeatureCard
+              icon={<FileText className="w-6 h-6" />}
+              title="Full Content Retrieval"
+              description="Get complete SKILL.md content with parsed YAML frontmatter, not just metadata. Ready for context injection."
+              color="bg-pink"
             />
-            <FeatureCard 
-              icon={<Star className="w-6 h-6" />} 
-              title="Relevance Ranking" 
-              description="Skills scored 0-100 based on content availability, query match, references, and popularity (install count)." 
-              color="bg-blue" 
+            <FeatureCard
+              icon={<Star className="w-6 h-6" />}
+              title="Relevance Ranking"
+              description="Skills scored 0-100 based on content availability, query match, references, and popularity (install count)."
+              color="bg-blue"
             />
-            <FeatureCard 
-              icon={<Zap className="w-6 h-6" />} 
-              title="Aggressive Caching" 
-              description="Intelligent caching respects GitHub rate limits. Configure TTL via environment variables." 
-              color="bg-orange" 
+            <FeatureCard
+              icon={<Zap className="w-6 h-6" />}
+              title="Aggressive Caching"
+              description="Intelligent caching respects GitHub rate limits. Configure TTL via environment variables."
+              color="bg-orange"
             />
-            <FeatureCard 
-              icon={<Package className="w-6 h-6" />} 
-              title="References Support" 
-              description="Optionally fetch additional .md files from references/, docs/, examples/ directories." 
-              color="bg-green-mid" 
+            <FeatureCard
+              icon={<Package className="w-6 h-6" />}
+              title="References Support"
+              description="Optionally fetch additional .md files from references/, docs/, examples/ directories."
+              color="bg-green-mid"
             />
-            <FeatureCard 
-              icon={<Cpu className="w-6 h-6" />} 
-              title="Dual Interface" 
-              description="Use as REST API for any integration, or as MCP server for Claude Desktop, Cursor, and more." 
-              color="bg-cream" 
+            <FeatureCard
+              icon={<Cpu className="w-6 h-6" />}
+              title="Dual Interface"
+              description="Use as REST API for any integration, or as MCP server for Claude Desktop, Cursor, and more."
+              color="bg-cream"
             />
           </div>
-        </Section>
+        </section>
 
         {/* Install with pip */}
-        <Section id="python">
+        <section id="python" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Package className="w-8 h-8" />
             <span className="bg-orange px-3 py-1 border-4 border-ink">Install with pip</span>
@@ -276,10 +238,10 @@ async with Skyll() as client:
     skills = await client.search("testing")`} />
             </div>
           </div>
-        </Section>
+        </section>
 
         {/* REST API */}
-        <Section id="api">
+        <section id="api" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Globe className="w-8 h-8" />
             <span className="bg-pink px-3 py-1 border-4 border-ink">REST API</span>
@@ -287,7 +249,7 @@ async with Skyll() as client:
 
           <div className="card-brutal p-6 mb-6">
             <p className="text-lg leading-relaxed">
-              The hosted API is available at <code className="bg-ink text-green-light px-2 py-1">https://api.skyll.app</code>. 
+              The hosted API is available at <code className="bg-ink text-green-light px-2 py-1">https://api.skyll.app</code>.
               For other languages or direct integration.
             </p>
             <div className="mt-4">
@@ -306,10 +268,10 @@ async with Skyll() as client:
               </div>
               <div className="p-6">
                 <p className="mb-4">Search for skills by query. Returns ranked results with full content.</p>
-                
+
                 <h4 className="font-bold mb-2">Example</h4>
                 <CodeBlock code={`curl "https://api.skyll.app/search?q=react+performance&limit=5"`} />
-                
+
                 <h4 className="font-bold mb-2 mt-6">Query Parameters</h4>
                 <table className="w-full text-sm mb-6">
                   <tbody>
@@ -363,13 +325,13 @@ async with Skyll() as client:
               </div>
               <div className="p-6">
                 <p className="mb-4">Get the latest version of a skill by name. Similar to <code className="bg-ink text-green-light px-1">npx skills add</code> but for runtime context injection.</p>
-                
+
                 <h4 className="font-bold mb-2">Simple Name (Searches for Best Match)</h4>
                 <CodeBlock code={`curl "https://api.skyll.app/skill/react-best-practices"`} />
-                
+
                 <h4 className="font-bold mb-2 mt-6">Full Path (Direct Lookup)</h4>
                 <CodeBlock code={`curl "https://api.skyll.app/skill/vercel-labs/agent-skills/vercel-react-best-practices"`} />
-                
+
                 <p className="mt-4 text-sm text-green-dark">
                   Always fetches fresh content from GitHub, ensuring you have the latest version.
                 </p>
@@ -399,10 +361,10 @@ async with Skyll() as client:
               </div>
             </div>
           </div>
-        </Section>
+        </section>
 
         {/* Self-Hosted */}
-        <Section id="quickstart">
+        <section id="quickstart" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Terminal className="w-8 h-8" />
             <span className="bg-green-mid px-3 py-1 border-4 border-ink">Self-Hosted</span>
@@ -418,7 +380,7 @@ async with Skyll() as client:
             <div>
               <h3 className="font-bold text-xl mb-3 flex items-center gap-2">
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 1</span>
-                Clone & Install
+                Clone &amp; Install
               </h3>
               <CodeBlock code={`git clone https://github.com/assafelovic/skyll.git
 cd skyll
@@ -430,13 +392,13 @@ pip install -e ".[server]"`} />
                 <span className="bg-yellow px-2 py-0.5 border-2 border-ink text-sm">Step 2</span>
                 Configure (Optional but Recommended)
               </h3>
-              <CodeBlock 
+              <CodeBlock
                 title=".env"
                 code={`# GitHub token for higher rate limits (5000 vs 60 requests/hour)
 GITHUB_TOKEN=ghp_your_token_here
 
 # Cache TTL in seconds (default: 86400 = 24 hours)
-CACHE_TTL=86400`} 
+CACHE_TTL=86400`}
               />
               <p className="mt-3 text-sm text-green-dark">
                 Get a GitHub token at{" "}
@@ -465,10 +427,10 @@ async with Skyll(base_url="http://localhost:8000") as client:
     skills = await client.search("testing")`} />
             </div>
           </div>
-        </Section>
+        </section>
 
         {/* Ranking Algorithm */}
-        <Section id="ranking">
+        <section id="ranking" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Star className="w-8 h-8" />
             <span className="bg-orange px-3 py-1 border-4 border-ink">Ranking Algorithm</span>
@@ -476,8 +438,8 @@ async with Skyll(base_url="http://localhost:8000") as client:
 
           <div className="card-brutal p-6 mb-6">
             <p className="text-lg leading-relaxed">
-              Skyll uses a <strong>multi-signal ranking algorithm</strong> to order search results by relevance. 
-              Each skill receives a score from <strong>0-100</strong> based on weighted factors, with a small 
+              Skyll uses a <strong>multi-signal ranking algorithm</strong> to order search results by relevance.
+              Each skill receives a score from <strong>0-100</strong> based on weighted factors, with a small
               additional boost for curated registry skills.
             </p>
           </div>
@@ -497,7 +459,6 @@ async with Skyll(base_url="http://localhost:8000") as client:
 
             {/* Signals Grid */}
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Content */}
               <div className="card-brutal p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="bg-green-mid p-2 border-2 border-ink">
@@ -509,7 +470,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                   </div>
                 </div>
                 <p className="text-green-dark mb-4">
-                  Skills with successfully fetched SKILL.md content receive 40 points. 
+                  Skills with successfully fetched SKILL.md content receive 40 points.
                   Skills without content are sorted last (not filtered).
                 </p>
                 <table className="w-full text-sm">
@@ -526,7 +487,6 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </table>
               </div>
 
-              {/* Query Match */}
               <div className="card-brutal p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="bg-yellow p-2 border-2 border-ink">
@@ -567,7 +527,6 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </table>
               </div>
 
-              {/* References */}
               <div className="card-brutal p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="bg-pink p-2 border-2 border-ink">
@@ -579,7 +538,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                   </div>
                 </div>
                 <p className="text-green-dark mb-4">
-                  When <code className="bg-ink text-green-light px-1">include_references=true</code>, skills with 
+                  When <code className="bg-ink text-green-light px-1">include_references=true</code>, skills with
                   additional .md files receive a boost.
                 </p>
                 <table className="w-full text-sm">
@@ -596,7 +555,6 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </table>
               </div>
 
-              {/* Popularity */}
               <div className="card-brutal p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="bg-blue p-2 border-2 border-ink">
@@ -608,7 +566,7 @@ async with Skyll(base_url="http://localhost:8000") as client:
                   </div>
                 </div>
                 <p className="text-green-dark mb-4">
-                  Install count from skills.sh, using <strong>logarithmic scaling</strong> to prevent 
+                  Install count from skills.sh, using <strong>logarithmic scaling</strong> to prevent
                   extremely popular skills from dominating.
                 </p>
                 <table className="w-full text-sm">
@@ -646,15 +604,15 @@ async with Skyll(base_url="http://localhost:8000") as client:
                 </div>
               </div>
               <p className="text-green-dark mb-4">
-                Skills from the curated <code className="bg-ink text-green-light px-1">registry/SKILLS.md</code> receive 
-                a boost <strong>scaled by query relevance</strong>. This rewards hand-picked quality skills without 
+                Skills from the curated <code className="bg-ink text-green-light px-1">registry/SKILLS.md</code> receive
+                a boost <strong>scaled by query relevance</strong>. This rewards hand-picked quality skills without
                 letting irrelevant registry entries jump the ranks.
               </p>
               <code className="block bg-ink text-green-light p-3 font-mono text-sm mb-4">
                 curated_boost = is_curated &times; 8 &times; query_match
               </code>
               <p className="text-sm text-green-dark">
-                A curated skill with a strong ID match gets +7.2 pts, a description match gets +5.6 pts, 
+                A curated skill with a strong ID match gets +7.2 pts, a description match gets +5.6 pts,
                 and a weak partial match gets just +2 pts.
               </p>
             </div>
@@ -803,10 +761,10 @@ self._ranker = MyCustomRanker()`} />
               </p>
             </div>
           </div>
-        </Section>
+        </section>
 
         {/* MCP Server */}
-        <Section id="mcp">
+        <section id="mcp" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Cpu className="w-8 h-8" />
             <span className="bg-pink px-3 py-1 border-4 border-ink">MCP Server</span>
@@ -814,7 +772,7 @@ self._ranker = MyCustomRanker()`} />
 
           <div className="card-brutal p-6 mb-6">
             <p className="text-lg leading-relaxed">
-              Skyll provides a <strong>hosted MCP server</strong> at <code className="bg-ink text-green-light px-2 py-1">api.skyll.app/mcp</code> - 
+              Skyll provides a <strong>hosted MCP server</strong> at <code className="bg-ink text-green-light px-2 py-1">api.skyll.app/mcp</code> -
               no installation required. Works with Claude Desktop, Cursor, and other MCP-compatible clients.
             </p>
           </div>
@@ -825,7 +783,7 @@ self._ranker = MyCustomRanker()`} />
                 <span className="bg-green-mid px-2 py-0.5 border-2 border-ink text-sm">Recommended</span>
                 Hosted MCP
               </h3>
-              <CodeBlock 
+              <CodeBlock
                 title="claude_desktop_config.json"
                 code={`{
   "mcpServers": {
@@ -833,7 +791,7 @@ self._ranker = MyCustomRanker()`} />
       "url": "https://api.skyll.app/mcp"
     }
   }
-}`} 
+}`}
               />
               <p className="mt-3 text-sm text-green-dark">
                 That&apos;s it! The hosted server is always up-to-date with the latest features.
@@ -875,7 +833,7 @@ add_skill("vercel-labs/agent-skills/vercel-react-best-practices")`} />
             <div>
               <h3 className="font-bold text-xl mb-3">Self-Hosted MCP</h3>
               <p className="text-green-dark mb-3">If you prefer to run your own MCP server:</p>
-              <CodeBlock 
+              <CodeBlock
                 title="claude_desktop_config.json"
                 code={`{
   "mcpServers": {
@@ -885,7 +843,7 @@ add_skill("vercel-labs/agent-skills/vercel-react-best-practices")`} />
       "cwd": "/path/to/skyll"
     }
   }
-}`} 
+}`}
               />
             </div>
 
@@ -901,10 +859,10 @@ python -m src.mcp_server --transport http --port 8080
 python -m src.mcp_server --transport sse --port 8080`} />
             </div>
           </div>
-        </Section>
+        </section>
 
         {/* Use Cases */}
-        <Section id="usecases">
+        <section id="usecases" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <span className="bg-blue px-3 py-1 border-4 border-ink">Use Cases</span>
           </h2>
@@ -971,10 +929,10 @@ python -m src.mcp_server --transport sse --port 8080`} />
               </li>
             </ul>
           </div>
-        </Section>
+        </section>
 
         {/* Contributing */}
-        <Section id="contributing">
+        <section id="contributing" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Users className="w-8 h-8" />
             <span className="bg-green-mid px-3 py-1 border-4 border-ink">Contributing</span>
@@ -984,12 +942,12 @@ python -m src.mcp_server --transport sse --port 8080`} />
             <div className="card-brutal p-6">
               <h3 className="font-bold text-xl mb-4">Add Your Skill to the Registry</h3>
               <p className="mb-4 text-green-dark">
-                The community registry at <code className="bg-ink text-green-light px-2">registry/SKILLS.md</code> is 
+                The community registry at <code className="bg-ink text-green-light px-2">registry/SKILLS.md</code> is
                 the easiest way to make your skill discoverable.
               </p>
-              <CodeBlock 
+              <CodeBlock
                 title="registry/SKILLS.md"
-                code={`- your-skill-id | your-username/your-repo | path/to/skill | Short description of what it does`} 
+                code={`- your-skill-id | your-username/your-repo | path/to/skill | Short description of what it does`}
               />
               <div className="mt-6 flex flex-wrap gap-4">
                 <a
@@ -1060,36 +1018,36 @@ class MyCustomSource(SkillSource):
               </p>
             </div>
           </div>
-        </Section>
+        </section>
 
         {/* Links */}
-        <Section id="links">
+        <section id="links" className="scroll-mt-24">
           <h2 className="text-3xl font-bold mb-6">Resources</h2>
-          
+
           <div className="grid md:grid-cols-4 gap-4">
-            <a 
-              href="https://github.com/assafelovic/skyll" 
-              target="_blank" 
+            <a
+              href="https://github.com/assafelovic/skyll"
+              target="_blank"
               rel="noopener noreferrer"
               className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
             >
               <Github className="w-8 h-8 mb-3" />
               <h3 className="font-bold mb-1">GitHub</h3>
-              <p className="text-sm text-green-dark">Source code & issues</p>
+              <p className="text-sm text-green-dark">Source code &amp; issues</p>
             </a>
-            <a 
-              href="https://discord.gg/CxdMdfZS" 
-              target="_blank" 
+            <a
+              href="https://discord.gg/CxdMdfZS"
+              target="_blank"
               rel="noopener noreferrer"
               className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
             >
               <MessageCircle className="w-8 h-8 mb-3" />
               <h3 className="font-bold mb-1">Discord</h3>
-              <p className="text-sm text-green-dark">Community & support</p>
+              <p className="text-sm text-green-dark">Community &amp; support</p>
             </a>
-            <a 
+            <a
               href={`${API_URL}/docs`}
-              target="_blank" 
+              target="_blank"
               rel="noopener noreferrer"
               className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
             >
@@ -1097,9 +1055,9 @@ class MyCustomSource(SkillSource):
               <h3 className="font-bold mb-1">API Docs</h3>
               <p className="text-sm text-green-dark">OpenAPI / Swagger</p>
             </a>
-            <a 
-              href="https://skills.sh" 
-              target="_blank" 
+            <a
+              href="https://skills.sh"
+              target="_blank"
               rel="noopener noreferrer"
               className="card-brutal p-6 hover:bg-yellow/20 transition-colors"
             >
@@ -1108,7 +1066,7 @@ class MyCustomSource(SkillSource):
               <p className="text-sm text-green-dark">Skill ecosystem</p>
             </a>
           </div>
-        </Section>
+        </section>
 
       </main>
 

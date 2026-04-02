@@ -1,39 +1,28 @@
-"use client";
+import { BookOpen, Github, Star } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import SkillSearch from "./components/SkillSearch";
+import CopyBlock from "./components/CopyBlock";
+import FeaturedSkillsList from "./components/FeaturedSkillsList";
+import { REGISTRY_SKILLS, type RegistrySkill } from "./data/registry";
+import scoresData from "./data/scores.json";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Search, Github, BookOpen, Zap, Package, Star, FileText, 
-  ChevronDown, ChevronUp, Copy, Check
-} from "lucide-react";
-
-// Copyable code block component
-function CopyableCode({ code, className = "text-sm" }: { code: string; className?: string }) {
-  const [copied, setCopied] = useState(false);
-  
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-  
-  return (
-    <div className="relative group">
-      <pre className={`bg-ink text-green-light p-4 ${className} overflow-x-auto pr-12`}>
-        <code>{code}</code>
-      </pre>
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 p-1.5 bg-green-dark/50 hover:bg-green-dark text-green-light rounded transition-colors"
-        title={copied ? "Copied!" : "Copy to clipboard"}
-      >
-        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-      </button>
-    </div>
-  );
+export interface SkillWithScore extends RegistrySkill {
+  relevance_score: number;
+  install_count: number;
 }
 
-// Discord logo SVG component
+function getSkillsWithScores(): SkillWithScore[] {
+  const scores = scoresData as Record<string, { relevance_score: number; install_count: number }>;
+  return REGISTRY_SKILLS
+    .map((skill) => ({
+      ...skill,
+      relevance_score: scores[skill.id]?.relevance_score ?? 0,
+      install_count: scores[skill.id]?.install_count ?? 0,
+    }))
+    .sort((a, b) => b.relevance_score - a.relevance_score);
+}
+
 function DiscordIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -41,419 +30,109 @@ function DiscordIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-import Image from "next/image";
-import Link from "next/link";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-interface SkillReference {
-  name: string;
-  path: string;
-  content: string;
-  raw_url: string;
-}
-
-interface Skill {
-  id: string;
-  title: string;
-  description: string;
-  source: string;
-  content: string;
-  install_count: number;
-  relevance_score: number;
-  fetch_error?: string;
-  refs?: {
-    skills_sh: string;
-    github: string;
-  };
-  references?: SkillReference[];
-}
-
-interface SearchResponse {
-  query: string;
-  count: number;
-  skills: Skill[];
-}
-
-function TopIcons() {
-  return (
-    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 md:gap-2 z-10">
-      <Link
-        href="/docs"
-        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-orange transition-colors"
-        style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
-        title="Documentation"
-      >
-        <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      </Link>
-      <a
-        href="https://github.com/assafelovic/skyll"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-ink hover:text-cream transition-colors"
-        style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
-        title="GitHub"
-      >
-        <Github className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      </a>
-      <a
-        href="https://discord.gg/CxdMdfZS"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-discord hover:text-white transition-colors"
-        style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
-        title="Discord"
-      >
-        <DiscordIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      </a>
-    </div>
-  );
-}
-
-function SkillCard({ skill, index }: { skill: Skill; index: number }) {
-  const [showContent, setShowContent] = useState(false);
-  const [showRefs, setShowRefs] = useState(false);
-  
-  const hasContent = skill.content && !skill.fetch_error;
-  const hasRefs = skill.references && skill.references.length > 0;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="card-brutal transition-all duration-200"
-    >
-      <div className="p-6 flex flex-wrap justify-between items-start gap-4">
-        <h3 className="font-bold text-xl">{skill.title || skill.id}</h3>
-        <div className="flex flex-wrap gap-2">
-          <span className="badge bg-yellow">
-            <Star className="inline w-3 h-3 mr-1" />
-            {skill.relevance_score.toFixed(1)}
-          </span>
-          <span className="badge bg-green-mid">
-            <Package className="inline w-3 h-3 mr-1" />
-            {skill.install_count.toLocaleString()}
-          </span>
-          <span className="badge bg-blue">
-            <FileText className="inline w-3 h-3 mr-1" />
-            {skill.source}
-          </span>
-          {hasRefs && (
-            <span className="badge bg-pink">📎 {skill.references!.length}</span>
-          )}
-        </div>
-      </div>
-
-      {skill.description && (
-        <p className="px-6 pb-4 text-green-dark text-sm leading-relaxed">
-          {skill.description}
-        </p>
-      )}
-
-      {hasContent && (
-        <>
-          <button
-            onClick={() => setShowContent(!showContent)}
-            className="mx-6 mb-4 btn-brutal bg-orange text-sm py-2 px-4"
-          >
-            <FileText className="inline w-4 h-4 mr-2" />
-            {showContent ? "Hide" : "Show"} Content
-            {showContent ? <ChevronUp className="inline w-4 h-4 ml-2" /> : <ChevronDown className="inline w-4 h-4 ml-2" />}
-          </button>
-          <AnimatePresence>
-            {showContent && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <pre className="bg-ink text-green-light p-6 text-sm leading-relaxed max-h-80 overflow-y-auto whitespace-pre-wrap break-words">
-                  {skill.content}
-                </pre>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      )}
-
-      {skill.fetch_error && (
-        <p className="px-6 pb-4 text-amber-700 text-sm italic">
-          Content unavailable — view on GitHub for details
-        </p>
-      )}
-
-      {hasRefs && (
-        <>
-          <button
-            onClick={() => setShowRefs(!showRefs)}
-            className="mx-6 mb-4 btn-brutal bg-pink text-sm py-2 px-4"
-          >
-            📎 {showRefs ? "Hide" : "Show"} {skill.references!.length} References
-            {showRefs ? <ChevronUp className="inline w-4 h-4 ml-2" /> : <ChevronDown className="inline w-4 h-4 ml-2" />}
-          </button>
-          <AnimatePresence>
-            {showRefs && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="p-6 pt-0 space-y-3">
-                  {skill.references!.map((ref, i) => (
-                    <ReferenceItem key={i} reference={ref} />
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      )}
-
-      <div className="p-4 border-t-4 border-ink bg-green-light flex flex-wrap gap-3">
-        {skill.refs?.skills_sh && (
-          <a href={skill.refs.skills_sh} target="_blank" rel="noopener noreferrer" className="btn-brutal bg-cream text-sm py-2 px-4">
-            <Zap className="inline w-4 h-4 mr-2" />skills.sh
-          </a>
-        )}
-        {skill.refs?.github && (
-          <a href={skill.refs.github} target="_blank" rel="noopener noreferrer" className="btn-brutal bg-cream text-sm py-2 px-4">
-            <Github className="inline w-4 h-4 mr-2" />GitHub
-          </a>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-function ReferenceItem({ reference }: { reference: SkillReference }) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="border-2 border-ink bg-cream">
-      <div className="flex justify-between items-center p-3 bg-blue border-b-2 border-ink">
-        <span className="font-semibold text-sm">📎 {reference.name}</span>
-        <button onClick={() => setExpanded(!expanded)} className="btn-brutal bg-yellow text-xs py-1 px-2">
-          {expanded ? "Hide" : "Show"}
-        </button>
-      </div>
-      <AnimatePresence>
-        {expanded && (
-          <motion.pre
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="bg-ink text-green-light p-4 text-xs leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap break-words"
-          >
-            {reference.content || "Content not loaded"}
-          </motion.pre>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const [limit, setLimit] = useState(5);
-  const [includeRefs, setIncludeRefs] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [results, setResults] = useState<SearchResponse | null>(null);
-  const [searchTime, setSearchTime] = useState<number | null>(null);
-
-  const handleSearch = async () => {
-    if (!query.trim()) {
-      setError("Please enter a search query");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setResults(null);
-    setSearchTime(null);
-
-    try {
-      const params = new URLSearchParams({ q: query, limit: limit.toString() });
-      if (includeRefs) params.append("include_references", "true");
-
-      const start = performance.now();
-      const response = await fetch(`${API_URL}/search?${params}`);
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-
-      const data: SearchResponse = await response.json();
-      setSearchTime(Math.round(performance.now() - start));
-      setResults(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Search failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const skillsWithScores = getSkillsWithScores();
 
   return (
     <div className="min-h-screen bg-green-light bg-gradient-garden flex flex-col">
-      <TopIcons />
-
-      {/* Main Content - Centered, fills viewport */}
-      <main className="flex-1 container mx-auto px-4 pt-16 md:pt-12 py-12 flex flex-col min-h-[calc(100vh-4rem)]">
-        {/* Hero */}
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+      {/* Top Navigation */}
+      <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 md:gap-2 z-10">
+        <Link
+          href="/docs"
+          className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-orange transition-colors"
+          style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
+          title="Documentation"
         >
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <motion.div
-              initial={{ rotate: -10, scale: 0.8 }}
-              animate={{ rotate: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 200 }}
-            >
-              <Image src="/logo.png" alt="Skyll" width={64} height={64} className="drop-shadow-lg" />
-            </motion.div>
-            <h1 className="font-mono font-extrabold text-5xl md:text-6xl tracking-tight">skyll</h1>
+          <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </Link>
+        <a
+          href="https://github.com/assafelovic/skyll"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-ink hover:text-cream transition-colors"
+          style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
+          title="GitHub"
+        >
+          <Github className="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </a>
+        <a
+          href="https://discord.gg/CxdMdfZS"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-1.5 md:p-2 bg-cream/90 border-2 border-ink hover:bg-discord hover:text-white transition-colors"
+          style={{ boxShadow: '2px 2px 0 #1a1a1a' }}
+          title="Discord"
+        >
+          <DiscordIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </a>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 container mx-auto px-4 pt-14 md:pt-10 py-10 flex flex-col min-h-[calc(100vh-4rem)]">
+        {/* Hero - Server rendered for SEO/AI crawlers */}
+        <header className="text-center mb-6">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <Image src="/logo.png" alt="Skyll" width={52} height={52} className="drop-shadow-lg" />
+            <h1 className="font-mono font-extrabold text-4xl md:text-5xl tracking-tight">skyll</h1>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-block"
-          >
-            <p className="bg-yellow border-4 border-ink px-6 py-3 font-bold text-lg shadow-brutal-sm">
+          <div className="inline-block">
+            <p data-speakable="tagline" className="bg-yellow border-3 border-ink px-5 py-2.5 font-bold text-base shadow-brutal-sm">
               Skill discovery for AI agents
             </p>
-          </motion.div>
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-6 max-w-xl mx-auto text-green-dark leading-relaxed"
-          >
+          <p data-speakable="description" className="mt-5 max-w-lg mx-auto text-green-dark leading-relaxed text-sm">
             Give any AI agent the power to discover and use new skills on demand. Search, retrieve, inject into context.
-          </motion.p>
-        </motion.header>
+          </p>
+        </header>
 
-        {/* Search Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="card-brutal p-6 md:p-8 max-w-3xl mx-auto w-full"
-        >
-          <div className="flex flex-col md:flex-row gap-4">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              placeholder="Search skills... (e.g., react performance, testing)"
-              className="flex-1 font-mono text-lg p-4 border-4 border-ink bg-cream placeholder:text-gray-500"
-              autoFocus
-            />
-            <button onClick={handleSearch} disabled={loading} className="btn-brutal bg-green-mid flex items-center justify-center gap-2">
-              <Search className="w-5 h-5" />
-              {loading ? "Searching..." : "Search"}
-            </button>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-6">
-            <label className="flex items-center gap-2 text-sm">
-              Limit:
-              <input
-                type="number"
-                value={limit}
-                onChange={(e) => setLimit(parseInt(e.target.value) || 5)}
-                min={1}
-                max={20}
-                className="w-16 p-2 border-2 border-ink text-center font-mono"
-              />
-            </label>
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" checked={includeRefs} onChange={(e) => setIncludeRefs(e.target.checked)} className="w-5 h-5 accent-green-mid" />
-              Include references
-            </label>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {loading && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-4 p-4 bg-yellow border-2 border-ink animate-pulse">
-                🔍 Discovering skills...
-              </motion.div>
-            )}
-            {error && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-4 p-4 bg-pink border-2 border-ink">
-                ⚠️ {error}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Results */}
-        {results && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8 max-w-3xl mx-auto w-full">
-            {results.skills.length > 0 ? (
-              <div className="space-y-6">
-                <p className="text-xs text-green-dark/60 text-right">
-                  {results.count} {results.count === 1 ? "result" : "results"}{searchTime !== null && <> in {searchTime}ms</>}
-                </p>
-                {results.skills.map((skill, index) => (
-                  <SkillCard key={skill.id} skill={skill} index={index} />
-                ))}
-              </div>
-            ) : (
-              <div className="card-brutal p-12 text-center">
-                <div className="text-6xl mb-4">🌿</div>
-                <p className="text-lg">No skills found for &quot;{results.query}&quot;</p>
-                <p className="mt-2 text-green-dark">Try a different search term</p>
-              </div>
-            )}
-          </motion.div>
-        )}
+        {/* Interactive Search - Client component */}
+        <SkillSearch />
       </main>
 
-      {/* Quick Start Section */}
-      <section className="container mx-auto px-4 py-16 max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-10"
-        >
-          <h2 className="font-mono font-bold text-3xl mb-3">Get Started</h2>
-          <p className="text-green-dark max-w-2xl mx-auto">
-            Skyll aggregates skills from multiple sources (like skills.sh, registries, and more), ranks them by relevance, and returns the best matches. 
+      {/* Skill Registry - Server rendered heading, client list */}
+      <section className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="text-center mb-6">
+          <h2 className="font-mono font-bold text-2xl mb-2">Skill Registry</h2>
+          <p className="text-green-dark max-w-xl mx-auto text-sm">
+            A curated collection of verified, security-audited agent skills maintained by trusted open-source authors.
+          </p>
+        </div>
+
+        <FeaturedSkillsList skills={skillsWithScores} />
+      </section>
+
+      {/* Get Started Section - Server rendered */}
+      <section className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="text-center mb-8">
+          <h2 className="font-mono font-bold text-2xl mb-2">Get Started</h2>
+          <p className="text-green-dark max-w-xl mx-auto text-sm">
+            Skyll aggregates skills from multiple sources, ranks them by relevance, and returns the best matches.
             Agents discover and learn skills autonomously.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="space-y-6 mb-10">
+        <div className="space-y-4 mb-8">
           {/* MCP */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="card-brutal p-6"
-          >
-            <div className="flex flex-col md:flex-row gap-6">
+          <div className="card-brutal p-5">
+            <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-1/2">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-pink px-3 py-1 border-2 border-ink font-bold text-sm">MCP Server</span>
-                  <span className="text-xs text-green-dark">Recommended</span>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-pink px-2.5 py-0.5 border-2 border-ink font-bold text-xs">MCP Server</span>
+                  <span className="text-[10px] text-green-dark">Recommended</span>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Hosted MCP</h3>
-                <p className="text-sm text-green-dark leading-relaxed">
-                  Add Skyll to any MCP-compatible client, or install as a skill for agents 
-                  that support it. Either way, your agent can search, discover, and learn skills on demand.
+                <h3 className="font-bold text-base mb-1.5">Hosted MCP</h3>
+                <p className="text-xs text-green-dark leading-relaxed">
+                  Add Skyll to any MCP-compatible client, or install as a skill for agents
+                  that support it. Your agent can search, discover, and learn skills on demand.
                 </p>
               </div>
-              <div className="md:w-1/2 space-y-3">
+              <div className="md:w-1/2 space-y-2">
                 <div>
-                  <p className="text-xs text-green-dark mb-2 font-medium">Add to your MCP config:</p>
-                  <CopyableCode 
+                  <p className="text-[10px] text-green-dark mb-1.5 font-medium">Add to your MCP config:</p>
+                  <CopyBlock
                     code={`{
   "mcpServers": {
     "skyll": {
@@ -465,37 +144,32 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Or add as a skill:</p>
-                  <CopyableCode code="npx skills add assafelovic/skyll" className="text-xs" />
+                  <p className="text-[10px] text-green-dark mb-1 font-medium">Or add as a skill:</p>
+                  <CopyBlock code="npx skills add assafelovic/skyll" className="text-xs" />
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Python + Skill */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="card-brutal p-6"
-          >
-            <div className="flex flex-col md:flex-row gap-6">
+          {/* Python */}
+          <div className="card-brutal p-5">
+            <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-1/2">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-blue px-3 py-1 border-2 border-ink font-bold text-sm">Python</span>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-blue px-2.5 py-0.5 border-2 border-ink font-bold text-xs">Python</span>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Client Library</h3>
-                <p className="text-sm text-green-dark leading-relaxed">
-                  Use the Python client for typed, async access. Perfect for custom agents 
+                <h3 className="font-bold text-base mb-1.5">Client Library</h3>
+                <p className="text-xs text-green-dark leading-relaxed">
+                  Use the Python client for typed, async access. Perfect for custom agents
                   where context engineering matters.
                 </p>
               </div>
-              <div className="md:w-1/2 space-y-3">
+              <div className="md:w-1/2 space-y-2">
                 <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Install:</p>
-                  <CopyableCode code="pip install skyll" className="text-xs" />
+                  <p className="text-[10px] text-green-dark mb-1 font-medium">Install:</p>
+                  <CopyBlock code="pip install skyll" className="text-xs" />
                 </div>
-                <CopyableCode 
+                <CopyBlock
                   code={`from skyll import Skyll
 
 async with Skyll() as client:
@@ -504,109 +178,92 @@ async with Skyll() as client:
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* REST API */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="card-brutal p-6"
-          >
-            <div className="flex flex-col md:flex-row gap-6">
+          <div className="card-brutal p-5">
+            <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-1/2">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-orange px-3 py-1 border-2 border-ink font-bold text-sm">REST API</span>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-orange px-2.5 py-0.5 border-2 border-ink font-bold text-xs">REST API</span>
                 </div>
-                <h3 className="font-bold text-lg mb-2">Direct API Access</h3>
-                <p className="text-sm text-green-dark leading-relaxed">
-                  Call the API from any language or framework. Fetch the latest version of any skill 
+                <h3 className="font-bold text-base mb-1.5">Direct API Access</h3>
+                <p className="text-xs text-green-dark leading-relaxed">
+                  Call the API from any language or framework. Fetch the latest version of any skill
                   by name, or search across all sources with a single request.
                 </p>
               </div>
-              <div className="md:w-1/2 space-y-3">
+              <div className="md:w-1/2 space-y-2">
                 <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Get a specific skill:</p>
-                  <CopyableCode code={`curl "https://api.skyll.app/skill/tavily-ai/skills/search"`} className="text-xs" />
+                  <p className="text-[10px] text-green-dark mb-1 font-medium">Get a specific skill:</p>
+                  <CopyBlock code={`curl "https://api.skyll.app/skill/tavily-ai/skills/search"`} className="text-xs" />
                 </div>
                 <div>
-                  <p className="text-xs text-green-dark mb-1 font-medium">Search for skills:</p>
-                  <CopyableCode code={`curl "https://api.skyll.app/search?q=testing&limit=5"`} className="text-xs" />
+                  <p className="text-[10px] text-green-dark mb-1 font-medium">Search for skills:</p>
+                  <CopyBlock code={`curl "https://api.skyll.app/search?q=testing&limit=5"`} className="text-xs" />
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Scoring */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="card-brutal p-6 bg-yellow/30"
-        >
-          <div className="flex items-start gap-4">
-            <Star className="w-6 h-6 mt-1 flex-shrink-0" />
+        <div className="card-brutal p-5 bg-yellow/30">
+          <div className="flex items-start gap-3">
+            <Star className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="font-bold text-lg mb-2">How Scoring Works</h3>
-              <p className="text-sm text-green-dark leading-relaxed mb-3">
-                Skills are gathered in realtime from multiple sources (skills.sh, curated registry, and more), 
-                so results are always fresh. Each skill is ranked <strong>0-100</strong> based on: <strong>content 
-                availability</strong> (40 pts), <strong>query match</strong> (30 pts), <strong>popularity</strong> (15 pts), 
+              <h3 className="font-bold text-base mb-1.5">How Scoring Works</h3>
+              <p className="text-xs text-green-dark leading-relaxed mb-2">
+                Skills are gathered in realtime from multiple sources (skills.sh, curated registry, and more),
+                so results are always fresh. Each skill is ranked <strong>0-100</strong> based on: <strong>content
+                availability</strong> (40 pts), <strong>query match</strong> (30 pts), <strong>popularity</strong> (15 pts),
                 and <strong>references</strong> (15 pts).
               </p>
-              <p className="text-sm text-green-dark leading-relaxed mb-2">
-                Skills from the community-curated registry get a small boost (up to 8 pts) scaled by how relevant 
-                they are to your query. Think of it like a Wikipedia for skills - open for anyone to contribute, 
-                validated by the community. The boost helps surface trusted skills while preserving real 
+              <p className="text-xs text-green-dark leading-relaxed mb-1">
+                Skills from the community-curated registry get a small boost (up to 8 pts) scaled by how relevant
+                they are to your query. The boost helps surface trusted skills while preserving real
                 popularity and relevance signals.
               </p>
-              <p className="text-xs text-green-dark/70 italic">
+              <p className="text-[10px] text-green-dark/70 italic">
                 Semantic search with embeddings coming soon.
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-10"
-        >
+        <div className="text-center mt-8">
           <Link href="/docs" className="btn-brutal bg-green-mid inline-flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
+            <BookOpen className="w-4 h-4" />
             Read the Docs
           </Link>
-        </motion.div>
+        </div>
       </section>
 
-      {/* Spacer to push footer below viewport */}
-      <div className="flex-1 min-h-[10vh]" />
+      <div className="flex-1 min-h-[6vh]" />
 
-      {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 border-t-4 border-ink/20 mt-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Skyll" width={28} height={28} />
-            <span className="font-bold text-lg">skyll</span>
+      {/* Footer - Server rendered */}
+      <footer className="container mx-auto px-4 py-6 border-t-3 border-ink/20 mt-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Image src="/logo.png" alt="Skyll" width={22} height={22} />
+            <span className="font-bold text-sm">skyll</span>
           </div>
-          
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a href="https://github.com/assafelovic/skyll" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
-              <Github className="w-4 h-4" /> GitHub
+
+          <div className="flex flex-wrap justify-center gap-5 text-xs">
+            <a href="https://github.com/assafelovic/skyll" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-ink transition-colors text-green-dark">
+              <Github className="w-3.5 h-3.5" /> GitHub
             </a>
-            <Link href="/docs" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
-              <BookOpen className="w-4 h-4" /> Docs
+            <Link href="/docs" className="flex items-center gap-1.5 hover:text-ink transition-colors text-green-dark">
+              <BookOpen className="w-3.5 h-3.5" /> Docs
             </Link>
-            <a href="https://discord.gg/CxdMdfZS" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-ink transition-colors text-green-dark">
-              <DiscordIcon className="w-4 h-4" /> Discord
+            <a href="https://discord.gg/CxdMdfZS" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-ink transition-colors text-green-dark">
+              <DiscordIcon className="w-3.5 h-3.5" /> Discord
             </a>
           </div>
         </div>
-        
-        <p className="text-center mt-6 text-xs text-green-dark">
+
+        <p className="text-center mt-4 text-[10px] text-green-dark">
           Built with ❤️ for autonomous agents ·{" "}
           <a href="https://agentskills.io" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
             Agent Skills Spec

@@ -15,9 +15,9 @@
   
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   
-  --shadow-brutal: 6px 6px 0 var(--color-ink);
-  --shadow-brutal-sm: 4px 4px 0 var(--color-ink);
-  --shadow-brutal-hover: 8px 8px 0 var(--color-ink);
+  --shadow-brutal: 4px 4px 0 var(--color-ink);
+  --shadow-brutal-sm: 3px 3px 0 var(--color-ink);
+  --shadow-brutal-hover: 6px 6px 0 var(--color-ink);
 }
 
 /* JetBrains Mono via Google Fonts link in layout.tsx head instead */
@@ -35,7 +35,7 @@ body {
 
 /* Neobrutalist button base */
 .btn-brutal {
-  @apply font-mono font-bold px-6 py-3 border-4 border-ink transition-all duration-150;
+  @apply font-mono font-bold px-5 py-2.5 border-3 border-ink transition-all duration-150 text-sm;
   box-shadow: var(--shadow-brutal-sm);
 }
 
@@ -51,7 +51,7 @@ body {
 
 /* Card styling */
 .card-brutal {
-  @apply bg-cream border-4 border-ink;
+  @apply bg-cream border-3 border-ink;
   box-shadow: var(--shadow-brutal);
 }
 

@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
-// JetBrains Mono font
 const fontLink = "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap";
 
 export const metadata: Metadata = {
@@ -19,6 +18,9 @@ export const metadata: Metadata = {
     "Cursor",
     "skills.sh",
     "SKILL.md",
+    "skill discovery",
+    "context engineering",
+    "agent skills spec",
   ],
   authors: [{ name: "Skyll", url: "https://skyll.app" }],
   openGraph: {
@@ -44,6 +46,70 @@ export const metadata: Metadata = {
       "Let any AI agent search for and retrieve agent skills at runtime",
     images: ["/logo.png"],
   },
+  alternates: {
+    canonical: "https://skyll.app",
+  },
+  other: {
+    "llms.txt": "https://skyll.app/llms.txt",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Skyll",
+  description:
+    "Skill discovery for AI agents. REST API and MCP server that lets any AI agent search for and retrieve agent skills at runtime. Aggregates skills from multiple sources with full SKILL.md content.",
+  url: "https://skyll.app",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Any",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+    description: "Free and open-source",
+  },
+  author: {
+    "@type": "Organization",
+    name: "Skyll",
+    url: "https://skyll.app",
+  },
+  license: "https://opensource.org/licenses/Apache-2.0",
+  sameAs: [
+    "https://github.com/assafelovic/skyll",
+    "https://pypi.org/project/skyll/",
+    "https://skills.sh/assafelovic/skyll/skyll",
+  ],
+  featureList: [
+    "Multi-source skill search",
+    "Full SKILL.md content retrieval",
+    "Relevance ranking (0-100 score)",
+    "MCP server support",
+    "Python client library",
+    "REST API",
+    "Aggressive caching",
+    "Reference file support",
+  ],
+  softwareRequirements: "Python 3.12+ or any HTTP client",
+  downloadUrl: "https://pypi.org/project/skyll/",
+  installUrl: "https://pypi.org/project/skyll/",
+  releaseNotes: "https://github.com/assafelovic/skyll/releases",
+  screenshot: "https://skyll.app/logo.png",
+};
+
+const speakableJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Skyll - Skill discovery for AI agents",
+  url: "https://skyll.app",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [
+      "h1",
+      '[data-speakable="tagline"]',
+      '[data-speakable="description"]',
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -57,6 +123,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href={fontLink} rel="stylesheet" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableJsonLd) }}
+        />
       </head>
       <body className="antialiased">
         {children}

@@ -342,6 +342,7 @@ async def root() -> dict:
         "version": "0.1.0",
         "description": "Search and retrieve agent skills with full markdown content",
         "documentation": "/docs",
+        "openapi": "/openapi.json",
         "endpoints": {
             "search_get": "GET /search?q={query}&limit={limit}&include_content={bool}",
             "search_post": "POST /search",
@@ -351,8 +352,11 @@ async def root() -> dict:
             "mcp": "POST /mcp/",
         },
         "links": {
+            "website": "https://skyll.app",
+            "llms_txt": "https://skyll.app/llms.txt",
             "skills.sh": "https://skills.sh",
             "agent_skills_spec": "https://agentskills.io",
             "github": "https://github.com/assafelovic/skyll",
+            "pypi": "https://pypi.org/project/skyll/",
         },
     }
