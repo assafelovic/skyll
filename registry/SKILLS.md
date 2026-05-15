@@ -134,3 +134,6 @@ Contributing: Add your skill via PR!
 Format: - skill-id | owner/repo | path/to/skill | Short description (under 80 chars)
 Requirements: Valid SKILL.md following Agent Skills Spec (https://agentskills.io)
 -->
+- integral-hermeneutics | DarkD/integral-hermeneutics-skill | | 8-lens multi-perspective interpretation methodology for analyzing texts, systems, behaviors, and phenomena through integrated hermeneutic lenses
+- rune-wisdom | DarkD/rune-wisdom-skill | | Elder Futhark runic symbol interpretation with 37+ spreads, three-factor oracle, and Norse mythology contextual framework
+- what-if-scenario-builder | DarkD/what-if-scenario-builder-skill | | Structured scenario construction using 15 foresight frameworks including Shell Scenario Planning, Schwartz Eight-Step, and Manoa Method
