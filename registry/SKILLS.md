@@ -137,3 +137,4 @@ Requirements: Valid SKILL.md following Agent Skills Spec (https://agentskills.io
 - integral-hermeneutics | DarkD/integral-hermeneutics-skill | | 8-lens multi-perspective interpretation methodology for analyzing texts, systems, behaviors, and phenomena through integrated hermeneutic lenses
 - rune-wisdom | DarkD/rune-wisdom-skill | | Elder Futhark runic symbol interpretation with 37+ spreads, three-factor oracle, and Norse mythology contextual framework
 - what-if-scenario-builder | DarkD/what-if-scenario-builder-skill | | Structured scenario construction using 15 foresight frameworks including Shell Scenario Planning, Schwartz Eight-Step, and Manoa Method
+- strategical-alignment | DarkD/strategical-alignment-skill | | Detect short-term vs long-term misalignment using White Rock 6-phase protocol with 9-dimension gap assessment and 5 Senge archetypes
