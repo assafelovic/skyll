@@ -44,6 +44,7 @@ Developer tools, testing, automation, and best practices.
 - software-architecture | NeoLabHQ/context-engineering-kit | plugins/ddd/skills/software-architecture | Clean Architecture, SOLID principles, and design patterns
 - subagent-development | NeoLabHQ/context-engineering-kit | plugins/sadd/skills/subagent-driven-development | Dispatch independent subagents for parallel development tasks
 - test-driven-development | obra/superpowers | skills/test-driven-development | Implement features using TDD workflow with tests before code
+- using-lwc | JanYork/using-lwc | skills/using-lwc | Durable project memory and graph recall for coding agents
 - git-worktrees | obra/superpowers | skills/using-git-worktrees | Create isolated git worktrees with smart directory selection
 - connect-apps | ComposioHQ/awesome-claude-skills | connect | Connect Claude to 500+ apps like Gmail, Slack, GitHub, Notion
 - webapp-testing | anthropics/skills | skills/webapp-testing | Test web applications with Playwright for frontend verification
