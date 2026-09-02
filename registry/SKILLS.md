@@ -127,6 +127,33 @@ Security analysis, threat hunting, and forensics.
 - metadata-extraction | mhattingpete/claude-skills-marketplace | computer-forensics-skills/skills/metadata-extraction | Extract and analyze file metadata for forensic purposes
 - threat-hunting | jthack/threat-hunting-with-sigma-rules-skill | | Hunt for threats using Sigma detection rules
 
+## BulkPublish social media content
+
+- brand-voice-editor | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/brand-voice-editor | Edit social content in a consistent brand voice via BulkPublish
+- bulk-publish | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/bulk-publish | Upload media and batch-create BulkPublish posts
+- campaign-performance-report | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/campaign-performance-report | Report campaign performance from BulkPublish analytics
+- check-quota | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/check-quota | Check BulkPublish plan limits and usage
+- content-repurposing | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/content-repurposing | Repurpose sources into BulkPublish social packages
+- get-analytics | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/get-analytics | Pull engagement metrics from BulkPublish
+- hashtag-keyword-research | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/hashtag-keyword-research | Research hashtags and prepare BulkPublish variants
+- influencer-campaign-planner | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/influencer-campaign-planner | Plan influencer campaigns for BulkPublish execution
+- link-tracking-review | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/link-tracking-review | Review BulkPublish link tracking and clicks
+- manage-channels | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/manage-channels | Check connected channel health through BulkPublish
+- media-preflight | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/media-preflight | Preflight media for BulkPublish platform requirements
+- platform-content-adapter | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/platform-content-adapter | Adapt content for platforms before BulkPublish
+- platform-reference | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/platform-reference | Reference BulkPublish platform requirements
+- rss-to-social | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/rss-to-social | Turn feeds into controlled BulkPublish posts
+- schedule-post | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/schedule-post | Schedule and publish social posts via BulkPublish MCP
+- social-campaign-builder | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-campaign-builder | Build cross-platform BulkPublish campaigns
+- social-content-audit | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-content-audit | Audit social content and BulkPublish operations
+- social-content-strategy | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-content-strategy | Create social strategies for BulkPublish execution
+- social-copy-ab-testing | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-copy-ab-testing | Design measurable BulkPublish copy experiments
+- social-localization | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-localization | Localize content into safe BulkPublish variants
+- social-media-calendar | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-media-calendar | Plan and schedule a BulkPublish content calendar
+- social-post-review | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-post-review | Review drafts before BulkPublish execution
+- social-trend-research | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-trend-research | Research trends for BulkPublish content opportunities
+- ugc-content-planner | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/ugc-content-planner | Plan UGC campaigns for BulkPublish publishing
+
 ---
 
 <!-- 
