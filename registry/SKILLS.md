@@ -128,6 +128,7 @@ Security analysis, threat hunting, and forensics.
 - file-deletion | mhattingpete/claude-skills-marketplace | computer-forensics-skills/skills/file-deletion | Secure file deletion and data sanitization methods
 - metadata-extraction | mhattingpete/claude-skills-marketplace | computer-forensics-skills/skills/metadata-extraction | Extract and analyze file metadata for forensic purposes
 - threat-hunting | jthack/threat-hunting-with-sigma-rules-skill | | Hunt for threats using Sigma detection rules
+- hol-guard | hashgraph-online/hol-guard | .factory/skills/hol-guard | Protect supported coding-agent runtimes before tool execution
 
 ---
 
