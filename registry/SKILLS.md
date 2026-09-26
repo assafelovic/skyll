@@ -40,6 +40,7 @@ Developer tools, testing, automation, and best practices.
 - prompt-engineering | NeoLabHQ/context-engineering-kit | plugins/customaize-agent/skills/prompt-engineering | Prompt engineering techniques and Anthropic best practices
 - pypict | omkamal/pypict-claude-skill | | Design comprehensive test cases using PICT pairwise testing
 - reddit-fetch | ykdojo/claude-code-tips | skills/reddit-fetch | Fetch Reddit content via Gemini CLI when WebFetch is blocked
+- robots-sitemap-validator | justhandledlabs/skills | skills/robots-sitemap-validator | Validate local robots.txt and sitemap.xml for crawl-blocking mistakes
 - skill-creator | anthropics/skills | skills/skill-creator | Design and create effective Claude Skills with proper structure
 - skill-seekers | yusufkaraaslan/Skill_Seekers | | Convert any documentation website into a Claude skill
 - software-architecture | NeoLabHQ/context-engineering-kit | plugins/ddd/skills/software-architecture | Clean Architecture, SOLID principles, and design patterns
