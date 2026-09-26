@@ -33,6 +33,7 @@ Developer tools, testing, automation, and best practices.
 - ios-simulator | conorluddy/ios-simulator-skill | | Interact with iOS Simulator for mobile app testing and debugging
 - jules | sanjay3290/ai-skills | skills/jules | Delegate coding tasks to Google Jules AI agent for async work
 - langsmith-fetch | ComposioHQ/awesome-claude-skills | langsmith-fetch | Debug LangChain agents by fetching traces from LangSmith Studio
+- markstream-install | Simon-He95/markstream-vue | .agents/skills/markstream-install | Use streaming Markdown renderers across Vue, React, Svelte, and Angular
 - mcp-builder | anthropics/skills | skills/mcp-builder | Create Model Context Protocol servers for LLM integrations
 - move-code-quality | 1NickPappas/move-code-quality-skill | | Analyze Move language packages for code quality compliance
 - playwright-automation | lackeyjb/playwright-skill | | Automate browser testing with Playwright for web applications
