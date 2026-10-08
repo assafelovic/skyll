@@ -72,6 +72,13 @@ Brand management, lead generation, and business tools.
 - domain-brainstormer | anthropics/skills | skills/domain-name-brainstormer | Generate domain name ideas and check availability
 - internal-comms | ComposioHQ/awesome-claude-skills | internal-comms | Write internal communications, newsletters, and status reports
 - lead-research | anthropics/skills | skills/lead-research-assistant | Identify and qualify leads for sales outreach
+- brand-voice-editor | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/brand-voice-editor | Edit social content in a consistent brand voice via BulkPublish
+- content-repurposing | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/content-repurposing | Repurpose sources into BulkPublish social packages
+- platform-content-adapter | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/platform-content-adapter | Adapt content for platforms before BulkPublish
+- schedule-post | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/schedule-post | Schedule and publish social posts via BulkPublish MCP
+- social-campaign-builder | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-campaign-builder | Build cross-platform BulkPublish campaigns
+- social-media-calendar | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-media-calendar | Plan and schedule a BulkPublish content calendar
+- social-post-review | azeemkafridi/bulkpublish-api | skills/social-media-content-skills/social-post-review | Review drafts before BulkPublish execution
 
 ## 📝 Writing & Communication
 
