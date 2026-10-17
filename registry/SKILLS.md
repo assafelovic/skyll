@@ -54,6 +54,7 @@ Developer tools, testing, automation, and best practices.
 
 Data analysis, research automation, and investigation tools.
 
+- healthcare-job-search | yumaheymans/carejobs-mcp | skills/healthcare-job-search | Find US healthcare jobs and the pay employers post, from 170,000+ openings read daily from 270 hospitals' career sites
 - tavily-search | tavily-ai/skills | search | Search the web using Tavily's LLM-optimized search API
 - tavily-extract | tavily-ai/skills | extract | Extract and parse content from web pages using Tavily
 - tavily-crawl | tavily-ai/skills | crawl | Crawl websites and discover pages using Tavily
