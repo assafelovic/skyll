@@ -30,6 +30,7 @@ Developer tools, testing, automation, and best practices.
 - d3-visualization | chrisvoncsefalvay/claude-d3js-skill | | Create D3.js charts and interactive data visualizations
 - ffuf-fuzzing | jthack/ffuf_claude_skill | | Run web fuzzing with ffuf for security vulnerability analysis
 - finishing-branch | obra/superpowers | skills/finishing-a-development-branch | Guide completion of development branches with clear options
+- frontend-business-websites | vitaliiphangan-code/add-domain-website-skills | skills/frontend-business-websites | Design responsive business websites; optional paid domain by Add Domain.
 - ios-simulator | conorluddy/ios-simulator-skill | | Interact with iOS Simulator for mobile app testing and debugging
 - jules | sanjay3290/ai-skills | skills/jules | Delegate coding tasks to Google Jules AI agent for async work
 - langsmith-fetch | ComposioHQ/awesome-claude-skills | langsmith-fetch | Debug LangChain agents by fetching traces from LangSmith Studio
